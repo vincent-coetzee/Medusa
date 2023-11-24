@@ -36,6 +36,7 @@
 		BFA9444B2B110E7300526CF1 /* BTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA9444A2B110E7300526CF1 /* BTree.swift */; };
 		BFA944542B1111C100526CF1 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA944532B1111C100526CF1 /* File.swift */; };
 		BFA944582B1113EE00526CF1 /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = BFA944572B1113EE00526CF1 /* Path */; };
+		BFA9445A2B11329F00526CF1 /* ValueBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA944592B11329F00526CF1 /* ValueBox.swift */; };
 		BFAAF0342B0F2A7C00A2FFD1 /* Fletcher32.c in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF0332B0F2A7C00A2FFD1 /* Fletcher32.c */; };
 		BFAAF0382B0FC1F000A2FFD1 /* PageBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF0372B0FC1F000A2FFD1 /* PageBuffer.swift */; };
 		BFAAF03C2B0FDF4300A2FFD1 /* FreeList.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF03B2B0FDF4300A2FFD1 /* FreeList.swift */; };
@@ -117,6 +118,7 @@
 		BFA944482B1078B400526CF1 /* Fragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fragment.swift; sourceTree = "<group>"; };
 		BFA9444A2B110E7300526CF1 /* BTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTree.swift; sourceTree = "<group>"; };
 		BFA944532B1111C100526CF1 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
+		BFA944592B11329F00526CF1 /* ValueBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueBox.swift; sourceTree = "<group>"; };
 		BFAAF0312B0F29CD00A2FFD1 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		BFAAF0322B0F2A1E00A2FFD1 /* Fletcher32.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Fletcher32.h; sourceTree = "<group>"; };
 		BFAAF0332B0F2A7C00A2FFD1 /* Fletcher32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Fletcher32.c; sourceTree = "<group>"; };
@@ -198,6 +200,7 @@
 				BF7FFCE42B07FEF9001D2F93 /* MOPRepository.swift */,
 				BF7FFCD02B079D10001D2F93 /* MOPValue.swift */,
 				BF7FFCDC2B07A591001D2F93 /* ObjectID.swift */,
+				BFA944592B11329F00526CF1 /* ValueBox.swift */,
 			);
 			path = "Medusa Object Protocol";
 			sourceTree = "<group>";
@@ -525,6 +528,7 @@
 				BF6C7E192B0E28AF006DB858 /* Field.swift in Sources */,
 				BF7FFCE32B07AB3D001D2F93 /* MOPEnumerationCase.swift in Sources */,
 				BFA944542B1111C100526CF1 /* File.swift in Sources */,
+				BFA9445A2B11329F00526CF1 /* ValueBox.swift in Sources */,
 				BFFB2E962B05364C00254090 /* Agent.swift in Sources */,
 				BFA944472B10783800526CF1 /* KeyEntry.swift in Sources */,
 				BFD674672B0607720086932A /* IPV6Address.swift in Sources */,

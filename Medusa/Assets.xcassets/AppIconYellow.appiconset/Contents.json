@@ -1,61 +1,61 @@
 {
   "images" : [
     {
-      "filename" : "MedusaInRedPinkIcon@16.png",
+      "filename" : "MedusaInYellowIcon@16.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "16x16"
     },
     {
-      "filename" : "MedusaInRedPinkIcon@32 1.png",
+      "filename" : "MedusaInYellowIcon@32 1.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "16x16"
     },
     {
-      "filename" : "MedusaInRedPinkIcon@32.png",
+      "filename" : "MedusaInYellowIcon@32.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "32x32"
     },
     {
-      "filename" : "MedusaInRedPinkIcon@64.png",
+      "filename" : "MedusaInYellowIcon@64.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "32x32"
     },
     {
-      "filename" : "MedusaInRedPinkIcon@128.png",
+      "filename" : "MedusaInYellowIcon@128.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "128x128"
     },
     {
-      "filename" : "MedusaInRedPinkIcon@256 1.png",
+      "filename" : "MedusaInYellowIcon@256 1.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "128x128"
     },
     {
-      "filename" : "MedusaInRedPinkIcon@256.png",
+      "filename" : "MedusaInYellowIcon@256.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "256x256"
     },
     {
-      "filename" : "MedusaInRedPinkIcon@512 1.png",
+      "filename" : "MedusaInYellowIcon@512 1.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "256x256"
     },
     {
-      "filename" : "MedusaInRedPinkIcon@512.png",
+      "filename" : "MedusaInYellowIcon@512.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "512x512"
     },
     {
-      "filename" : "MedusaInRedPinkIcon@1024.png",
+      "filename" : "MedusaInYellowIcon@1024.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "512x512"

@@ -38,13 +38,13 @@ public class MOPRepository
     private func initMessageClass() -> MOPClass
         {
         let someKlass = MOPClass(name: "Message")
-        someKlass.addInstanceVariable(name: "messageType", klass: .messageType, offset: 0,keyPath: \Message.messageType)
-        someKlass.addInstanceVariable(name: "sequenceNumber", klass: .integer, offset: 0,keyPath: \Message.sequenceNumber)
-        someKlass.addInstanceVariable(name: "sourceIP", klass: .ipv6Address, offset: 0,keyPath: \Message.sourceIP)
-        someKlass.addInstanceVariable(name: "targetIP", klass: .ipv6Address, offset: 0,keyPath: \Message.targetIP)
-        someKlass.addInstanceVariable(name: "totalMessageSize", klass: .integer, offset: 0,keyPath: \Message.totalMessageSize)
-        someKlass.addInstanceVariable(name: "payloadSize", klass: .integer, offset: 0,keyPath: \Message.payloadSize)
-        someKlass.addInstanceVariable(name: "payloadOffset", klass: .integer, offset: 0,keyPath: \Message.payloadOffset)
+        someKlass.addInstanceVariable(name: "messageType", klass: .messageType)
+        someKlass.addInstanceVariable(name: "sequenceNumber", klass: .integer)
+        someKlass.addInstanceVariable(name: "sourceIP", klass: .ipv6Address)
+        someKlass.addInstanceVariable(name: "targetIP", klass: .ipv6Address)
+        someKlass.addInstanceVariable(name: "totalMessageSize", klass: .integer)
+        someKlass.addInstanceVariable(name: "payloadSize", klass: .integer)
+        someKlass.addInstanceVariable(name: "payloadOffset", klass: .integer)
         return(someKlass)
         }
         
