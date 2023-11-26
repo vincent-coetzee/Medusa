@@ -9,47 +9,56 @@ import Cocoa
 
 class BTreePageInspectorViewController: NSViewController
     {
-    private var btreePage: BTreePage<String,String>?
+    public var btreePage: BTreePage<String,String>?
+        {
+        didSet
+            {
+            self.fieldSets = Array(self.btreePage!.fieldSets.values)
+            self.outlineView.reloadData()
+            }
+        }
+        
     private var highlightColor = NSColor.argonLivingCoral
     private var regularColor = NSColor.argonWhite80
     private var lowlightColor = NSColor.argonTribalSeaGreen
+    private var fieldSets: Array<FieldSet>!
     
     @IBOutlet weak var outlineView: NSOutlineView!
     
     override func viewDidLoad()
         {
         super.viewDidLoad()
-        self.btreePage = BTreePage(magicNumber: Medusa.kBTreePageMagicNumber)
-        do
-            {
-            try self.btreePage?.insertKeyEntry(key: "Vincent", value: "Some text that will be stuffed in.", pointer: Medusa.PageAddress(1_000_000_000))
-            try self.btreePage?.insertKeyEntry(key: "Joan", value: "More text.", pointer: Medusa.PageAddress(2_000_000))
-            try self.btreePage?.insertKeyEntry(key: "Jen", value: "Jennifer has no problem speaking in public and can say a lot of things in a short space of time.", pointer: Medusa.PageAddress(11_000_000))
-            try self.btreePage?.insertKeyEntry(key: "Stevie", value: "Stevie is now all grown up and married.", pointer: Medusa.PageAddress(2_000_000))
-            try self.btreePage?.insertKeyEntry(key: "Daniel", value: "Daniel is very boring I am told.", pointer: Medusa.PageAddress(2_000_000))
-            }
-        catch let issue as SystemIssue
-            {
-            print("Issue occurred: \(issue.message)")
-            }
-        catch
-            {
-            }
-        self.btreePage?.rightPointer = Medusa.PageAddress(5_555_555_555)
-        self.btreePage?.write()
+//        self.btreePage = BTreePage(magicNumber: Medusa.kBTreePageMagicNumber)
+//        do
+//            {
+//            try self.btreePage?.insertKeyEntry(key: "Vincent", value: "Some text that will be stuffed in.", pointer: Medusa.PageAddress(1_000_000_000))
+//            try self.btreePage?.insertKeyEntry(key: "Joan", value: "More text.", pointer: Medusa.PageAddress(2_000_000))
+//            try self.btreePage?.insertKeyEntry(key: "Jen", value: "Jennifer has no problem speaking in public and can say a lot of things in a short space of time.", pointer: Medusa.PageAddress(11_000_000))
+//            try self.btreePage?.insertKeyEntry(key: "Stevie", value: "Stevie is now all grown up and married.", pointer: Medusa.PageAddress(2_000_000))
+//            try self.btreePage?.insertKeyEntry(key: "Daniel", value: "Daniel is very boring I am told.", pointer: Medusa.PageAddress(2_000_000))
+//            }
+//        catch let issue as SystemIssue
+//            {
+//            print("Issue occurred: \(issue.message)")
+//            }
+//        catch
+//            {
+//            }
+//        self.btreePage?.rightPointer = Medusa.PageAddress(5_555_555_555)
+//        self.btreePage?.write()
         self.outlineView.backgroundColor = NSColor.argonBlack50
         self.outlineView.font = NSFont.systemFont(ofSize: 13)
-        let pp = Medusa.PagePointer(page: 1000,offset: 400)
-        print(bitString(of: pp))
-        print(pp.pageValue)
-        print(pp.offsetValue)
+//        let pp = Medusa.PagePointer(page: 1000,offset: 400)
+//        print(Medusa.bitString(integer: pp))
+//        print(pp.pageValue)
+//        print(pp.offsetValue)
         self.outlineView.rowHeight = 20
         self.outlineView.reloadData()
-        let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
-        let windowController = storyboard.instantiateController(withIdentifier: "bufferBrowserWindowController") as! NSWindowController
-        let viewController = windowController.contentViewController as! BufferBrowserViewController
-        windowController.showWindow(self)
-        viewController.buffer = btreePage!.pageBuffer
+//        let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
+//        let windowController = storyboard.instantiateController(withIdentifier: "bufferBrowserWindowController") as! NSWindowController
+//        let viewController = windowController.contentViewController as! BufferBrowserViewController
+//        windowController.showWindow(self)
+//        viewController.buffer = btreePage!.pageBuffer
         }
     }
 
@@ -58,7 +67,7 @@ extension BTreePageInspectorViewController: NSOutlineViewDataSource
     {
     func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool
         {
-        if item is FieldHolder
+        if item is FieldSet
             {
             return(true)
             }
@@ -72,11 +81,15 @@ extension BTreePageInspectorViewController: NSOutlineViewDataSource
         {
         if item.isNil
             {
-            return(3)
+            if self.btreePage.isNil
+                {
+                return(0)
+                }
+            return(self.fieldSets.count)
             }
-        else if let holder = item as? FieldHolder
+        else if let fieldSet = item as? FieldSet
             {
-            return(holder.fields.count)
+            return(fieldSet.count)
             }
         else if item is Field
             {
@@ -89,25 +102,14 @@ extension BTreePageInspectorViewController: NSOutlineViewDataSource
         {
         if item.isNil
             {
-            if index == 0
-                {
-                return(FieldHolder(label: "Header Fields",fields: self.btreePage!.headerFields))
-                }
-            else if index == 1
-                {
-                return(FieldHolder(label: "Key Entry Fields",fields: self.btreePage!.keyEntryFields))
-                }
-            else
-                {
-                return(FieldHolder(label: "Free Cell Fields",fields: self.btreePage!.freeCellFields))
-                }
+            return(self.fieldSets[index])
             }
-        else
+        else if let fieldSet = item as? FieldSet
             {
-            let holder = item as! FieldHolder
-            let field = holder.fields[index]
+            let field = fieldSet[index]
             return(field)
             }
+        fatalError()
         }
     }
 
@@ -115,7 +117,7 @@ extension BTreePageInspectorViewController: NSOutlineViewDelegate
     {
     func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView?
         {
-        if let holder = item as? FieldHolder
+        if let fieldSet = item as? FieldSet
             {
             if tableColumn?.identifier == NSUserInterfaceItemIdentifier("Column.0")
                 {
@@ -126,7 +128,7 @@ extension BTreePageInspectorViewController: NSOutlineViewDelegate
                 textField.backgroundColor = self.outlineView.backgroundColor
                 textField.textColor = self.lowlightColor
                 textField.drawsBackground = true
-                textField.stringValue = holder.label
+                textField.stringValue = fieldSet.name
                 return(textField)
                 }
             return(nil)
@@ -159,17 +161,5 @@ extension BTreePageInspectorViewController: NSOutlineViewDelegate
                 }
             }
         return(nil)
-        }
-    }
-
-public class FieldHolder
-    {
-    public let fields: FieldSet
-    public let label: String
-    
-    public init(label: String,fields: FieldSet)
-        {
-        self.label = label
-        self.fields = fields
         }
     }

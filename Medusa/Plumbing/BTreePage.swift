@@ -6,95 +6,92 @@
 //
 
 import Foundation
-import Fletcher32
+import Fletcher
 
 public class BTreePage<Key,Value>: Page where Key:Fragment,Value:Fragment
     {
-    public var headerFields: FieldSet
+    public var keyEntries = Array<KeyEntry<Key,Value>>()
+    public var rightPointer: Medusa.PagePointer = 0
+    public private(set) var keyEntryCount: Medusa.Integer64 = 0
+    private var keyPointersNeedSorting = false
+    
+    public var entryCount: Int
         {
-        let fields = FieldSet()
-        fields.append(Field(index: 0,name: "magicNumber",value: .magicNumber(self.magicNumber)))
-        fields.append(Field(index: 1,name: "checksum",value: .checksum(self.checksum)))
-        fields.append(Field(index: 2,name: "freeByteCount",value: .offset(self.freeByteCount)))
-        fields.append(Field(index: 3,name: "firstFreeCellOffset",value: .offset(self.firstFreeCellOffset)))
-        fields.append(Field(index: 4,name: "freeCellCount",value: .offset(self.freeCellCount)))
-        fields.append(Field(index: 5,name: "rightPointer",value: .pageAddress(self.rightPointer)))
-        fields.append(Field(index: 6,name: "keyEntryCount",value: .offset(self.keyEntryCount)))
-        fields.append(Field(index: 6,name: "pageAddress",value: .pageAddress(self.pageAddress)))
-        fields.append(Field(index: 6,name: "file",value: .string(self.file?.path.string ?? "nil")))
-        return(fields)
+        return(self.keyEntries.count)
+        }
+        
+    public override var fieldSets: FieldSetList
+        {
+        var list = super.fieldSets
+        list["Header Fields"]!.append(Field(index: 5,name: "rightPointer",value: .pageAddress(self.rightPointer),offset: Medusa.kBTreePageRightPointerOffset))
+        list["Header Fields"]!.append(Field(index: 6,name: "keyEntryCount",value: .offset(self.keyEntryCount),offset: Medusa.kBTreePageKeyEntryCountOffset))
+        let keyEntryFields = self.keyEntryFields
+        list[keyEntryFields.name] = keyEntryFields
+        return(list)
         }
         
     public var keyEntryFields: FieldSet
         {
-        let fields = FieldSet()
+        let fields = FieldSet(name: "Key Entry Fields")
         var index = 0
         var count = 0
         for entry in self.keyEntries
             {
             var localOffset = entry.cellOffset
-            let pointer = self.pageBuffer.load(fromByteOffset: &localOffset, as: Medusa.PageAddress.self)
+            let pointer = readIntegerWithOffset(self.buffer,&localOffset)
             print("READ POINTER \(pointer) AT \(entry.cellOffset)")
-            let keyBytes = Medusa.Bytes(from: self.pageBuffer, atByteOffset: &localOffset)
-            let valueBytes = Medusa.Bytes(from: self.pageBuffer,atByteOffset: &localOffset)
-            fields.append(Field(index: index,name: "Key entry \(count)",value: .keyValueEntry(entry.cellOffset, pointer, keyBytes, valueBytes)))
+            let keyBytes = Medusa.Bytes(from: self.buffer, atByteOffset: &localOffset)
+            let valueBytes = Medusa.Bytes(from: self.buffer,atByteOffset: &localOffset)
+            fields.append(Field(index: index,name: "Key entry \(count)",value: .keyValueEntry(entry.cellOffset, pointer, keyBytes, valueBytes),offset: entry.cellOffset))
             count += 1
             index += 1
             }
         return(fields)
         }
-        
-    public var freeCellFields: FieldSet
-        {
-        self.freeList.freeListFields
-        }
-        
-    private var keyEntries = Array<KeyEntry<Key,Value>>()
-    public var rightPointer: Medusa.PagePointer = 0
-    public private(set) var keyEntryCount: Medusa.Integer = 0
-    private var keyPointersNeedSorting = false
     
     public required init(magicNumber: Medusa.MagicNumber)
         {
         super.init(magicNumber: magicNumber)
-        self.firstFreeCellOffset = Medusa.kBTreePageHeaderSizeInBytes
-        self.freeCellCount = 0
-        self.checksumOffset = Medusa.kPageChecksumOffset
         }
-    
-    public override init(from buffer: PageBuffer)
+        
+    public override init(from buffer: UnsafeMutableRawPointer)
         {
         super.init(from: buffer)
-        self.pageAddress = 0
-        self.pageBuffer = buffer
-        self.readHeader()
         self.readKeyEntries()
         }
         
+    public override init(from page: Page)
+        {
+        super.init(from: page)
+        self.readKeyEntries()
+        }
+        
+        
     @discardableResult
-    public func write() -> PageBuffer
+    public func write() -> UnsafeMutableRawPointer
         {
         self.writeHeader()
         self.writeKeyPointers()
         self.writeKeyEntries()
         self.writeChecksum()
         self.writeFreeList()
-        return(self.pageBuffer)
+        return(self.buffer)
         }
         
     internal override func writeHeader()
         {
         super.writeHeader()
-        self.freeCellCount = self.freeList.count
-        self.pageBuffer.storeBytes(of: self.rightPointer,atByteOffset: Medusa.kBTreePageRightPointerOffset, as: Medusa.PageAddress.self)
-        self.pageBuffer.storeBytes(of: Int(self.keyEntries.count),atByteOffset: Medusa.kBTreePageKeyEntryCountOffset, as: Medusa.Integer.self)
+        writeInteger(self.buffer,self.rightPointer,Medusa.kBTreePageRightPointerOffset)
+        writeInteger(self.buffer,Int(self.keyEntries.count),Medusa.kBTreePageKeyEntryCountOffset)
         }
         
     internal override func readHeader()
         {
         super.readHeader()
-        self.rightPointer = self.pageBuffer.load(fromByteOffset: Medusa.kBTreePageRightPointerOffset, as: Medusa.PagePointer.self)
-        self.keyEntryCount = self.pageBuffer.load(fromByteOffset: Medusa.kBTreePageKeyEntryCountOffset, as: Int.self)
+        self.rightPointer = readInteger(self.buffer,Medusa.kBTreePageRightPointerOffset)
+        print("     RIGHT POINTER \(self.rightPointer)")
+        self.keyEntryCount = readInteger(self.buffer,Medusa.kBTreePageKeyEntryCountOffset)
+        print("     KEY ENTRY COUNT \(self.keyEntryCount)")
         }
     
     //
@@ -102,19 +99,17 @@ public class BTreePage<Key,Value>: Page where Key:Fragment,Value:Fragment
     //
     private func writeChecksum()
         {
-        var location = self.checksumOffset
         // set the checksum to 0 before we do the checksum to ensure we get a clean checksum
-        self.pageBuffer.storeBytes(of: Medusa.Checksum(0),atByteOffset: &location, as: Medusa.Checksum.self)
-        let data = self.pageBuffer.unsignedInt16Pointer
+        writeUnsigned64(self.buffer,UInt64(0),Medusa.kPageChecksumOffset)
+        let data = UnsafePointer<UInt32>(OpaquePointer(self.buffer))
         let length = Medusa.kBTreePageSizeInBytes
-        self.checksum = fletcher32(data,length)
-        location = self.checksumOffset
-        self.pageBuffer.storeBytes(of: self.checksum,atByteOffset: &location, as: Medusa.Checksum.self)
+        self.checksum = fletcher64(data,length)
+        writeUnsigned64(self.buffer,self.checksum,Medusa.kPageChecksumOffset)
         }
         
     public func dump()
         {
-        print("PAGE BUFFER @ \(self.pageBuffer)")
+        print("PAGE BUFFER @ \(self.buffer)")
         print("HEADER")
         print("-------------------------------------")
         print("FREE BYTE COUNT          : \(self.freeByteCount)")
@@ -136,11 +131,14 @@ public class BTreePage<Key,Value>: Page where Key:Fragment,Value:Fragment
     private func readKeyEntries()
         {
         var offset = Medusa.kBTreePageHeaderSizeInBytes
-        for _ in 0..<self.keyEntryCount
+        print("OFFSET FOR KEY ENTRIES \(offset)")
+        for index in 0..<self.keyEntryCount
             {
-            var entryOffset = self.pageBuffer.load(fromByteOffset: &offset, as: Medusa.Integer.self)
-            self.keyEntries.append(KeyEntry(from: self.pageBuffer,atByteOffset: &entryOffset))
-            offset += MemoryLayout<Medusa.Integer>.size
+            var entryOffset = readIntegerWithOffset(self.buffer,&offset)
+            print("     KEY ENTRY \(index) OFFSET \(entryOffset)")
+            let entry = KeyEntry<Key,Value>(from: self.buffer,atByteOffset: &entryOffset)
+            self.keyEntries.append(entry)
+            print("     KEY ENTRY \(index) KEY \(entry.key.description.prefix(20))")
             }
         }
         
@@ -149,15 +147,17 @@ public class BTreePage<Key,Value>: Page where Key:Fragment,Value:Fragment
         let keyEntry = KeyEntry<Key,Value>(key: key, value: value, pointer: pointer)
         self.keyEntries.append(keyEntry)
         self.keyEntryCount = self.keyEntries.count
-        var byteOffset = try self.freeList.allocate(sizeInBytes: keyEntry.sizeInBytes)
-        if byteOffset == 0
-            {
-            print("halt")
-            }
+        print("INSERT KEY")
+        print("     KEY ENTRY SIZE = \(keyEntry.sizeInBytes) KEY SIZE = \(keyEntry.key.sizeInBytes) VALUE SIZE = \(keyEntry.value.sizeInBytes)")
+        var byteOffset = try self.allocate(sizeInBytes: keyEntry.sizeInBytes)
+        print("     ALLOCATED \(keyEntry.sizeInBytes) BYTES AT \(byteOffset)")
         keyEntry.setCellOffset(byteOffset)
-        keyEntry.write(to: self.pageBuffer,atByteOffset: &byteOffset)
-        var offsetOffset = self.keyEntries.count * MemoryLayout<Medusa.Integer>.size + Medusa.kBTreePageHeaderSizeInBytes
-        self.pageBuffer.storeBytes(of: Int(byteOffset), atByteOffset: &offsetOffset,as: Medusa.Integer.self)
+        let savedOffset = byteOffset
+        keyEntry.write(to: self.buffer,atByteOffset: &byteOffset)
+        var offsetOffset = self.keyEntries.count * MemoryLayout<Medusa.Integer64>.size + Medusa.kBTreePageHeaderSizeInBytes
+        print("     WRITING CELL OFFSET \(savedOffset) OF KEY ENTRY AT \(offsetOffset)")
+        writeIntegerWithOffset(self.buffer,savedOffset,&offsetOffset)
+        self.freeList.write(to: self.buffer)
         self.keyPointersNeedSorting = true
         self.isDirty = true
         }
@@ -171,17 +171,21 @@ public class BTreePage<Key,Value>: Page where Key:Fragment,Value:Fragment
             }
         for entry in self.keyEntries
             {
-            self.pageBuffer.storeBytes(of: entry.cellOffset, atByteOffset: &offset,as: Medusa.Integer.self)
+            writeIntegerWithOffset(self.buffer,entry.cellOffset,&offset)
             }
         self.isDirty = true
         }
         
     private func writeKeyEntries()
         {
+        print("WRITING \(self.keyEntries.count) KEY ENTRIES")
+        var count = 0
         for entry in self.keyEntries
             {
             var offset = entry.cellOffset
-            entry.write(to: self.pageBuffer,atByteOffset: &offset)
+            print("WRITING KEY ENTRY \(count)")
+            entry.write(to: self.buffer,atByteOffset: &offset)
+            count += 1
             }
         self.isDirty = true
         }

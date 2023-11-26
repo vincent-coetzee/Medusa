@@ -10,6 +10,11 @@ import Socket
 
 public class MessageBuffer: Buffer
     {
+    public var fieldSets: FieldSetList
+        {
+        FieldSetList()
+        }
+        
     public var count: Int
         {
         self.bufferSize

@@ -9,7 +9,7 @@ import Foundation
 
 public enum ValueBox
     {
-    case integer(Medusa.Integer)
+    case integer(Medusa.Integer64)
     case string(Medusa.String)
     case float(Medusa.Float)
     case boolean(Medusa.Boolean)

@@ -382,8 +382,12 @@
                             </menuItem>
                         </items>
                     </menu>
+                    <connections>
+                        <outlet property="delegate" destination="8xa-Zz-fdY" id="Xjz-aY-nqa"/>
+                    </connections>
                 </application>
                 <customObject id="2Ox-EC-oiC" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customObject id="8xa-Zz-fdY" customClass="AppDelegate" customModule="Medusa" customModuleProvider="target"/>
             </objects>
             <point key="canvasLocation" x="68" y="-70"/>
         </scene>

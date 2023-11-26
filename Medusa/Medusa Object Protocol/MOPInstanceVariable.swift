@@ -13,7 +13,7 @@ public class MOPInstanceVariable
     public var klass: MOPClass
     public var offset: Int
     
-    public var sizeInBytes: Medusa.Integer
+    public var sizeInBytes: Medusa.Integer64
         {
         self.klass.sizeInBytes!
         }

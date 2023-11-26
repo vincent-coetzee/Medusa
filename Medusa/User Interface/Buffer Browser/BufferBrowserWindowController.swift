@@ -29,6 +29,6 @@ class BufferBrowserWindowController: NSWindowController {
 //        message.encode(on: buffer)
         let page = BTreePage<String,String>(magicNumber: Medusa.kBTreePageMagicNumber)
         page.write()
-        browserController.buffer = page.pageBuffer
+        browserController.buffer = PageWrapper(page: page)
         }
     }

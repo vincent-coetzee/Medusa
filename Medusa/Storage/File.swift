@@ -20,7 +20,7 @@ public class File
     public let path: Path
     public let mode: Mode
     public var handle: UnsafeMutablePointer<FILE>?
-    public var seekOffset: Medusa.Integer = 0
+    public var seekOffset: Medusa.Integer64 = 0
     
     public init(path: String,mode: Mode) throws
         {
@@ -81,18 +81,18 @@ public class File
         self.seekOffset = pageAddress.fileOffset
         }
         
-    public func readPageBuffer(sizeInBytes: Medusa.Integer) throws -> PageBuffer
+    public func readBuffer(sizeInBytes: Medusa.Integer64) throws -> UnsafeMutableRawPointer
         {
         guard feof(self.handle) == 0 else
             {
             throw(SystemIssue(code: .endOfFileReached,agentKind: .storageAgent,agentLocation: .unknown))
             }
-        let pageBuffer = PageBuffer(sizeInBytes: sizeInBytes)
-        let bytesRead = fread(pageBuffer.buffer,1,sizeInBytes,self.handle)
+        let buffer = UnsafeMutableRawPointer.allocate(byteCount: sizeInBytes, alignment: 1)
+        let bytesRead = fread(buffer,1,sizeInBytes,self.handle)
         guard bytesRead == sizeInBytes else
             {
             throw(SystemIssue(code: .fileReadFailedShort,agentKind: .storageAgent,agentLocation: .unknown))
             }
-        return(pageBuffer)
+        return(buffer)
         }
     }

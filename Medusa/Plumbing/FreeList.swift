@@ -6,23 +6,24 @@
 //
 
 import Foundation
+import Fletcher
 
 public class FreeListCell: Equatable
     {
-    private var deltaSize: Int = 0
+    public var deltaSize: Int = 0
     public var byteOffset: Int
     public var sizeInBytes: Int
     internal var lastCell: FreeListCell?
     internal var nextCell: FreeListCell?
      
-    public var count: Medusa.Integer
+    public var count: Medusa.Integer64
         {
         1 + (self.nextCell?.count ?? 0)
         }
         
     public var cellSizeInBytes: Int
         {
-        Int(MemoryLayout<Int>.size * 2)
+        Int(MemoryLayout<Medusa.Integer64>.size * 2)
         }
         
     public static func ==(lhs: FreeListCell,rhs: FreeListCell) -> Bool
@@ -38,26 +39,29 @@ public class FreeListCell: Equatable
         self.nextCell = nil
         }
         
-    public init(in page: PageBuffer,atByteOffset: Int,lastCell: FreeListCell?)
+    public init(in page: UnsafeMutableRawPointer,atByteOffset: Int,lastCell: FreeListCell?)
         {
         var offset = atByteOffset
-        let nextCellOffset = page.load(fromByteOffset: &offset, as: Int.self)
-        let size = page.load(fromByteOffset: &offset, as: Int.self)
-        self.sizeInBytes = size
-        self.byteOffset = Int(atByteOffset)
+        let nextCellOffset = readIntegerWithOffset(page,&offset)
+        self.sizeInBytes = readIntegerWithOffset(page,&offset)
+        self.byteOffset = atByteOffset
         if nextCellOffset != 0
             {
-            self.nextCell = FreeListCell(in: page,atByteOffset: Int(nextCellOffset),lastCell: self)
+            self.nextCell = FreeListCell(in: page,atByteOffset: nextCellOffset,lastCell: self)
             }
         self.lastCell = lastCell
         }
         
-    public func write(to pageBuffer: PageBuffer)
+    public func write(to pageBuffer: UnsafeMutableRawPointer,number: Int = 0)
         {
-        var offset = Int(self.byteOffset)
-        pageBuffer.storeBytes(of: self.nextCell?.byteOffset ?? 0, atByteOffset: &offset, as: Int.self)
-        pageBuffer.storeBytes(of: Int(self.sizeInBytes), atByteOffset: &offset, as: Int.self)
-        self.nextCell?.write(to: pageBuffer)
+        var offset = self.byteOffset
+        print("WRITING FREE LIST CELL \(number) AT \(offset)")
+        let value = self.nextCell?.byteOffset ?? 0
+        writeIntegerWithOffset(pageBuffer,value,&offset)
+        print("     NEXT CELL OFFSET \(value)")
+        writeIntegerWithOffset(pageBuffer,self.sizeInBytes,&offset)
+        print("     SIZE IN BYTES \(self.sizeInBytes)")
+        self.nextCell?.write(to: pageBuffer,number: number + 1)
         }
         
     public func cellsWithSufficientSpace(sizeInBytes: Int) -> Array<FreeListCell>
@@ -72,70 +76,73 @@ public class FreeListCell: Equatable
             {
             cells.append(contentsOf: self.nextCell!.cellsWithSufficientSpace(sizeInBytes: sizeInBytes))
             }
-        return(cells.sorted{$0.deltaSize < $1.deltaSize})
+        return(cells)
         }
     }
 
 public class FreeList
     {
-    public var count: Medusa.Integer
+    public static let kCellSizeInBytes = MemoryLayout<Int>.size
+    
+    public var count: Medusa.Integer64
         {
         self.firstCell.isNil ? 0 : self.firstCell!.count
         }
         
     public var freeListFields: FieldSet
         {
-        let fields = FieldSet()
+        let fields = FieldSet(name: "Free Cell Fields")
         var cell = self.firstCell
-        var index = 0
         var count = 0
         while cell.isNotNil
             {
-            fields.append(Field(index: index,name: "Free cell \(count)",value: .freeCell(cell!.byteOffset,cell!.nextCell?.byteOffset ?? 0,cell!.sizeInBytes)))
+            assert(cell!.byteOffset != 0,"ByteOffset should not be 0 but is.")
+            fields.append(Field(index: count,name: "Free cell \(count)",value: .freeCell(cell!.byteOffset,cell!.nextCell?.byteOffset ?? 0,FreeList.kCellSizeInBytes),offset: cell!.byteOffset))
             count += 1
-            index += 1
             cell = cell?.nextCell
             }
         return(fields)
         }
         
-    private var pageBuffer: PageBuffer
+    private var buffer: UnsafeMutableRawPointer
     public private(set) var firstCell: FreeListCell?
     
-    init(pageBuffer: PageBuffer,atByteOffset: Int,sizeInBytes: Int)
+    init(buffer: UnsafeMutableRawPointer,atByteOffset: Int,sizeInBytes: Int)
         {
-        self.pageBuffer = pageBuffer
+        self.buffer = buffer
         self.firstCell = FreeListCell(atByteOffset: atByteOffset,sizeInBytes: sizeInBytes)
         }
         
-    init(pageBuffer: PageBuffer,atByteOffset: Int)
+    init(buffer: UnsafeMutableRawPointer,atByteOffset: Int)
         {
-        self.pageBuffer = pageBuffer
-        self.firstCell = FreeListCell(in: pageBuffer,atByteOffset: Int(atByteOffset),lastCell: nil)
+        self.buffer = buffer
+        self.firstCell = FreeListCell(in: buffer,atByteOffset: Int(atByteOffset),lastCell: nil)
         }
         
-    public func allocate(sizeInBytes size: Int) throws -> Int
+    public func allocate(sizeInBytes: Int) throws -> Int
         {
         guard let someCell = self.firstCell else
             {
             throw(SystemIssue(code: .insufficientFreeSpace,message: "Insufficient free space in free space list.",agentKind: .pageServer,agentLocation: .unknown))
             }
-        let cells = someCell.cellsWithSufficientSpace(sizeInBytes: size)
+        let cells = someCell.cellsWithSufficientSpace(sizeInBytes: sizeInBytes).sorted{$0.deltaSize < $1.deltaSize}
         guard !cells.isEmpty else
             {
             throw(SystemIssue(code: .insufficientFreeSpace,agentKind: .pageServer))
             }
         let bestCell = cells.first!
-        let newCellSize = bestCell.sizeInBytes - size
+        let newCellSize = bestCell.sizeInBytes - sizeInBytes
+        assert(newCellSize>0,"newCellSize SHOULD BE > 0 BUT IS NOT.")
         //
         // If it's the first cell and there's not enough EXTRA space in the cell
         // to store a cell reference, so eliminate the cell completely
         //
-        if bestCell == self.firstCell && bestCell.sizeInBytes - size < bestCell.cellSizeInBytes
+        if bestCell == self.firstCell && newCellSize < FreeList.kCellSizeInBytes
             {
+            print("BEST CELL IS FIRST CELL AND CELL SPACE IS TOO SMALL FOR CELL, ELMINATE CELL")
             bestCell.nextCell?.lastCell = nil
             self.firstCell = bestCell.nextCell
-            self.firstCell?.write(to: self.pageBuffer)
+            bestCell.lastCell = nil
             return(bestCell.byteOffset)
             }
         //
@@ -143,22 +150,27 @@ public class FreeList
         //
         else if bestCell == self.firstCell
             {
+            print("BEST CELL IS FIRST CELL AND CELL SPACE HAS SPACE FOR CELL, CHANGE OLD CELL TO REFER TO NEW CELL")
+            assert(bestCell.sizeInBytes > sizeInBytes + FreeList.kCellSizeInBytes,"bestCell.sizeInBytes !> sizeInBytes + FreeList.kCellSize IN BYTES AND SHOULD BE.")
             let oldOffset = bestCell.byteOffset
+            print("     BEST CELL IS AT \(oldOffset)")
+            print("     CHANGING BEST CELL SIZE FROM \(bestCell.sizeInBytes) TO \(newCellSize)")
             bestCell.sizeInBytes = newCellSize
-            bestCell.byteOffset = bestCell.byteOffset + size
-            self.firstCell?.write(to: self.pageBuffer)
+            print("     CHANGING BEST CELL BYTE OFFSET FROM \(oldOffset) TO \(oldOffset + sizeInBytes)")
+            bestCell.byteOffset = oldOffset + sizeInBytes
+            bestCell.lastCell = nil
             return(oldOffset)
             }
         //
         // It's not the first cell, but it does not have enough space to store a cell,
         // so eliminate it completely
         //
-        else if bestCell.sizeInBytes - size < bestCell.cellSizeInBytes
+        else if bestCell.sizeInBytes - sizeInBytes < bestCell.cellSizeInBytes
             {
+            print("BEST CELL IS NOT FIRST CELL AND CELL SPACE IS TOO SMALL FOR CELL, ELMINATE CELL")
             let oldOffset = bestCell.byteOffset
             bestCell.lastCell?.nextCell = bestCell.nextCell
             bestCell.nextCell?.lastCell = bestCell.lastCell
-            self.firstCell?.write(to: self.pageBuffer)
             return(oldOffset)
             }
         //
@@ -167,16 +179,20 @@ public class FreeList
         //
         else
             {
+            print("BEST CELL IS NOT FIRST CELL AND CELL SPACE HAS SPACE FOR CELL, CHANGE CELL TO REFER TO NEW CELL")
             let oldOffset = bestCell.byteOffset
+            print("     BEST CELL IS CELL AT \(bestCell.byteOffset)")
+            print("     CHANGING BEST CELL SIZE FROM \(bestCell.sizeInBytes) TO \(newCellSize)")
             bestCell.sizeInBytes = newCellSize
-            bestCell.byteOffset = bestCell.byteOffset + size
-            self.firstCell?.write(to: self.pageBuffer)
+            print("     CHANGING BEST CELL BYTE OFFSET FROM \(bestCell.byteOffset) TO \(bestCell.byteOffset + sizeInBytes)")
+            bestCell.byteOffset = bestCell.byteOffset + sizeInBytes
             return(oldOffset)
             }
         }
         
-    public func write(to page: PageBuffer)
+    public func write(to buffer: UnsafeMutableRawPointer)
         {
-        self.firstCell?.write(to: page)
+        print("WRITING FREE LIST FOR BUFFER \(buffer)")
+        self.firstCell?.write(to: buffer,number: 0)
         }
     }

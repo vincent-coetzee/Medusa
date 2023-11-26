@@ -9,7 +9,7 @@ import Foundation
 
 public protocol Buffer
     {
-    var count: Int { get }
+    var fieldSets: FieldSetList{ get }
     var sizeInBytes: Int { get }
     subscript(_ index: Int) -> Medusa.Byte { get set }
     }

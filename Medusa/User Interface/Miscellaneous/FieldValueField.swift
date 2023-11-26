@@ -51,6 +51,8 @@ public class FieldValueField: NSTextField
             self.stringValue = "\(offset) \(next) \(size)"
         case .pageAddress(let address):
             self.stringValue = "\(address)"
+        case .bytes:
+            print("hellow")
             }
         }
     }

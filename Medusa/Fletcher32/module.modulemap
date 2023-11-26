@@ -1,4 +1,0 @@
-module Fletcher32 [system] [extern_c] {
-    header "Fletcher32.h"
-    export *
-}

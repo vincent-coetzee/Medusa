@@ -11,7 +11,6 @@ public protocol Fragment: Comparable
     {
     var description: String { get }
     var sizeInBytes: Int { get }
-    var elementSizeInBytes: Int { get }
-    init(from: PageBuffer,atByteOffset:inout Int)
-    func write(to: PageBuffer,atByteOffset:inout Int)
+    init(from: UnsafeMutableRawPointer,atByteOffset:inout Int)
+    func write(to: UnsafeMutableRawPointer,atByteOffset:inout Int)
     }

@@ -6,38 +6,54 @@
 //
 
 import Foundation
+import Fletcher
 
 public class MedusaBytes: Buffer,Fragment
     {
-    public var count: Medusa.Integer
+    public var fieldSets: FieldSetList
         {
-        self._count
+        let fieldSet = FieldSet(name: "Bytes Fields")
+        fieldSet.append(Field(index: 0, name: "Medsua.Bytes", value: .bytes(self), offset: 0))
+        var list = FieldSetList()
+        list[fieldSet.name] = fieldSet
+        return(list)
+        }
+        
+    public var count: Medusa.Integer64
+        {
+        self.sizeInBytes
         }
     
-    public var djb2Hash: Medusa.Integer
+    public var djb2Hash: Medusa.Integer64
         {
         var hash = UInt64(5381)
         for byte in self.bytes
             {
             hash = ((hash << 5) + hash) + UInt64(byte)
             }
-        return(Medusa.Integer(hash))
+        return(Medusa.Integer64(hash))
         }
         
     public var description: String
         {
         var string = String()
-        for byte in self.bytes
+        let pointer = UnsafeMutableRawPointer.from(byteArray: self.bytes, sizeInBytes: self.sizeInBytes)
+        defer
             {
-            string += String(format: "%02X",byte) + " "
+            pointer.deallocate()
+            }
+        var offset = 0
+        for _ in 0..<self.sizeInBytes / MemoryLayout<Unicode.Scalar>.size
+            {
+            let character = Character(pointer.load(fromByteOffset: offset, as: Unicode.Scalar.self))
+            string.append(character)
+            offset += MemoryLayout<Unicode.Scalar>.size
             }
         return(string)
         }
         
-    public private(set) var sizeInBytes: Medusa.Integer
+    public private(set) var sizeInBytes: Medusa.Integer64
     public private(set) var bytes: Array<Medusa.Byte>
-    public let elementSizeInBytes: Medusa.Integer
-    private var _count: Medusa.Integer = 0
     
     public static func <(lhs: MedusaBytes, rhs: MedusaBytes) -> Bool
         {
@@ -49,60 +65,42 @@ public class MedusaBytes: Buffer,Fragment
         lhs.djb2Hash == rhs.djb2Hash
         }
 
-    public required init(from page: PageBuffer,atByteOffset offset: Medusa.Integer)
+    public required init(from page: UnsafeMutableRawPointer,atByteOffset offset: Medusa.Integer64)
         {
         var localOffset = offset
-        var size = 0
-        self._count = page.load(fromByteOffset: &localOffset, as: Medusa.Integer.self)
-        if self._count > 10000
-            {
-            print("halt")
-            }
-        size = page.load(fromByteOffset: &localOffset, as: Medusa.Integer.self)
-        self.elementSizeInBytes = size
-        self.sizeInBytes = self._count * self.elementSizeInBytes
+        self.sizeInBytes = readIntegerWithOffset(page,&localOffset)
         self.bytes = Array<Medusa.Byte>()
         for _ in 0..<self.sizeInBytes
             {
-            self.bytes.append(page.load(fromByteOffset: &localOffset, as: Medusa.Byte.self))
+            let byte = readByteWithOffset(page,&localOffset)
+            self.bytes.append(byte)
             }
         }
         
-    public required init(from page: PageBuffer,atByteOffset offset:inout Medusa.Integer)
+    public required init(from page: UnsafeMutableRawPointer,atByteOffset offset:inout Medusa.Integer64)
         {
-        var size = 0
-        self._count = page.load(fromByteOffset: &offset, as: Medusa.Integer.self)
-        if self._count > 10000
-            {
-            print("halt")
-            }
-        size = page.load(fromByteOffset: &offset, as: Medusa.Integer.self)
-        self.elementSizeInBytes = size
-        self.sizeInBytes = self._count * self.elementSizeInBytes
+        self.sizeInBytes = readIntegerWithOffset(page,&offset)
         self.bytes = Array<Medusa.Byte>()
         for _ in 0..<self.sizeInBytes
             {
-            self.bytes.append(page.load(fromByteOffset: &offset, as: Medusa.Byte.self))
+            let byte = readByteWithOffset(page,&offset)
+            self.bytes.append(byte)
             }
         }
         
     public init(bytes: Array<Medusa.Byte>)
         {
         self.sizeInBytes = bytes.count
-        self._count = bytes.count
         self.bytes = bytes
-        self.elementSizeInBytes = MemoryLayout<Medusa.Byte>.size
         }
         
-    public init(sizeInBytes: Medusa.Integer)
+    public init(sizeInBytes: Medusa.Integer64)
         {
-        self._count = sizeInBytes
         self.sizeInBytes = sizeInBytes
         self.bytes = Array<Medusa.Byte>()
-        self.elementSizeInBytes = MemoryLayout<Medusa.Byte>.size
         }
         
-    public subscript(_ index: Medusa.Integer) -> Medusa.Byte
+    public subscript(_ index: Medusa.Integer64) -> Medusa.Byte
         {
         get
             {
@@ -114,14 +112,13 @@ public class MedusaBytes: Buffer,Fragment
             }
         }
         
-    public func write(to buffer: PageBuffer, atByteOffset: inout Medusa.Integer)
+    public func write(to buffer: UnsafeMutableRawPointer, atByteOffset: inout Medusa.Integer64)
         {
         var localOffset = atByteOffset
-        buffer.storeBytes(of: self._count,atByteOffset: &localOffset, as: Medusa.Integer.self)
-        buffer.storeBytes(of: self.elementSizeInBytes,atByteOffset: &localOffset, as: Int.self)
+        writeIntegerWithOffset(buffer,self.sizeInBytes,&localOffset)
         for byte in self.bytes
             {
-            buffer.storeBytes(of: byte,atByteOffset: &localOffset, as: Medusa.Byte.self)
+            writeByteWithOffset(buffer,byte,&localOffset)
             }
         atByteOffset = localOffset
         }

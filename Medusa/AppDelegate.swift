@@ -8,10 +8,11 @@
 import Cocoa
 
 @main
-class AppDelegate: NSObject, NSApplicationDelegate {
-
+class AppDelegate: NSObject, NSApplicationDelegate
+    {
     func applicationDidFinishLaunching(_ aNotification: Notification)
         {
+        Medusa.runTests()
         }
 
     func applicationWillTerminate(_ aNotification: Notification)

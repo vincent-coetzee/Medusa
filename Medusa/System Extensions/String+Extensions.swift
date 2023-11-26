@@ -6,52 +6,59 @@
 //
 
 import Foundation
+import Fletcher
 
 extension String: Fragment
     {
-    public init(from page: PageBuffer,atByteOffset:inout Medusa.Integer)
+    public init(from page: UnsafeMutableRawPointer,atByteOffset:inout Medusa.Integer64)
         {
-        var offset = atByteOffset
-        let count = page.load(fromByteOffset: &offset, as: Medusa.Integer.self)
-        let elementSize = page.load(fromByteOffset: &offset,as: Medusa.Integer.self)
-        assert(elementSize == MemoryLayout<Unicode.Scalar>.size,"ElementSize should equal size of Unicode.Scalar and it does not.")
-        var string = String()
-        for _ in 0..<count
-            {
-            let character = Character(page.load(fromByteOffset: &offset, as: Unicode.Scalar.self))
-            string.append(character)
-            }
-        self = string
-        atByteOffset = offset
+        self.init()
+        self = self.readStringFromPointer(buffer: page,atByteOffset: &atByteOffset)
         }
         
-    public func write(to buffer: PageBuffer,atByteOffset:inout Medusa.Integer)
+    public func write(to buffer: UnsafeMutableRawPointer,atByteOffset:inout Medusa.Integer64)
         {
         var offset = atByteOffset
-        buffer.storeBytes(of: self.count, atByteOffset: &offset, as: Medusa.Integer.self)
-        buffer.storeBytes(of: MemoryLayout<Unicode.Scalar>.size,atByteOffset: &offset,as: Medusa.Integer.self)
-        for index in 0..<self.count
+        let size = self.count * MemoryLayout<Unicode.Scalar>.size
+        print("     WRITING STRING OF SIZE \(size) AT \(offset)")
+        writeIntegerWithOffset(buffer,size,&offset)
+        let pointer = UnsafeMutablePointer<Unicode.Scalar>.allocate(capacity: 1)
+        var stringIndex = self.unicodeScalars.startIndex
+        for _ in 0..<self.count
             {
-            let stringIndex = self.unicodeScalars.index(self.unicodeScalars.startIndex, offsetBy: index)
-            buffer.storeBytes(of: self.unicodeScalars[stringIndex],atByteOffset: &offset,as: Unicode.Scalar.self)
+            pointer.pointee = self.unicodeScalars[stringIndex]
+            writeUnicodeScalarWithOffset(buffer,pointer,&offset)
+            stringIndex = self.unicodeScalars.index(after: stringIndex)
             }
         atByteOffset = offset
         }
     
-    public init(from pageBuffer: PageBuffer,at offset:inout Medusa.Integer)
+    public init(from buffer: UnsafeMutableRawPointer,at offset:inout Medusa.Integer64)
         {
         self.init()
-        self = pageBuffer.loadString(fromByteOffset: &offset)
-        
+        self = self.readStringFromPointer(buffer: buffer,atByteOffset: &offset)
         }
         
-    public var elementSizeInBytes: Int
+    private func readStringFromPointer(buffer: UnsafeMutableRawPointer,atByteOffset offset:inout Int) -> String
         {
-        Int(MemoryLayout<Unicode.Scalar>.size)
+        let length = readIntegerWithOffset(buffer,&offset) / MemoryLayout<Unicode.Scalar>.size
+        print("     READING STRING OF SIZE \(length) AT \(offset)")
+        var newString = String()
+        let pointer = UnsafeMutablePointer<Unicode.Scalar>.allocate(capacity: 1)
+        defer
+            {
+            pointer.deallocate()
+            }
+        for _ in 0..<length
+            {
+            readUnicodeScalarWithOffset(buffer,pointer,&offset)
+            newString.append(Character(pointer.pointee))
+            }
+        return(newString)
         }
         
     public var sizeInBytes: Int
         {
-        return(self.count * self.elementSizeInBytes + 2 * MemoryLayout<Medusa.PageAddress>.alignment)
+        return(self.count * MemoryLayout<Unicode.Scalar>.size + 8)
         }
     }

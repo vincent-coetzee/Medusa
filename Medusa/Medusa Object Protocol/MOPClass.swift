@@ -34,9 +34,9 @@ import Foundation
 //                                     Tag ( 4 bits )       0000                                                                              5
 //                                     SizeInWords ( 36 bits )  000 00000000 00000000 00000000 000000000 0                                   41
 //                                     HasBytes ( 1 bit )                                                 0                                  42
-//                                     FlipCount ( 13 bits = 8192 )                                        000000 0000000                    55
+//                                     FlipCount ( 13 bits = 8191 )                                        000000 0000000                    55
 //                                     IsForwarded ( 1 bit )                                                             0                   56
-//                                     Kind ( 8 bits = 256 )                                                              00000000           64
+//                                     Kind ( 8 bits = 256 )                                                               00000000          64
 //
 //            Class Pointer                                00000000 00000000 00000000 00000000 000000000 00000000 00000000 00000000
 //            Slot 0                                       00000000 00000000 00000000 00000000 000000000 00000000 00000000 00000000
@@ -58,9 +58,9 @@ public class MOPClass: MOPObject
     public var instanceVariables = Dictionary<String,MOPInstanceVariable>()
     public let name: String
     private var nextOffset = 8
-    public let sizeInBytes: Medusa.Integer?
+    public let sizeInBytes: Medusa.Integer64?
     
-    public init(name: String,sizeInBytes: Medusa.Integer)
+    public init(name: String,sizeInBytes: Medusa.Integer64)
         {
         self.name = name
         self.sizeInBytes = sizeInBytes
@@ -86,11 +86,11 @@ public class MOPClass: MOPObject
         return(object)
         }
         
-    public func encode(value: ValueBox,into buffer: Buffer,atByteOffset offset: Medusa.Integer)
+    public func encode(value: ValueBox,into buffer: Buffer,atByteOffset offset: Medusa.Integer64)
         {
         }
         
-    public func encode(object: MOPObject,into buffer: Buffer,atByteOffset: Medusa.Integer)
+    public func encode(object: MOPObject,into buffer: Buffer,atByteOffset: Medusa.Integer64)
         {
         let offset = atByteOffset
         for (name,variable) in self.instanceVariables
