@@ -86,7 +86,7 @@ public class FreeList
     
     public var count: Medusa.Integer64
         {
-        self.firstCell.isNil ? 0 : self.firstCell!.count
+        self.firstCell?.count ?? 0
         }
         
     public var freeListFields: FieldSet
@@ -97,7 +97,8 @@ public class FreeList
         while cell.isNotNil
             {
             assert(cell!.byteOffset != 0,"ByteOffset should not be 0 but is.")
-            fields.append(Field(index: count,name: "Free cell \(count)",value: .freeCell(cell!.byteOffset,cell!.nextCell?.byteOffset ?? 0,FreeList.kCellSizeInBytes),offset: cell!.byteOffset))
+            fields.append(Field(index: count,name: "Free \(count) Next",value: .integer(cell!.nextCell?.byteOffset ?? 0),offset: cell!.byteOffset))
+            fields.append(Field(index: count,name: "Free \(count) Size",value: .integer(cell!.sizeInBytes),offset: cell!.byteOffset + MemoryLayout<Medusa.Integer64>.size))
             count += 1
             cell = cell?.nextCell
             }

@@ -12,6 +12,8 @@ public struct Medusa
     {
     public typealias Float = Swift.Double
     public typealias Integer64 = Swift.Int
+    public typealias Integer32 = Swift.Int32
+    public typealias Integer16 = Swift.Int16
     public typealias String = Swift.String
     public typealias Byte = Swift.UInt8
     public typealias ObjectID = Swift.UInt64
@@ -24,9 +26,10 @@ public struct Medusa
     public typealias PagePointer = Integer64
     public typealias Bytes = MedusaBytes
     public typealias PageAddress = Integer64
-    public typealias Integer32 = Int32
     public typealias Unsigned64 = UInt64
     public typealias Unsigned32 = UInt32
+    public typealias Unsigned16 = UInt16
+    public typealias FileIdentifier = Int
     
     public static let kMedusaServiceType = "_medusa._tcp."
     public static let kHostName = Host.current().localizedName!
@@ -42,22 +45,22 @@ public struct Medusa
     public static let kPageChecksumOffset                   = 8
     public static let kPageFreeByteCountOffset              = 16
     public static let kPageFirstFreeCellOffsetOffset        = 24
-    public static let kPageCellCountOffset                  = 32
-    public static let kPageFreeCellCountOffset              = 40
-    public static let kPageHeaderSizeInBytes                = 48
+    public static let kPageFreeCellCountOffset              = 32
+    public static let kPageHeaderSizeInBytes                = 40
     
-    public static let kBTreePageRightPointerOffset               = 48
-    public static let kBTreePageKeyEntryCountOffset              = 56
+    public static let kBTreePageRightPointerOffset               = 40
+    public static let kBTreePageKeyEntryCountOffset              = 48
+    public static let kBTreePageKeysPerPageOffset                = 56
     public static let kBTreePageHeaderSizeInBytes                = 64
     
     public static let kPageSizeInBytes                           = 16 * 1024
     public static let kBTreePageSizeInBytes                      = Medusa.kPageSizeInBytes
-    public static let kBTreePageKeysPerPage                      = 50
+    public static let kBTreePageDefaultKeysPerPage               = 50
     public static let kBTreePageFirstCellOffset                  = 50 * MemoryLayout<Int>.size + Self.kBTreePageHeaderSizeInBytes
     
     public static let kBTreePageMagicNumber: MagicNumber    = 0xFADE0000D00DF00D
     
-    public static func bitString(word: Word) -> String
+    public static func bitString(_ word: Word) -> String
         {
         let little = word.littleEndian
         var bit: Word = 1
@@ -74,7 +77,7 @@ public struct Medusa
         return(String(string.reversed()))
         }
 
-    public static func bitString(integer: Int) -> String
+    public static func bitString(_ integer: Int) -> String
         {
         let little = integer.littleEndian
         var bit: Int = 1
@@ -89,6 +92,106 @@ public struct Medusa
             bit <<= 1
             }
         return(String(string.reversed()))
+        }
+        
+    public static func bitString(_ integer32: Int32) -> String
+        {
+        let little = integer32.littleEndian
+        var bit: Int32 = 1
+        var string = String()
+        for index in 0..<32
+            {
+            if index % 8 == 0 && index != 0
+                {
+                string += " "
+                }
+            string += (little & bit == bit ? "1" : "0")
+            bit <<= 1
+            }
+        return(String(string.reversed()))
+        }
+        
+    public static func bitString(_ integer16: Int16) -> String
+        {
+        let little = integer16.littleEndian
+        var bit: Int16 = 1
+        var string = String()
+        for index in 0..<16
+            {
+            if index % 8 == 0 && index != 0
+                {
+                string += " "
+                }
+            string += (little & bit == bit ? "1" : "0")
+            bit <<= 1
+            }
+        return(String(string.reversed()))
+        }
+        
+    public static func bitString(_ integer16: UInt16) -> String
+        {
+        let little = integer16.littleEndian
+        var bit: UInt16 = 1
+        var string = String()
+        for index in 0..<16
+            {
+            if index % 8 == 0 && index != 0
+                {
+                string += " "
+                }
+            string += (little & bit == bit ? "1" : "0")
+            bit <<= 1
+            }
+        return(String(string.reversed()))
+        }
+        
+    public static func bitString(_ integer64: UInt32) -> String
+        {
+        let little = integer64.littleEndian
+        var bit: UInt32 = 1
+        var string = String()
+        for index in 0..<32
+            {
+            if index % 8 == 0 && index != 0
+                {
+                string += " "
+                }
+            string += (little & bit == bit ? "1" : "0")
+            bit <<= 1
+            }
+        return(String(string.reversed()))
+        }
+        
+    public static func bitString(_ integer8: Medusa.Byte) -> String
+        {
+        let little = integer8.littleEndian
+        var bit: Medusa.Byte = 1
+        var string = String()
+        for index in 0..<8
+            {
+            if index % 8 == 0 && index != 0
+                {
+                string += " "
+                }
+            string += (little & bit == bit ? "1" : "0")
+            bit <<= 1
+            }
+        return(String(string.reversed()))
+        }
+        
+    public static func bitString(_ float: Medusa.Float) -> String
+        {
+        let floatPointer = UnsafeMutablePointer<Medusa.Float>.allocate(capacity: 1)
+        floatPointer.pointee = float
+        let rawPointer = UnsafeRawPointer(OpaquePointer(floatPointer))
+        var string = String()
+        for index in 0..<8
+            {
+            let byte = rawPointer.load(fromByteOffset: index, as: Medusa.Byte.self)
+            let smallString = Medusa.bitString(byte)
+            string += smallString + " "
+            }
+        return(string)
         }
         
     public static func runTests()
@@ -136,7 +239,7 @@ extension Word
     {
     public var bitString: String
         {
-        Medusa.bitString(word: Word(self))
+        Medusa.bitString(self)
         }
     }
 
@@ -220,13 +323,19 @@ public func testBTreePages()
     let windowController = storyboard.instantiateController(withIdentifier: "bufferBrowserWindowController") as! NSWindowController
     let viewController = windowController.contentViewController as! BufferBrowserViewController
     windowController.showWindow(nil)
-    viewController.buffer = PageWrapper(page: page1)
-//    let page3 = BTreePage<String,String>(from: page1)
+    let page3 = BTreePage<String,String>(from: page1)
+    viewController.leftBuffer = PageWrapper(page: page1)
+    viewController.rightBuffer = PageWrapper(page: page3)
     let windowController1 = storyboard.instantiateController(withIdentifier: "btreePageInspectorWindowController") as! NSWindowController
     let viewController1 = windowController1.contentViewController as! BTreePageInspectorViewController
     windowController1.showWindow(nil)
     windowController1.window?.title = "Page 1"
     viewController1.btreePage = page1
+    let windowController2 = storyboard.instantiateController(withIdentifier: "btreePageInspectorWindowController") as! NSWindowController
+    let viewController2 = windowController2.contentViewController as! BTreePageInspectorViewController
+    windowController2.showWindow(nil)
+    windowController2.window?.title = "Page 3"
+    viewController2.btreePage = page3
 //    let windowController2 = storyboard.instantiateController(withIdentifier: "btreePageInspectorWindowController") as! NSWindowController
 //    let viewController2 = windowController2.contentViewController as! BTreePageInspectorViewController
 //    windowController2.showWindow(nil)

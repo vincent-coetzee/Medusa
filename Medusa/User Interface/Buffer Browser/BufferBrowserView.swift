@@ -9,20 +9,23 @@ import AppKit
 
 public class FieldLayer: CALayer
     {
+    private let label: String
     public let leftText = CATextLayer()
     public let labelText = CATextLayer()
     public let rightText = CATextLayer()
+    public var field: Field!
     
     public var font: NSFont!
         {
         didSet
             {
-            self.leftText.font = self.font.fontName as CFTypeRef
+            self.leftText.font = self.font as CFTypeRef
             self.leftText.fontSize = self.font.pointSize
-            self.labelText.font = self.font.fontName as CFTypeRef
+            self.labelText.font = self.font as CFTypeRef
             self.labelText.fontSize = self.font.pointSize
-            self.rightText.font = self.font.fontName as CFTypeRef
+            self.rightText.font = self.font as CFTypeRef
             self.rightText.fontSize = self.font.pointSize
+            self.needsLayout()
             }
         }
         
@@ -33,6 +36,7 @@ public class FieldLayer: CALayer
             self.leftText.foregroundColor = self.textColor.cgColor
             self.labelText.foregroundColor = self.textColor.cgColor
             self.rightText.foregroundColor = self.textColor.cgColor
+            self.needsDisplay()
             }
         }
         
@@ -58,6 +62,7 @@ public class FieldLayer: CALayer
     
     public init(left: String,label: String,right: String)
         {
+        self.label = label
         super.init()
         self.addSublayer(self.leftText)
         self.addSublayer(self.labelText)
@@ -65,10 +70,14 @@ public class FieldLayer: CALayer
         self.leftText.string = left
         self.labelText.string = label
         self.rightText.string = right
+        self.labelText.isWrapped = true
+        self.labelText.alignmentMode = .center
+        self.labelText.truncationMode = .end
         }
         
     public required init?(coder: NSCoder)
         {
+        self.label = ""
         super.init(coder: coder)
         self.addSublayer(self.leftText)
         self.addSublayer(self.labelText)
@@ -82,16 +91,37 @@ public class FieldLayer: CALayer
             let theseBounds = self.bounds
             super.layoutSublayers()
             var string = NSAttributedString(string: self.leftText.string as! String,attributes: [.font:self.font!,.foregroundColor: self.textColor])
-            var size = string.size()
-            self.leftText.frame = CGRect(x: theseBounds.origin.x + 4,y: theseBounds.origin.y,width: size.width,height: size.height)
-            string = NSAttributedString(string: self.labelText.string as! String,attributes: [.font:self.font!,.foregroundColor: self.textColor])
-            size = string.size()
-            var extraX = (theseBounds.width - size.width) / 2
-            self.labelText.frame = CGRect(x: theseBounds.origin.x + extraX,y: theseBounds.origin.y,width: size.width,height: size.height)
+            let leftSize = string.size()
+            self.leftText.frame = CGRect(x: theseBounds.origin.x + 4,y: theseBounds.origin.y,width: leftSize.width,height: leftSize.height)
             string = NSAttributedString(string: self.rightText.string as! String,attributes: [.font:self.font!,.foregroundColor: self.textColor])
-            size = string.size()
-            extraX = theseBounds.size.width - size.width
-            self.rightText.frame = CGRect(x: theseBounds.origin.x + extraX,y: theseBounds.origin.y,width: size.width,height: size.height)
+            let rightSize = string.size()
+            let extraX = theseBounds.width - rightSize.width - 4
+            self.rightText.frame = CGRect(x: theseBounds.origin.x + extraX,y: theseBounds.origin.y,width: rightSize.width,height: rightSize.height)
+            self.layoutLabel(leftSize: leftSize,rightSize: rightSize)
+            }
+        }
+        
+    private func layoutLabel(leftSize: CGSize,rightSize: CGSize)
+        {
+        let theseBounds = self.bounds
+        let string = NSAttributedString(string: self.labelText.string as! String,attributes: [.font:self.font!,.foregroundColor: self.textColor])
+        let size = string.size()
+        let height = size.height * 2 + 2
+        if size.width > theseBounds.width - leftSize.width - rightSize.width - 4
+            {
+            let center = self.label.count / 2
+            var newString = self.label
+            let offset = self.label.index(self.label.startIndex,offsetBy: center)
+            if label.unicodeScalars[offset] != " "
+                {
+                newString.insert(" ",at: offset)
+                self.labelText.string = newString
+                }
+            }
+        else
+            {
+            let extraX = (theseBounds.width - size.width) / 2
+            self.labelText.frame = CGRect(x: theseBounds.origin.x + extraX,y: theseBounds.origin.y,width: size.width,height: height)
             }
         }
     }
@@ -161,13 +191,15 @@ class BufferBrowserView: NSView
     private var leftLabelInset: CGFloat = 0
     private var leftTextInset: CGFloat = 0
     private var columnGutterWidth: CGFloat = 10
+    private var lineColor = NSColor.argonWhite40
     private var highlightColor = NSColor.argonLivingCoral
     private var regularColor = NSColor.argonWhite80
     private var lowlightColor = NSColor.argonTribalSeaGreen
-    private let colorA = NSColor.argonDustyCoral.withAlpha(0.2)
-    private let colorB = NSColor.argonSunkistCoral.withAlpha(0.2)
+    private let colorA = NSColor.argonGreenBlueCrayola.withAlpha(0.2)
+    private let colorB = NSColor.argonFreshSalmon.withAlpha(0.2)
     private var currentLayer: CALayer = CALayer()
     private var leftOver: CGFloat = 0
+    private var fields = Array<FieldLayer>()
     
     public override var isFlipped: Bool
         {
@@ -221,11 +253,32 @@ class BufferBrowserView: NSView
         
     public override func mouseDown(with event: NSEvent)
         {
+        let point = self.convert(event.locationInWindow, from: nil)
+        for layer in self.fields
+            {
+            if layer.frame.contains(point)
+                {
+                let field = layer.field
+                let viewController = NSStoryboard.main!.instantiateController(withIdentifier: "bufferBrowserPopoverViewController") as! BufferBrowserPopoverViewController
+                let popover = NSPopover()
+                popover.behavior = .transient
+                popover.contentViewController = viewController
+                popover.show(relativeTo: layer.frame, of: self,preferredEdge: .maxX)
+                viewController.buffer = self.buffer
+                viewController.field = field
+                return
+                }
+            }
         }
         
     public override func draw(_ rect: NSRect)
         {
-        let width = self.frame.size.width
+//        let width = self.frame.size.width
+        var oldFrame = self.frame
+        let scrollerSize = self.enclosingScrollView!.contentSize
+        oldFrame.size.height = CGFloat(self.buffer.sizeInBytes / self.columnCount + 1) * 2 * self.rowHeight
+        oldFrame.size.width = scrollerSize.width
+        self.frame = oldFrame
         var offset = CGPoint(x: self.leftTextInset + self.columnGutterWidth,y: 6 + self.rowHeight)
         var rowCount = 0
         self.insertRowMarker(row: rowCount,at: CGPoint(x: self.leftLabelInset,y: offset.y))
@@ -248,12 +301,16 @@ class BufferBrowserView: NSView
                 }
             }
         self.drawFields()
-        self.frame = CGRect(origin: .zero,size: CGSize(width: width,height: offset.y))
         }
         
     private func drawFields()
         {
-        let smallFont = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .bold)
+        let totalWidth = self.columnWidth + self.columnGutterWidth
+        for field in self.fields
+            {
+            field.removeFromSuperlayer()
+            }
+        let smallFont = NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .bold)
         let twiceRowHeight = 2 * self.rowHeight
         for fieldSet in self.buffer.fieldSets.values
             {
@@ -272,15 +329,18 @@ class BufferBrowserView: NSView
                     for section in sections
                         {
                         let minY = CGFloat(section.startRow) * twiceRowHeight + 6
-                        let minX = CGFloat(section.startColumn) * (self.columnWidth + self.columnGutterWidth) + self.leftTextInset + self.columnGutterWidth
-                        let maxY = minY + twiceRowHeight
-                        let maxX = minX + CGFloat(section.stopColumn) * (self.columnWidth + self.columnGutterWidth) - self.columnGutterWidth
+                        let minX = CGFloat(section.startColumn) * totalWidth + self.leftTextInset + 4
+                        let maxY = minY + twiceRowHeight + 1
+                        let maxX = minX + CGFloat(section.stopColumn - section.startColumn) * totalWidth - 4
                         let rect = CGRect(x: minX,y: minY,width: maxX - minX,height: maxY - minY)
                         let fieldLayer = FieldLayer(left: "\(section.startOffset(rowWidth: self.columnCount))", label: field.name, right: "\(section.stopOffset(rowWidth: self.columnCount))")
                         self.layer?.insertSublayer(fieldLayer, below: self.currentLayer)
-                        fieldLayer.lineColor = .white
+                        fieldLayer.lineColor = self.lineColor
                         fieldLayer.font = smallFont
                         fieldLayer.backgroundColor = color.cgColor
+                        fieldLayer.frame = rect
+                        fields.append(fieldLayer)
+                        fieldLayer.field = field
 //                        color.set()
 //                        NSBezierPath.fill(rect)
 //                        self.lowlightColor.set()

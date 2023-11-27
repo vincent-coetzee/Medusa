@@ -9,6 +9,11 @@ import Foundation
 
 public class PageAgent: BaseAgent
     {
+    public class func nextAvailableAgent() -> PageAgent
+        {
+        fatalError("Not yet implemented")
+        }
+        
     public override func boot()
         {
         self.name = "Pager"
@@ -18,5 +23,15 @@ public class PageAgent: BaseAgent
         
     private func loadColdStartPages()
         {
+        }
+        
+    internal func writePage(_ page: Page)
+        {
+        fatalError("Not yet implemented")
+        }
+        
+    internal func readPage(from: Medusa.FileIdentifier,at: Medusa.PageAddress) throws -> Page
+        {
+        fatalError("Not yet implemented")
         }
     }

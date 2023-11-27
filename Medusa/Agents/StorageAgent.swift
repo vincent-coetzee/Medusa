@@ -8,11 +8,21 @@
 import Foundation
 import os
 
-public actor StorageAgent
+public class StorageAgent
     {
+    internal static func nextAvailableAgent() -> StorageAgent
+        {
+        fatalError("Not yet implemented")
+        }
+        
     private let eventLogger = Logger(subsystem: "com.macsemantics.xenon",category: "Boss")
     
     public func boot()
         {
+        }
+        
+    public func loadPage(in fileIdentifier: Medusa.FileIdentifier,at pageAddress: Medusa.PageAddress) throws -> Page
+        {
+        fatalError("Not yet implemented")
         }
     }

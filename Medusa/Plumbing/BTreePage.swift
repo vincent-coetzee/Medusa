@@ -14,7 +14,14 @@ public class BTreePage<Key,Value>: Page where Key:Fragment,Value:Fragment
     public var rightPointer: Medusa.PagePointer = 0
     public private(set) var keyEntryCount: Medusa.Integer64 = 0
     private var keyPointersNeedSorting = false
+    public var keysPerPage: Medusa.Integer64
+    public var isLeaf: Bool = false
     
+    internal override var basePageSizeInBytes: Medusa.Integer64
+        {
+        super.basePageSizeInBytes + 3 * MemoryLayout<Medusa.Integer64>.size + self.keysPerPage * MemoryLayout<Medusa.Integer64>.size
+        }
+        
     public var entryCount: Int
         {
         return(self.keyEntries.count)
@@ -25,6 +32,7 @@ public class BTreePage<Key,Value>: Page where Key:Fragment,Value:Fragment
         var list = super.fieldSets
         list["Header Fields"]!.append(Field(index: 5,name: "rightPointer",value: .pageAddress(self.rightPointer),offset: Medusa.kBTreePageRightPointerOffset))
         list["Header Fields"]!.append(Field(index: 6,name: "keyEntryCount",value: .offset(self.keyEntryCount),offset: Medusa.kBTreePageKeyEntryCountOffset))
+        list["Header Fields"]!.append(Field(index: 6,name: "keysPerPage",value: .offset(self.keysPerPage),offset: Medusa.kBTreePageKeysPerPageOffset))
         let keyEntryFields = self.keyEntryFields
         list[keyEntryFields.name] = keyEntryFields
         return(list)
@@ -35,6 +43,12 @@ public class BTreePage<Key,Value>: Page where Key:Fragment,Value:Fragment
         let fields = FieldSet(name: "Key Entry Fields")
         var index = 0
         var count = 0
+        var offset = Medusa.kBTreePageHeaderSizeInBytes
+        for index in 0..<self.keyEntries.count
+            {
+            fields.append(Field(index: offset,name: "Key Pointer \(index)",value: .pageAddress(readInteger(self.buffer,offset)),offset: offset))
+            offset += MemoryLayout<Medusa.PageAddress>.size
+            }
         for entry in self.keyEntries
             {
             var localOffset = entry.cellOffset
@@ -49,21 +63,31 @@ public class BTreePage<Key,Value>: Page where Key:Fragment,Value:Fragment
         return(fields)
         }
     
-    public required init(magicNumber: Medusa.MagicNumber)
+    public required init(magicNumber: Medusa.MagicNumber,keysPerPage: Medusa.Integer64)
         {
+        assert(keysPerPage % 2 == 1,"keysPerPage must be an odd number and is not.")
+        self.keysPerPage = keysPerPage
         super.init(magicNumber: magicNumber)
         }
         
     public override init(from buffer: UnsafeMutableRawPointer)
         {
+        self.keysPerPage = readInteger(buffer,Medusa.kBTreePageKeysPerPageOffset)
         super.init(from: buffer)
         self.readKeyEntries()
         }
         
     public override init(from page: Page)
         {
+        self.keysPerPage = readInteger(page.buffer,Medusa.kBTreePageKeysPerPageOffset)
         super.init(from: page)
         self.readKeyEntries()
+        }
+        
+    public required init(magicNumber: Medusa.MagicNumber)
+        {
+        self.keysPerPage = Medusa.kBTreePageDefaultKeysPerPage
+        super.init(magicNumber: magicNumber)
         }
         
         
@@ -83,6 +107,7 @@ public class BTreePage<Key,Value>: Page where Key:Fragment,Value:Fragment
         super.writeHeader()
         writeInteger(self.buffer,self.rightPointer,Medusa.kBTreePageRightPointerOffset)
         writeInteger(self.buffer,Int(self.keyEntries.count),Medusa.kBTreePageKeyEntryCountOffset)
+        writeInteger(self.buffer,Int(self.keysPerPage),Medusa.kBTreePageKeysPerPageOffset)
         }
         
     internal override func readHeader()
@@ -92,6 +117,8 @@ public class BTreePage<Key,Value>: Page where Key:Fragment,Value:Fragment
         print("     RIGHT POINTER \(self.rightPointer)")
         self.keyEntryCount = readInteger(self.buffer,Medusa.kBTreePageKeyEntryCountOffset)
         print("     KEY ENTRY COUNT \(self.keyEntryCount)")
+        self.keysPerPage = readInteger(self.buffer,Medusa.kBTreePageKeysPerPageOffset)
+        print("     KEYS PEr PAGE \(self.keyEntryCount)")
         }
     
     //
@@ -162,6 +189,19 @@ public class BTreePage<Key,Value>: Page where Key:Fragment,Value:Fragment
         self.isDirty = true
         }
         
+    internal func insertKeyEntry(key: Key,value: Value,pointer: Medusa.PageAddress,at index: Medusa.Integer64) throws
+        {
+        let keyEntry = KeyEntry<Key,Value>(key: key,value: value,pointer: pointer)
+        self.keyEntries.insert(keyEntry, at: index)
+        self.keyEntryCount = self.keyEntries.count
+        var byteOffset = try self.allocate(sizeInBytes: keyEntry.sizeInBytes)
+        keyEntry.setCellOffset(byteOffset)
+        keyEntry.write(to: self.buffer,atByteOffset: &byteOffset)
+        self.freeList.write(to: self.buffer)
+        self.keyPointersNeedSorting = true
+        self.isDirty = true
+        }
+        
     private func writeKeyPointers()
         {
         var offset = Medusa.kBTreePageHeaderSizeInBytes
@@ -188,5 +228,55 @@ public class BTreePage<Key,Value>: Page where Key:Fragment,Value:Fragment
             count += 1
             }
         self.isDirty = true
+        }
+        
+    public func find(key: Key) throws -> (BTreePage,Medusa.Integer64,Value)?
+        {
+        var index = 1
+        while index <= self.keyEntries.count && key > self.keyEntries[index].key
+            {
+            index += 1
+            }
+        if index <= self.keyEntries.count && key == self.keyEntries[index].key
+            {
+            return(self,index,self.keyEntries[index].value)
+            }
+        if self.isLeaf
+            {
+            return(nil)
+            }
+        let page = try PageAgent.nextAvailableAgent().readPage(from: fileIdentifier,at: self.keyEntries[index].pointer) as! BTreePage<Key,Value>
+        return(try page.find(key: key))
+        }
+        
+    public class func makeRootBTreePage(fileIdentifier: Medusa.FileIdentifier,magicNumber: Medusa.MagicNumber,keysPerPage: Medusa.Integer64) -> BTreePage<Key,Value>
+        {
+        let page = BTreePage<Key,Value>(magicNumber: magicNumber,keysPerPage: keysPerPage)
+        page.fileIdentifier = fileIdentifier
+        PageAgent.nextAvailableAgent().writePage(page)
+        return(page)
+        }
+        
+    public func splitPage(index: Medusa.Integer64,fullChildPage: BTreePage<Key,Value>) throws
+        {
+        let newNode = BTreePage(magicNumber: self.magicNumber,keysPerPage: self.keysPerPage)
+        newNode.isLeaf = fullChildPage.isLeaf
+        var t = self.keysPerPage / 2
+        if self.keysPerPage % 2 == 0
+            {
+            t -= 1
+            }
+        var j = 0
+        while j <= t && j + t + 1 <= fullChildPage.keyEntries.count - 1
+            {
+            let keyEntry = fullChildPage.keyEntries[j + t + 1]
+            try newNode.insertKeyEntry(keyEnttry,at: j)
+            fullChildPage.keyEntries.remove(at: j+t+1)
+            j += 1
+            }
+        self.keyPointersNeedSorting = true
+        self.isDirty = true
+        fullChildPage.keyPointersNeedSorting = true
+        fullChildPage.isDirty = true
         }
     }

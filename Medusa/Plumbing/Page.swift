@@ -19,11 +19,16 @@ public class Page
         fields.append(Field(index: 3,name: "firstFreeCellOffset",value: .offset(self.firstFreeCellOffset),offset: Medusa.kPageFirstFreeCellOffsetOffset))
         fields.append(Field(index: 4,name: "freeCellCount",value: .offset(self.freeCellCount),offset: Medusa.kPageFreeCellCountOffset))
         fields.append(Field(index: 6,name: "pageAddress",value: .pageAddress(self.pageAddress)))
-        fields.append(Field(index: 6,name: "file",value: .string(self.file?.path.string ?? "nil")))
+        fields.append(Field(index: 6,name: "fileIdentifier",value: .integer(self.fileIdentifier)))
         var list = FieldSetList()
         list["Header Fields"] = fields
         list["Free Cell Fields"] = self.freeList.freeListFields
         return(list)
+        }
+        
+    internal var basePageSizeInBytes: Medusa.Integer64
+        {
+        Medusa.kPageHeaderSizeInBytes
         }
 
     internal var bufferSizeInBytes: Medusa.Integer64 = 0
@@ -35,7 +40,7 @@ public class Page
     internal var firstFreeCellOffset: Medusa.Integer64
     internal var freeCellCount: Medusa.Integer64 = 0
     internal var pageAddress: Medusa.PageAddress = 0
-    internal var file: File!
+    internal var fileIdentifier: Medusa.FileIdentifier = 0
     internal var isDirty = false
     
     public required init(magicNumber: Medusa.MagicNumber)
@@ -61,21 +66,13 @@ public class Page
         
     public init(from page: Page)
         {
+        self.fileIdentifier = page.fileIdentifier
+        self.pageAddress = page.pageAddress
         self.buffer = page.buffer
         self.pageAddress = 0
         self.firstFreeCellOffset = 0
         self.readHeader()
         self.freeList = FreeList(buffer: self.buffer, atByteOffset: self.firstFreeCellOffset)
-        }
-        
-    public init(file: File,pageAddress: Medusa.PageAddress) throws
-        {
-        self.file = file
-        self.pageAddress = pageAddress
-        try self.file.seek(pageAddress: pageAddress)
-        self.buffer = try self.file.readBuffer(sizeInBytes: Medusa.kPageSizeInBytes)
-        self.firstFreeCellOffset = 0
-        self.readHeader()
         }
         
     internal func writeFreeList()
@@ -90,7 +87,6 @@ public class Page
         writeUnsigned64(self.buffer,self.magicNumber,Medusa.kPageMagicNumberOffset)
         writeUnsigned64(self.buffer,self.checksum,Medusa.kPageChecksumOffset)
         writeInteger(self.buffer,self.freeByteCount,Medusa.kPageFreeByteCountOffset)
-        self.freeCellCount = self.freeList.count
         writeInteger(self.buffer,self.freeList.firstCell?.byteOffset ?? 0,Medusa.kPageFirstFreeCellOffsetOffset)
         writeInteger(self.buffer,self.freeCellCount,Medusa.kPageFreeCellCountOffset)
         }
@@ -109,13 +105,14 @@ public class Page
         print("     FREE BYTE COUNT \(self.freeByteCount)")
         self.firstFreeCellOffset = readInteger(self.buffer,Medusa.kPageFirstFreeCellOffsetOffset)
         print("     FIRST FREE CELL OFFSET \(self.firstFreeCellOffset)")
+        self.freeCellCount = readInteger(self.buffer,Medusa.kPageFreeCellCountOffset)
         }
         
     internal func initFreeCellList()
         {
-        let offset = Medusa.kBTreePageHeaderSizeInBytes + MemoryLayout<Medusa.Integer64>.size * Medusa.kBTreePageKeysPerPage
+        let offset = self.basePageSizeInBytes + MemoryLayout<Medusa.Integer64>.size
         self.firstFreeCellOffset = offset
-        self.freeByteCount = Medusa.kBTreePageSizeInBytes - Medusa.kBTreePageHeaderSizeInBytes - Medusa.kBTreePageKeysPerPage * MemoryLayout<Medusa.Integer64>.size
+        self.freeByteCount = Medusa.kBTreePageSizeInBytes - self.basePageSizeInBytes - MemoryLayout<Medusa.Integer64>.size
         self.freeList = FreeList(buffer: self.buffer,atByteOffset: self.firstFreeCellOffset,sizeInBytes: self.freeByteCount)
         self.freeList.write(to: self.buffer)
         self.isDirty = true

@@ -9,18 +9,25 @@ import Cocoa
 
 class BufferBrowserViewController: NSViewController
     {
-    @IBOutlet private weak var bufferBrowserView: BufferBrowserView!
+    @IBOutlet private weak var bufferBrowserViewLeft: BufferBrowserView!
+    @IBOutlet private weak var bufferBrowserViewRight: BufferBrowserView!
     @IBOutlet private weak var byteCountLabel: NSTextField!
-    @IBOutlet private weak var currentIndexLabel: NSTextField!
-    @IBOutlet private weak var scrollView: NSScrollView!
     @IBOutlet private weak var valueTypeControl: NSSegmentedControl!
     
-    public var buffer: Buffer?
+    public var leftBuffer: Buffer?
         {
         didSet
             {
-            self.bufferBrowserView.buffer = self.buffer
-            self.byteCountLabel.stringValue = String(format: "%d bytes",self.buffer!.sizeInBytes)
+            self.bufferBrowserViewLeft.buffer = self.leftBuffer
+            self.byteCountLabel.stringValue = String(format: "%d bytes",self.leftBuffer!.sizeInBytes)
+            }
+        }
+        
+    public var rightBuffer: Buffer?
+        {
+        didSet
+            {
+            self.bufferBrowserViewRight.buffer = self.rightBuffer
             }
         }
         
@@ -28,6 +35,13 @@ class BufferBrowserViewController: NSViewController
         {
         super.viewDidLoad()
         self.valueTypeControl.selectedSegment = 2
+        let left = BufferBrowserView(frame: .zero)
+        
+        }
+        
+    override func viewWillLayout()
+        {
+        super.viewWillLayout()
         }
         
         
@@ -40,15 +54,18 @@ class BufferBrowserViewController: NSViewController
         let value = control.selectedSegment
         if value == 0
             {
-            self.bufferBrowserView.valueType = .binary
+            self.bufferBrowserViewLeft.valueType = .binary
+            self.bufferBrowserViewRight.valueType = .binary
             }
         else if value == 1
             {
-            self.bufferBrowserView.valueType = .decimal
+            self.bufferBrowserViewLeft.valueType = .decimal
+            self.bufferBrowserViewRight.valueType = .decimal
             }
         else if value == 2
             {
-            self.bufferBrowserView.valueType = .hexadecimal
+            self.bufferBrowserViewLeft.valueType = .hexadecimal
+            self.bufferBrowserViewRight.valueType = .hexadecimal
             }
         }
     }

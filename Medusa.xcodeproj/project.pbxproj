@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BF521F3B2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF521F3A2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift */; };
 		BF6473892B13A91D0049B583 /* SmalltalkMonads.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6473882B13A91D0049B583 /* SmalltalkMonads.swift */; };
 		BF6C7E132B0E259A006DB858 /* BTreePageInspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E122B0E259A006DB858 /* BTreePageInspectorWindowController.swift */; };
 		BF6C7E162B0E25B8006DB858 /* BTreePageInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E142B0E25B8006DB858 /* BTreePageInspectorViewController.swift */; };
@@ -36,7 +37,6 @@
 		BF9369432B0BF33700921D6E /* Page.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9369422B0BF33700921D6E /* Page.swift */; };
 		BFA944472B10783800526CF1 /* KeyEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA944462B10783800526CF1 /* KeyEntry.swift */; };
 		BFA944492B1078B400526CF1 /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA944482B1078B400526CF1 /* Fragment.swift */; };
-		BFA9444B2B110E7300526CF1 /* BTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA9444A2B110E7300526CF1 /* BTree.swift */; };
 		BFA944542B1111C100526CF1 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA944532B1111C100526CF1 /* File.swift */; };
 		BFA944582B1113EE00526CF1 /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = BFA944572B1113EE00526CF1 /* Path */; };
 		BFA9445A2B11329F00526CF1 /* ValueBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA944592B11329F00526CF1 /* ValueBox.swift */; };
@@ -93,6 +93,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BF521F3A2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferBrowserPopoverViewController.swift; sourceTree = "<group>"; };
 		BF6473882B13A91D0049B583 /* SmalltalkMonads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmalltalkMonads.swift; sourceTree = "<group>"; };
 		BF6C7E122B0E259A006DB858 /* BTreePageInspectorWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTreePageInspectorWindowController.swift; sourceTree = "<group>"; };
 		BF6C7E142B0E25B8006DB858 /* BTreePageInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTreePageInspectorViewController.swift; sourceTree = "<group>"; };
@@ -122,7 +123,6 @@
 		BF9369422B0BF33700921D6E /* Page.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Page.swift; sourceTree = "<group>"; };
 		BFA944462B10783800526CF1 /* KeyEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyEntry.swift; sourceTree = "<group>"; };
 		BFA944482B1078B400526CF1 /* Fragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fragment.swift; sourceTree = "<group>"; };
-		BFA9444A2B110E7300526CF1 /* BTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTree.swift; sourceTree = "<group>"; };
 		BFA944532B1111C100526CF1 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		BFA944592B11329F00526CF1 /* ValueBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueBox.swift; sourceTree = "<group>"; };
 		BFAAF0312B0F29CD00A2FFD1 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
@@ -323,6 +323,7 @@
 				BFA9444F2B11101F00526CF1 /* Buffer Browser */,
 				BFA944502B11102C00526CF1 /* Miscellaneous */,
 				BFA944512B11106500526CF1 /* Primary View Controller */,
+				BF521F3A2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift */,
 			);
 			path = "User Interface";
 			sourceTree = "<group>";
@@ -355,7 +356,6 @@
 		BFD734AE2B06D7DA00CD500D /* Plumbing */ = {
 			isa = PBXGroup;
 			children = (
-				BFA9444A2B110E7300526CF1 /* BTree.swift */,
 				BFFB2E902B05364B00254090 /* BTreePage.swift */,
 				BFD6747A2B065ADF0086932A /* Buffer.swift */,
 				BF6C7E182B0E28AF006DB858 /* Field.swift */,
@@ -572,11 +572,11 @@
 				BF7FFCDB2B07A04F001D2F93 /* MOPBuffer.swift in Sources */,
 				BF6C7E1F2B0E4ACC006DB858 /* MedusaBytes.swift in Sources */,
 				BFD674762B0659DA0086932A /* BufferBrowserWindowController.swift in Sources */,
-				BFA9444B2B110E7300526CF1 /* BTree.swift in Sources */,
 				BF9369432B0BF33700921D6E /* Page.swift in Sources */,
 				BFFB2E7D2B05363300254090 /* AppDelegate.swift in Sources */,
 				BF9071652B11F148007F70EE /* UnsafeMutableRawPointer+Extensions.swift in Sources */,
 				BF7FFCCB2B079CA3001D2F93 /* MOPChannel.swift in Sources */,
+				BF521F3B2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift in Sources */,
 				BF7FFCE52B07FEF9001D2F93 /* MOPRepository.swift in Sources */,
 				BF6473892B13A91D0049B583 /* SmalltalkMonads.swift in Sources */,
 				BFD6745A2B05F60C0086932A /* Message.swift in Sources */,
