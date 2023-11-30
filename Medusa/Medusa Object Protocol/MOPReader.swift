@@ -7,6 +7,7 @@
 
 import Foundation
 
-public class MOPDecoder: MOPChannel
+public class MOPReader: MOPChannel
     {
+    
     }

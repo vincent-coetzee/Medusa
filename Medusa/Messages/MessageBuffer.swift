@@ -10,9 +10,14 @@ import Socket
 
 public class MessageBuffer: Buffer
     {
-    public var fieldSets: FieldSetList
+    public var rawPointer: UnsafeMutableRawPointer
         {
-        FieldSetList()
+        self.bytes
+        }
+        
+    public var fields: CompositeField
+        {
+        CompositeField(name: "Empty")
         }
         
     public var count: Int
@@ -70,6 +75,10 @@ public class MessageBuffer: Buffer
         self.sizeKind = sizeKind
         }
         
+    public func flush()
+        {
+        }
+        
     public init(socket: Socket) throws
         {
         let intSize = MemoryLayout<Int>.size
@@ -80,7 +89,7 @@ public class MessageBuffer: Buffer
             }
         if try socket.read(into: sizePointer, bufSize: intSize) != intSize
             {
-            throw(SystemIssue(code: .incorrectReadSizeInDecodeMessage,agentKind: .unknown,agentLocation: .unknown))
+            throw(SystemIssue(code: .incorrectReadSizeInDecodeMessage,agentKind: .unknown))
             }
         var integerValue:Int = 0
         sizePointer.withMemoryRebound(to: Int.self, capacity: 1)
@@ -91,12 +100,22 @@ public class MessageBuffer: Buffer
         let bytePointer = UnsafeMutablePointer<CChar>.allocate(capacity: integerValue)
         if try socket.read(into: bytePointer, bufSize: integerValue) != integerValue
             {
-            throw(SystemIssue(code: .incorrectReadSizeInDecodeMessage,agentKind: .unknown,agentLocation: .unknown))
+            throw(SystemIssue(code: .incorrectReadSizeInDecodeMessage,agentKind: .unknown))
             }
         self.bytes = UnsafeMutableRawPointer(bytePointer)
         self.bufferSize = integerValue
         self.offset = integerValue
         self.sizeKind = .fixed(integerValue)
+        }
+        
+    public func allocate(sizeInBytes: Medusa.Integer64) -> Medusa.Integer64
+        {
+        fatalError("Not yet implemented.")
+        }
+        
+    public func deallocate(at: Medusa.Integer64)
+        {
+        fatalError("Not yet implemented.")
         }
         
     public func write(to socket: Socket) throws

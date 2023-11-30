@@ -6,34 +6,30 @@
 //
 
 import Foundation
+import Fletcher
 
-//public class KeyValueEntry
-//    {
-//    private let keyHolder: () -> Any
-//    private let valueHolder: () -> Any
-//    
-//    public func key<K>() -> K
-//        {
-//        self.keyHolder() as! K
-//        }
-//        
-//    public func value<V>() -> V
-//        {
-//        self.valueHolder() as! V
-//        }
-//        
-//    public init<K,V>(key: K,value: V)
-//        {
-//        self.keyHolder = { key }
-//        self.valueHolder = { value }
-//        }
-//    }
-    
-public struct Field
+public class Field: Sequence
     {
+    public var sections = Array<Section>()
+        
+    public var flattenedFields: Fields
+        {
+        [self]
+        }
+        
     public var isBufferBased: Bool
         {
         self.offset != -1
+        }
+        
+    public var count: Medusa.Integer64
+        {
+        1
+        }
+        
+    public var fields: Array<Field>
+        {
+        [self]
         }
         
     public enum FieldValue
@@ -42,7 +38,11 @@ public struct Field
             {
             switch(self)
             {
+            case .empty:
+                return("nil")
             case .integer(let integer):
+                return("\(integer)")
+            case .boolean(let integer):
                 return("\(integer)")
             case .float(let float):
                 return(String(format: "%.04lf",float))
@@ -55,18 +55,13 @@ public struct Field
                 return(String(format: "0x%08X",sum))
             case .offset(let offset):
                 return("\(offset)")
-            case .pagePointer(let pointer):
-                let pagePointer = Medusa.PagePointer(pointer)
-                return("PAGE(\(pagePointer.pageValue)):OFFSET(\(pagePointer.offsetValue))")
             case .fixedLengthString(let count, let string):
                 return("\(count) \(string)")
             case .keyValueEntry(let offset,let pointer,let keyBytes,let valueBytes):
                 let sample1 = String(keyBytes.description.prefix(10))
                 let sample2 = String(valueBytes.description.prefix(10))
                 return("\(offset)(\(pointer),\(keyBytes.sizeInBytes),\(sample1),\(valueBytes.sizeInBytes),\(sample2))")
-            case .freeCell(let offset,let next, let size):
-                return("OFFSET(\(offset)) NEXT(\(next)) SIZE(\(size))")
-            case .pageAddress(let address):
+            case .address(let address):
                 return("ADDRESS(\(address))")
             case .bytes(let bytes):
                 return("BYTES(\(bytes.sizeInBytes))")
@@ -76,55 +71,57 @@ public struct Field
             {
             switch(self)
                 {
+                case .empty:
+                    return(0)
                 case .integer:
-                    return(Int(MemoryLayout<Medusa.Integer64>.size))
+                    return(MemoryLayout<Medusa.Integer64>.size)
+                case .boolean:
+                    return(MemoryLayout<Medusa.Boolean>.size)
                 case .float:
-                    return(Int(MemoryLayout<Medusa.Float>.size))
+                    return(MemoryLayout<Medusa.Float>.size)
                 case .string(let string):
-                    return(Int(MemoryLayout<Int32>.size + string.count * MemoryLayout<Character>.size))
+                    return(MemoryLayout<Int32>.size + string.count * MemoryLayout<Character>.size)
                 case .magicNumber:
-                    return(Int(MemoryLayout<Medusa.MagicNumber>.size))
+                    return(MemoryLayout<Medusa.MagicNumber>.size)
                 case .checksum:
-                    return(Int(MemoryLayout<Medusa.Checksum>.size))
+                    return(MemoryLayout<Medusa.Checksum>.size)
                 case .offset:
-                    return(Int(MemoryLayout<Int>.size))
-                case .pagePointer:
-                    return(Int(MemoryLayout<Medusa.PagePointer>.size))
+                    return(MemoryLayout<Int>.size)
                 case .fixedLengthString(let count,_):
-                    return(Int((count)))
+                    return(count)
                 case .keyValueEntry(_,_,let key,let value):
-                    return(Int(MemoryLayout<Int>.size + MemoryLayout<Medusa.PagePointer>.size + Int(key.sizeInBytes) + Int(value.sizeInBytes)))
-                case .freeCell(_,_,let size):
-                    return(Int((size)))
-                case .pageAddress:
-                    return(Int(MemoryLayout<Medusa.PageAddress>.size))
+                    return(MemoryLayout<Int>.size + MemoryLayout<Medusa.PagePointer>.size + Int(key.sizeInBytes) + Int(value.sizeInBytes))
+                case .address:
+                    return(MemoryLayout<Medusa.Address>.size)
                 case .bytes(let bytes):
                     return(bytes.sizeInBytes)
                 }
             }
             
+        case empty
         case integer(Medusa.Integer64)
+        case boolean(Medusa.Boolean)
         case float(Medusa.Float)
         case string(Medusa.String)
         case magicNumber(Medusa.MagicNumber)
         case checksum(Medusa.Checksum)
         case offset(Int)
-        case pagePointer(Medusa.PagePointer)
         case fixedLengthString(Int,String)
-        case keyValueEntry(Int,Medusa.PagePointer,Medusa.Bytes,Medusa.Bytes)
-        case freeCell(Int,Int,Int)
-        case pageAddress(Medusa.PageAddress)
-        case bytes(Medusa.Bytes)
+        case keyValueEntry(Int,Medusa.PagePointer,Bytes,Bytes)
+        case address(Medusa.Address)
+        case bytes(Bytes)
         }
         
     public typealias SectionRange = Range<Int>
     
-    public struct Section:Equatable
+    public class Section:Equatable
         {
+        var frame: CGRect!
         let startRow: Int
         let startColumn: Int
         let stopRow: Int
         let stopColumn: Int
+        let field: Field
         
         public static func ==(lhs: Section,rhs: Section) -> Bool
             {
@@ -140,6 +137,15 @@ public struct Field
             {
             self.stopRow * rowWidth + self.stopColumn
             }
+            
+        public init(field: Field,startRow: Int,stopRow: Int,startColumn: Int,stopColumn: Int)
+            {
+            self.field = field
+            self.startRow = startRow
+            self.stopRow = stopRow
+            self.stopColumn = stopColumn
+            self.startColumn = startColumn
+            }
         }
         
     public var stopOffset: Int
@@ -152,51 +158,45 @@ public struct Field
         self.offset
         }
         
-    public let index: Int
+    public var description: String
+        {
+        self.value.description
+        }
+        
+    public var sizeInBytes: Medusa.Integer64
+        {
+        self.value.sizeInBytes
+        }
+        
+    public func description(in buffer: Buffer) -> String
+        {
+        switch(self.value)
+            {
+            case .integer:
+                let integer = readInteger(buffer.rawPointer,self.startOffset)
+                return(String(integer,radix: 10))
+            default:
+                return(self.value.description)
+            }
+        }
+        
     public let name: String
     public let value: FieldValue
     public var offset: Int = -1
     
-    public init(index: Int,name: String,value: FieldValue,offset: Int = -1)
+    public init(name: String,value: FieldValue,offset: Int = -1)
         {
-        self.index = index
         self.name = name
         self.value = value
         self.offset = offset
-        if offset == 0
-            {
-            print("halt")
-            }
         }
-        
-//    public func sections(withRowWidth rowWidth: Int) -> Array<Section>?
-//        {
-//        if self.offset == -1
-//            {
-//            return(nil)
-//            }
-//        let length = self.value.sizeInBytes
-//        var start = self.offset % rowWidth
-//        var index = self.offset
-//        let stop = self.offset + length
-//        let column = self.offset % rowWidth
-//        let row = self.offset / rowWidth
-//        if column + length < rowWidth
-//            {
-//            return([Section(startRow: row, startColumn: column, stopRow: row, stopColumn: column + length)])
-//            }
-//        var sections = Array<Section>()
-//        while index < stop
-//            {
-//            let sectionLength = min(rowWidth - start,stop - index)
-//            var stopRow = (index + sectionLength) / rowWidth
-//            stopRow = stopRow == rowWidth ? stopRow : stopRow - 1
-//            sections.append(Section(startRow: index / rowWidth, startColumn: index % rowWidth, stopRow: stopRow, stopColumn: rowWidth - (index + sectionLength) % rowWidth))
-//            index += sectionLength
-//            start = index % rowWidth
-//            }
-//        return(sections)
-//        }
+    
+    public init(name: String,offset: Medusa.Integer64 = -1)
+        {
+        self.name = name
+        self.value = .empty
+        self.offset = offset
+        }
         
     public func sections(withRowWidth rowWidth: Int) -> Array<Section>
         {
@@ -212,68 +212,133 @@ public struct Field
         var sections = Array<Section>()
         while index < stop
             {
-            let sectionLength = min(rowWidth - column,stop - index)
-            sections.append(Section(startRow: row, startColumn: column, stopRow: row, stopColumn: column + sectionLength))
+            let sectionLength = Swift.min(rowWidth - column,stop - index)
+            sections.append(Section(field: self,startRow: row, stopRow: row,startColumn: column,stopColumn: column + sectionLength))
             index += sectionLength
             row += 1
             column = index % rowWidth
             }
         return(sections)
         }
-    }
-
-public class FieldSet: Sequence
-    {
-    public var count: Int
-        {
-        self.fields.count
-        }
-        
-    public let name: String
-    private var fields = Array<Field>()
-    
-    public init(name: String)
-        {
-        self.name = name
-        }
-        
-    public func append(_ field: Field)
-        {
-        var newField = field
-        self.fields.append(newField)
-        }
         
     public subscript(_ index: Int) -> Field
         {
-        self.fields[index]
+        if index == 0
+            {
+            return(self)
+            }
+        fatalError()
         }
         
-    public func append(contentsOf: FieldSet)
+   public func append(_ field: Field)
         {
-        self.fields.append(contentsOf: contentsOf.fields)
+        fatalError()
         }
         
-    public func makeIterator() -> FieldSetIterator
+    public func makeIterator() -> FieldIterator
         {
-        FieldSetIterator(fieldSet: self)
+        FieldIterator(field: self)
+        }
+        
+    public func compositeField(named: String) -> CompositeField?
+        {
+        nil
+        }
+    }
+    
+public class CompositeField: Field
+    {
+    public override var flattenedFields: Fields
+        {
+        self.fields.flatMap{$0.flattenedFields}
+        }
+        
+    public override var count: Medusa.Integer64
+        {
+        self._fields.count
+        }
+        
+    public override var fields: Array<Field>
+        {
+        self._fields
+        }
+        
+    private var _fields = Array<Field>()
+    
+    public override var description: String
+        {
+        self._fields.map{$0.description}.joined(separator: " ")
+        }
+        
+    public override var sizeInBytes: Medusa.Integer64
+        {
+        self._fields.reduce(0) {$0 + $1.sizeInBytes}
+        }
+        
+    public override func sections(withRowWidth rowWidth: Int) -> Array<Section>
+        {
+        var sections = Array<Section>()
+        for field in self._fields
+            {
+            sections.append(contentsOf: field.sections(withRowWidth: rowWidth))
+            }
+        return(sections)
+        }
+        
+    public override subscript(_ index: Int) -> Field
+        {
+        self._fields[index]
+        }
+        
+   public override func append(_ field: Field)
+        {
+        self._fields.append(field)
+        }
+        
+    public func append(contentsOf fields: Fields)
+        {
+        for field in fields
+            {
+            self._fields.append(field)
+            }
+        }
+        
+    public override func compositeField(named: String) -> CompositeField?
+        {
+        if self.name == named
+            {
+            return(self)
+            }
+        for field in self._fields
+            {
+            if field.name == named
+                {
+                return(field as? CompositeField)
+                }
+            if let found = field.compositeField(named: named)
+                {
+                return(found)
+                }
+            }
+        return(nil)
         }
     }
 
-public struct FieldSetIterator: IteratorProtocol
+public struct FieldIterator: IteratorProtocol
     {
-    private let fieldSet: FieldSet
+    private let field: Field
     private var index: Int = 0
     
-    public init(fieldSet: FieldSet)
+    public init(field: Field)
         {
-        self.fieldSet = fieldSet
+        self.field = field
         }
         
     public mutating func next() -> Field?
         {
-        if index < self.fieldSet.count
+        if index < self.field.count
             {
-            let value = self.fieldSet[index]
+            let value = self.field[index]
             self.index = index + 1
             return(value)
             }
@@ -281,4 +346,34 @@ public struct FieldSetIterator: IteratorProtocol
         }
     }
 
-public typealias FieldSetList = Dictionary<String,FieldSet>
+public typealias FieldList = Dictionary<String,Field>
+
+public typealias Fields = Array<Field>
+
+extension Fields
+    {
+    public func compositeField(named: String) -> CompositeField?
+        {
+        for field in self
+            {
+            if field.name == named
+                {
+                return(field as? CompositeField)
+                }
+            }
+        return(nil)
+        }
+        
+    public mutating func append(contentsOf fields: Fields)
+        {
+        for field in fields
+            {
+            self.append(field)
+            }
+        }
+        
+    public var flattened: Self
+        {
+        self.flatMap{$0.fields}
+        }
+    }

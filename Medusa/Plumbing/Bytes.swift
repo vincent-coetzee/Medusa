@@ -8,15 +8,30 @@
 import Foundation
 import Fletcher
 
-public class MedusaBytes: Buffer,Fragment
+public class Bytes: Buffer,Fragment
     {
-    public var fieldSets: FieldSetList
+    // WARNING: This value alloctaes memory but does not free it, do not use this for production purposes
+    public var rawPointer: UnsafeMutableRawPointer
         {
-        let fieldSet = FieldSet(name: "Bytes Fields")
-        fieldSet.append(Field(index: 0, name: "Medsua.Bytes", value: .bytes(self), offset: 0))
-        var list = FieldSetList()
-        list[fieldSet.name] = fieldSet
-        return(list)
+        let pointer = UnsafeMutableRawPointer.allocate(byteCount: self.sizeInBytes, alignment: 1)
+        var offset = 0
+        for index in 0..<self.sizeInBytes
+            {
+            pointer.storeBytes(of: self.bytes[index], toByteOffset: offset, as: Medusa.Byte.self)
+            offset += MemoryLayout<Medusa.Byte>.size
+            }
+        return(pointer)
+        }
+        
+    public var fields: CompositeField
+        {
+        let composite = CompositeField(name: "Bytes Fields")
+        composite.append(Field(name: "Medsua.Bytes", value: .bytes(self), offset: 0))
+        return(composite)
+        }
+        
+    public func flush()
+        {
         }
         
     public var count: Medusa.Integer64
@@ -55,12 +70,12 @@ public class MedusaBytes: Buffer,Fragment
     public private(set) var sizeInBytes: Medusa.Integer64
     public private(set) var bytes: Array<Medusa.Byte>
     
-    public static func <(lhs: MedusaBytes, rhs: MedusaBytes) -> Bool
+    public static func <(lhs: Bytes, rhs: Bytes) -> Bool
         {
         lhs.djb2Hash < rhs.djb2Hash
         }
         
-    public static func ==(lhs: MedusaBytes,rhs: MedusaBytes) -> Bool
+    public static func ==(lhs: Bytes,rhs: Bytes) -> Bool
         {
         lhs.djb2Hash == rhs.djb2Hash
         }
@@ -86,6 +101,17 @@ public class MedusaBytes: Buffer,Fragment
             let byte = readByteWithOffset(page,&offset)
             self.bytes.append(byte)
             }
+        self.bytes = Array(self.bytes.reversed())
+        }
+        
+    public func allocate(sizeInBytes: Medusa.Integer64) -> Medusa.Integer64
+        {
+        fatalError("Not yet implemented.")
+        }
+        
+    public func deallocate(at: Medusa.Integer64)
+        {
+        fatalError("Not yet implemented.")
         }
         
     public init(bytes: Array<Medusa.Byte>)

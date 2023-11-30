@@ -47,27 +47,36 @@ import Foundation
 
 public class MOPClass: MOPObject
     {
-    public static let ipv6Address = MOPClass(name: "IPv6Address",sizeInBytes: 8)
-    public static let messageType = MOPEnumerationKind(name: "MessageType").cases("none","ping","pong","connect","connectAccept","connectReject","disconnect","disconnectAccept","Request","Response")
-    public static let integer = MOPInteger(name: "Integer",sizeInBytes: MemoryLayout<Int>.size)
-    public static let string = MOPString(name: "String")
-    public static let boolean = MOPBoolean(name: "Boolean",sizeInBytes: 1)
-    public static let float = MOPInteger(name: "Float",sizeInBytes: MemoryLayout<Medusa.Float>.size)
+    public static let argonModule = MOPModule(module: nil,name: "Argon")
+    public static let ipv6Address = MOPClass(module: MOPClass.argonModule,name: "IPv6Address",sizeInBytes: 8)
+    public static let messageType = MOPEnumerationKind(module: MOPClass.argonModule,name: "MessageType").cases("none","ping","pong","connect","connectAccept","connectReject","disconnect","disconnectAccept","Request","Response")
+    public static let integer = MOPInteger(module: MOPClass.argonModule,name: "Integer",sizeInBytes: MemoryLayout<Int>.size)
+    public static let string = MOPString(module: MOPClass.argonModule,name: "String")
+    public static let boolean = MOPBoolean(module: MOPClass.argonModule,name: "Boolean",sizeInBytes: 1)
+    public static let float = MOPInteger(module: MOPClass.argonModule,name: "Float",sizeInBytes: MemoryLayout<Medusa.Float>.size)
     
     public var superklasses = MOPClasses()
     public var instanceVariables = Dictionary<String,MOPInstanceVariable>()
     public let name: String
     private var nextOffset = 8
     public let sizeInBytes: Medusa.Integer64?
+    public let module: MOPModule
     
-    public init(name: String,sizeInBytes: Medusa.Integer64)
+    public var identifier: Identifier
         {
+        self.module.identifier + self.name
+        }
+        
+    public init(module: MOPModule,name: String,sizeInBytes: Medusa.Integer64)
+        {
+        self.module = module
         self.name = name
         self.sizeInBytes = sizeInBytes
         }
         
-    public init(name: String)
+    public init(module: MOPModule,name: String)
         {
+        self.module = module
         self.name = name
         self.sizeInBytes = nil
         }
@@ -79,27 +88,18 @@ public class MOPClass: MOPObject
         self.nextOffset += instanceVariable.sizeInBytes
         }
         
+    public func addPrimitiveInstanceVariable<R,T>(name: String,klass: MOPClass,keyPath: KeyPath<R,T>)
+        {
+        let instanceVariable = MOPPrimitiveInstanceVariable(name: name,klass: klass,offset: self.nextOffset,keyPath: keyPath)
+        self.instanceVariables[name] = instanceVariable
+        self.nextOffset += instanceVariable.sizeInBytes
+        }
+        
     public func instanciate() -> MOPObject
         {
         let object = MOPObject()
         object.klass = self
         return(object)
-        }
-        
-    public func encode(value: ValueBox,into buffer: Buffer,atByteOffset offset: Medusa.Integer64)
-        {
-        }
-        
-    public func encode(object: MOPObject,into buffer: Buffer,atByteOffset: Medusa.Integer64)
-        {
-        let offset = atByteOffset
-        for (name,variable) in self.instanceVariables
-            {
-            if let value = self.values[name]
-                {
-                variable.klass.encode(value: value,into: buffer,atByteOffset: offset)
-                }
-            }
         }
     }
 

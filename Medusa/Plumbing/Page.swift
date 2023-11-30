@@ -10,20 +10,20 @@ import Fletcher
 
 public class Page
     {
-    public var fieldSets: FieldSetList
+    public var fields: CompositeField
         {
-        let fields = FieldSet(name: "Header Fields")
-        fields.append(Field(index: 0,name: "magicNumber",value: .magicNumber(self.magicNumber),offset: Medusa.kPageMagicNumberOffset))
-        fields.append(Field(index: 1,name: "checksum",value: .checksum(self.checksum),offset: Medusa.kPageChecksumOffset))
-        fields.append(Field(index: 2,name: "freeByteCount",value: .offset(self.freeByteCount),offset: Medusa.kPageFreeByteCountOffset))
-        fields.append(Field(index: 3,name: "firstFreeCellOffset",value: .offset(self.firstFreeCellOffset),offset: Medusa.kPageFirstFreeCellOffsetOffset))
-        fields.append(Field(index: 4,name: "freeCellCount",value: .offset(self.freeCellCount),offset: Medusa.kPageFreeCellCountOffset))
-        fields.append(Field(index: 6,name: "pageAddress",value: .pageAddress(self.pageAddress)))
-        fields.append(Field(index: 6,name: "fileIdentifier",value: .integer(self.fileIdentifier)))
-        var list = FieldSetList()
-        list["Header Fields"] = fields
-        list["Free Cell Fields"] = self.freeList.freeListFields
-        return(list)
+        let fields = CompositeField(name: "Header Fields")
+        fields.append(Field(name: "magicNumber",value: .magicNumber(self.magicNumber),offset: Medusa.kPageMagicNumberOffset))
+        fields.append(Field(name: "checksum",value: .checksum(self.checksum),offset: Medusa.kPageChecksumOffset))
+        fields.append(Field(name: "freeByteCount",value: .offset(self.freeByteCount),offset: Medusa.kPageFreeByteCountOffset))
+        fields.append(Field(name: "firstFreeCellOffset",value: .offset(self.firstFreeCellOffset),offset: Medusa.kPageFirstFreeCellOffsetOffset))
+        fields.append(Field(name: "freeCellCount",value: .offset(self.freeCellCount),offset: Medusa.kPageFreeCellCountOffset))
+        fields.append(Field(name: "pageAddress",value: .address(self.pageAddress)))
+//        fields.append(Field(name: "fileIdentifier",value: .integer(self.fileIdentifier)))
+        fields.append(Field(name: "isDirty",value: .boolean(self.isDirty)))
+        fields.append(Field(name: "needsDefragmentation",value: .boolean(self.needsDefragmentation)))
+        fields.append(self.freeList.fields)
+        return(fields)
         }
         
     internal var basePageSizeInBytes: Medusa.Integer64
@@ -39,11 +39,12 @@ public class Page
     internal var freeList: FreeList!
     internal var firstFreeCellOffset: Medusa.Integer64
     internal var freeCellCount: Medusa.Integer64 = 0
-    internal var pageAddress: Medusa.PageAddress = 0
-    internal var fileIdentifier: Medusa.FileIdentifier = 0
+    internal var pageAddress: Medusa.Address = 0
+    internal var fileIdentifier: FileIdentifier = .empty
     internal var isDirty = false
+    internal var needsDefragmentation = false
     
-    public required init(magicNumber: Medusa.MagicNumber)
+    public init(magicNumber: Medusa.MagicNumber)
         {
         self.buffer = UnsafeMutableRawPointer.allocate(byteCount: Medusa.kPageSizeInBytes, alignment: 1)
         self.buffer.initializeMemory(as: Medusa.Byte.self, repeating: 0, count: Medusa.kPageSizeInBytes)
@@ -52,7 +53,10 @@ public class Page
         self.firstFreeCellOffset = Medusa.kBTreePageHeaderSizeInBytes
         self.freeCellCount = 0
         self.pageAddress = 0
+        self.needsDefragmentation = false
+        self.isDirty = false
         self.initFreeCellList()
+        self.freeList.write(to: self.buffer)
         }
         
     public init(from buffer: UnsafeMutableRawPointer)
@@ -123,20 +127,75 @@ public class Page
         self.readHeader()
         }
         
+    internal func writeChecksum()
+        {
+        // set the checksum to 0 before we do the checksum to ensure we get a clean checksum
+        writeUnsigned64(self.buffer,UInt64(0),Medusa.kPageChecksumOffset)
+        let data = UnsafePointer<UInt32>(OpaquePointer(self.buffer))
+        let length = Medusa.kBTreePageSizeInBytes
+        self.checksum = fletcher64(data,length)
+        writeUnsigned64(self.buffer,self.checksum,Medusa.kPageChecksumOffset)
+        }
+        
+    public func write() throws
+        {
+        if self.needsDefragmentation
+            {
+            try self.rewritePage()
+            }
+        self.writeChecksum()
+        self.writeHeader()
+        self.writeFreeList()
+        }
+        
+    internal func rewritePage() throws
+        {
+        self.freeByteCount = Medusa.kBTreePageSizeInBytes - self.basePageSizeInBytes - MemoryLayout<Medusa.Integer64>.size
+        self.initFreeCellList()
+        self.writeFreeList()
+        self.writeHeader()
+        self.writeChecksum()
+        self.needsDefragmentation = false
+        }
+        
     internal func allocate(sizeInBytes: Int) throws -> Medusa.Integer64
         {
-        let byteOffset = try self.freeList.allocate(sizeInBytes: sizeInBytes)
+        if self.freeByteCount < sizeInBytes && self.needsDefragmentation
+            {
+            try self.rewritePage()
+            }
+        let byteOffset = try self.freeList.allocate(from: self.buffer,sizeInBytes: sizeInBytes)
         self.freeByteCount -= sizeInBytes
         return(byteOffset)
+        }
+        
+    internal func deallocate(at: Int) throws
+        {
+        if at < 0 || at > Medusa.kPageSizeInBytes
+            {
+            throw(SystemIssue(code: .invalidIntraPageAddress,agentKind: .pageServer,message: "Byte offset in Page.deallocate is \(at) but should be > 0 and < \(Medusa.kPageSizeInBytes)."))
+            }
+        let sizeInBytes = readInteger(buffer,at)
+        if sizeInBytes < 0 || sizeInBytes > Medusa.kPageSizeInBytes
+            {
+            throw(SystemIssue(code: .invalidIntraPageAddress,agentKind: .pageServer,message: "Cell size in Page.deallocate is \(sizeInBytes) but should be > 0 and < \(Medusa.kPageSizeInBytes)."))
+            }
+        self.freeList.deallocate(from: buffer,atByteOffset: at - MemoryLayout<Medusa.Integer64>.size,sizeInBytes: Int(sizeInBytes))
+        self.needsDefragmentation = true
         }
     }
 
 
 public class PageWrapper: Buffer
     {
-    public var fieldSets: FieldSetList
+    public var rawPointer: UnsafeMutableRawPointer
         {
-        self.page.fieldSets
+        self.page.buffer
+        }
+        
+    public var fields: CompositeField
+        {
+        self.page.fields
         }
         
     public let page: Page
@@ -156,6 +215,28 @@ public class PageWrapper: Buffer
         set
             {
             UnsafeMutablePointer<Medusa.Byte>(OpaquePointer(self.page.buffer + index)).pointee = newValue
+            }
+        }
+        
+    public func allocate(sizeInBytes: Medusa.Integer64) throws -> Medusa.Integer64
+        {
+        try self.page.allocate(sizeInBytes: sizeInBytes)
+        }
+        
+    public func deallocate(at: Medusa.Integer64) throws
+        {
+        try self.page.deallocate(at: at)
+        }
+        
+    public func flush()
+        {
+        do
+            {
+            try self.page.write()
+            }
+        catch let error
+            {
+            print(error)
             }
         }
     }

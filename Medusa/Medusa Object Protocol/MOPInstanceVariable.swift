@@ -9,9 +9,9 @@ import Foundation
 
 public class MOPInstanceVariable
     {
-    private var name: String
-    public var klass: MOPClass
-    public var offset: Int
+    public let name: String
+    public let klass: MOPClass
+    public let offset: Int
     
     public var sizeInBytes: Medusa.Integer64
         {
@@ -23,5 +23,36 @@ public class MOPInstanceVariable
         self.name = name
         self.klass = klass
         self.offset = offset
+        }
+        
+    public func value<T>(in: Medusa.Buffer,as someType: T.Type) -> T
+        {
+        fatalError()
+        }
+        
+    public func value<R,T>(in root: R,as someType: T.Type) -> T
+        {
+        fatalError()
+        }
+    }
+
+public class MOPPrimitiveInstanceVariable<Root,ValueType>: MOPInstanceVariable
+    {
+    private let keyPath: AnyKeyPath
+    
+    public init(name: String,klass: MOPClass,offset: Int,keyPath: KeyPath<Root,ValueType>)
+        {
+        self.keyPath = keyPath
+        super.init(name: name,klass: klass,offset: offset)
+        }
+        
+    public override func value<T>(in buffer: Medusa.Buffer,as someType: T.Type) -> T
+        {
+        buffer.load(fromByteOffset: self.offset, as: T.self)
+        }
+        
+    public override func value<R,T>(in root: R,as someType: T.Type) -> T
+        {
+        root[keyPath: self.keyPath as! KeyPath<R,T>]
         }
     }

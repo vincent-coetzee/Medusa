@@ -113,6 +113,41 @@ long readInteger(void* buffer,long offset)
     return(*from);
     }
     
+int32_t readInteger32(void* buffer,long offset)
+    {
+    int32_t* from = (int32_t*)(((char*)buffer) + offset);
+    return(*from);
+    }
+    
+int16_t readInteger16(void* buffer,long offset)
+    {
+    int16_t* from = (int16_t*)(((char*)buffer) + offset);
+    return(*from);
+    }
+    
+double readFloat(void* buffer,long offset)
+    {
+    double* from = (double*)(((char*)buffer) + offset);
+    return(*from);
+    }
+    
+unsigned long readUnsigned(void* buffer,long offset)
+    {
+    unsigned long* from = (unsigned long*)(((char*)buffer) + offset);
+    return(*from);
+    }
+    
+uint32_t readUnsigned32(void* buffer,long offset)
+    {
+    uint32_t* from = (uint32_t*)(((char*)buffer) + offset);
+    return(*from);
+    }
+    
+uint16_t readUnsigned16(void* buffer,long offset)
+    {
+    uint16_t* from = (uint16_t*)(((char*)buffer) + offset);
+    return(*from);
+    }
 long readIntegerWithOffset(void* buffer,long* offset)
     {
     long* from = (long*)(((char*)buffer) + *offset);

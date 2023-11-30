@@ -20,9 +20,4 @@ public class StorageAgent
     public func boot()
         {
         }
-        
-    public func loadPage(in fileIdentifier: Medusa.FileIdentifier,at pageAddress: Medusa.PageAddress) throws -> Page
-        {
-        fatalError("Not yet implemented")
-        }
     }

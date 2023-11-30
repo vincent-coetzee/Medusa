@@ -13,7 +13,7 @@ class BTreePageInspectorViewController: NSViewController
         {
         didSet
             {
-            self.fieldSets = Array(self.btreePage!.fieldSets.values)
+            self.field = self.btreePage!.fields
             self.outlineView.reloadData()
             }
         }
@@ -21,7 +21,7 @@ class BTreePageInspectorViewController: NSViewController
     private var highlightColor = NSColor.argonLivingCoral
     private var regularColor = NSColor.argonWhite80
     private var lowlightColor = NSColor.argonTribalSeaGreen
-    private var fieldSets: Array<FieldSet>!
+    private var field: CompositeField!
     
     @IBOutlet weak var outlineView: NSOutlineView!
     
@@ -67,7 +67,7 @@ extension BTreePageInspectorViewController: NSOutlineViewDataSource
     {
     func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool
         {
-        if item is FieldSet
+        if item is CompositeField
             {
             return(true)
             }
@@ -85,11 +85,11 @@ extension BTreePageInspectorViewController: NSOutlineViewDataSource
                 {
                 return(0)
                 }
-            return(self.fieldSets.count)
+            return(1)
             }
-        else if let fieldSet = item as? FieldSet
+        else if let field = item as? CompositeField
             {
-            return(fieldSet.count)
+            return(field.count)
             }
         else if item is Field
             {
@@ -102,12 +102,11 @@ extension BTreePageInspectorViewController: NSOutlineViewDataSource
         {
         if item.isNil
             {
-            return(self.fieldSets[index])
+            return(self.field!)
             }
-        else if let fieldSet = item as? FieldSet
+        else if let field = item as? CompositeField
             {
-            let field = fieldSet[index]
-            return(field)
+            return(field[index])
             }
         fatalError()
         }
@@ -117,7 +116,7 @@ extension BTreePageInspectorViewController: NSOutlineViewDelegate
     {
     func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView?
         {
-        if let fieldSet = item as? FieldSet
+        if let composite = item as? CompositeField
             {
             if tableColumn?.identifier == NSUserInterfaceItemIdentifier("Column.0")
                 {
@@ -128,7 +127,7 @@ extension BTreePageInspectorViewController: NSOutlineViewDelegate
                 textField.backgroundColor = self.outlineView.backgroundColor
                 textField.textColor = self.lowlightColor
                 textField.drawsBackground = true
-                textField.stringValue = fieldSet.name
+                textField.stringValue = composite.name
                 return(textField)
                 }
             return(nil)

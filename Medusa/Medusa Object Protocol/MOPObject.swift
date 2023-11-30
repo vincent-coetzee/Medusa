@@ -7,19 +7,10 @@
 
 import Foundation
 
-public class MOPObject: MOPValue
+public class MOPObject: MOPRoot
     {
     public var objectID: Medusa.ObjectID!
-    public var values = Dictionary<String,ValueBox>()
+    public var values = Dictionary<String,MOPValue>()
     public var klass: MOPClass!
     public var hasBytes: Bool = false
-    
-    public func setValue(_ value: ValueBox,of name: String) throws
-        {
-//        guard let instanceVariable = self.klass.instanceVariables[name] else
-//            {
-//            fatalError()
-//            }
-//        self.values[name] = value
-        }
     }

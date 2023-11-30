@@ -26,6 +26,8 @@ public enum SystemIssueCode: String
     case insufficientFreeSpace                                      = "There is not enough space to fit the object"
     case incorrectReadSizeInDecodeMessage                           = "Incorrect byte count found when decoding message."
     case invalidMessageTypeInDecodeMessage                          = "Invalid message type value found when decoding message."
+    case invalidFileDescriptor                                      = "The file descriptor is not valid, was the file opened ?"
+    case invalidIntraPageAddress                                    = "The specified address is not valid for an intra page address."
     }
     
 public enum AgentKind
@@ -40,29 +42,22 @@ public enum AgentKind
     case loggingAgent
     }
     
-public enum AgentLocation
-    {
-    case unknown
-    }
-    
 public struct SystemIssue: Error
     {
     private let _message: String?
     public let code: SystemIssueCode
-    public let agentKind: AgentKind
-    public let agentLocation: AgentLocation
-
+    public var agentKind: AgentKind
+        
     public var message: String
         {
         self._message ?? self.code.rawValue
         }
         
-    public init(code: SystemIssueCode,message: String? = nil,agentKind: AgentKind = .unknown,agentLocation: AgentLocation = .unknown)
+    public init(code: SystemIssueCode,agentKind: AgentKind,message: String? = nil)
         {
         self.code = code
         self._message = message
         self.agentKind = agentKind
-        self.agentLocation = agentLocation
         }
     }
     

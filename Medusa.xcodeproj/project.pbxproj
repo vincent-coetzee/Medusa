@@ -14,12 +14,17 @@
 		BF6C7E192B0E28AF006DB858 /* Field.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E182B0E28AF006DB858 /* Field.swift */; };
 		BF6C7E1B2B0E307E006DB858 /* FieldValueField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E1A2B0E307E006DB858 /* FieldValueField.swift */; };
 		BF6C7E1D2B0E3543006DB858 /* FieldCellField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E1C2B0E3543006DB858 /* FieldCellField.swift */; };
-		BF6C7E1F2B0E4ACC006DB858 /* MedusaBytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E1E2B0E4ACC006DB858 /* MedusaBytes.swift */; };
+		BF6C7E1F2B0E4ACC006DB858 /* Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E1E2B0E4ACC006DB858 /* Bytes.swift */; };
 		BF6C7E232B0EB18B006DB858 /* NSFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E222B0EB18B006DB858 /* NSFont+Extensions.swift */; };
+		BF7075F82B16016300E3F6D8 /* BTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7075F72B16016300E3F6D8 /* BTree.swift */; };
+		BF7075FA2B1626C100E3F6D8 /* Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7075F92B1626C100E3F6D8 /* Stack.swift */; };
+		BF7075FC2B162D5A00E3F6D8 /* Identifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7075FB2B162D5A00E3F6D8 /* Identifier.swift */; };
+		BF7075FE2B16300B00E3F6D8 /* MOPModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7075FD2B16300B00E3F6D8 /* MOPModule.swift */; };
+		BF7076022B16594100E3F6D8 /* MOPRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7076012B16594100E3F6D8 /* MOPRoot.swift */; };
 		BF797A342B0A23A90006A238 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF797A332B0A23A90006A238 /* String+Extensions.swift */; };
 		BF7FFCCB2B079CA3001D2F93 /* MOPChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCCA2B079CA3001D2F93 /* MOPChannel.swift */; };
-		BF7FFCCD2B079CB9001D2F93 /* MOPEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCCC2B079CB9001D2F93 /* MOPEncoder.swift */; };
-		BF7FFCCF2B079CDA001D2F93 /* MOPDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCCE2B079CDA001D2F93 /* MOPDecoder.swift */; };
+		BF7FFCCD2B079CB9001D2F93 /* MOPWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCCC2B079CB9001D2F93 /* MOPWriter.swift */; };
+		BF7FFCCF2B079CDA001D2F93 /* MOPReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCCE2B079CDA001D2F93 /* MOPReader.swift */; };
 		BF7FFCD12B079D10001D2F93 /* MOPValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCD02B079D10001D2F93 /* MOPValue.swift */; };
 		BF7FFCD32B079D48001D2F93 /* MOPObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCD22B079D48001D2F93 /* MOPObject.swift */; };
 		BF7FFCD52B079D67001D2F93 /* MOPPrimitive.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCD42B079D67001D2F93 /* MOPPrimitive.swift */; };
@@ -35,15 +40,15 @@
 		BF9071612B11C281007F70EE /* Word.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9071602B11C281007F70EE /* Word.swift */; };
 		BF9071652B11F148007F70EE /* UnsafeMutableRawPointer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9071642B11F148007F70EE /* UnsafeMutableRawPointer+Extensions.swift */; };
 		BF9369432B0BF33700921D6E /* Page.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9369422B0BF33700921D6E /* Page.swift */; };
-		BFA944472B10783800526CF1 /* KeyEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA944462B10783800526CF1 /* KeyEntry.swift */; };
+		BFA944472B10783800526CF1 /* KeyValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA944462B10783800526CF1 /* KeyValue.swift */; };
 		BFA944492B1078B400526CF1 /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA944482B1078B400526CF1 /* Fragment.swift */; };
 		BFA944542B1111C100526CF1 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA944532B1111C100526CF1 /* File.swift */; };
 		BFA944582B1113EE00526CF1 /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = BFA944572B1113EE00526CF1 /* Path */; };
-		BFA9445A2B11329F00526CF1 /* ValueBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA944592B11329F00526CF1 /* ValueBox.swift */; };
 		BFAAF0342B0F2A7C00A2FFD1 /* Fletcher.c in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF0332B0F2A7C00A2FFD1 /* Fletcher.c */; };
 		BFAAF0382B0FC1F000A2FFD1 /* PageBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF0372B0FC1F000A2FFD1 /* PageBuffer.swift */; };
 		BFAAF03C2B0FDF4300A2FFD1 /* FreeList.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF03B2B0FDF4300A2FFD1 /* FreeList.swift */; };
 		BFAAF03E2B0FE55A00A2FFD1 /* SystemIssue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF03D2B0FE55A00A2FFD1 /* SystemIssue.swift */; };
+		BFBAF5132B172BC1003ED388 /* FileIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAF5122B172BC1003ED388 /* FileIdentifier.swift */; };
 		BFD674432B05E6010086932A /* Socket in Frameworks */ = {isa = PBXBuildFile; productRef = BFD674422B05E6010086932A /* Socket */; };
 		BFD674452B05E79F0086932A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BFD674442B05E79F0086932A /* Info.plist */; };
 		BFD674472B05EAE20086932A /* Medusa.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD674462B05EAE20086932A /* Medusa.swift */; };
@@ -100,12 +105,17 @@
 		BF6C7E182B0E28AF006DB858 /* Field.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Field.swift; sourceTree = "<group>"; };
 		BF6C7E1A2B0E307E006DB858 /* FieldValueField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldValueField.swift; sourceTree = "<group>"; };
 		BF6C7E1C2B0E3543006DB858 /* FieldCellField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldCellField.swift; sourceTree = "<group>"; };
-		BF6C7E1E2B0E4ACC006DB858 /* MedusaBytes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedusaBytes.swift; sourceTree = "<group>"; };
+		BF6C7E1E2B0E4ACC006DB858 /* Bytes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bytes.swift; sourceTree = "<group>"; };
 		BF6C7E222B0EB18B006DB858 /* NSFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSFont+Extensions.swift"; sourceTree = "<group>"; };
+		BF7075F72B16016300E3F6D8 /* BTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTree.swift; sourceTree = "<group>"; };
+		BF7075F92B1626C100E3F6D8 /* Stack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
+		BF7075FB2B162D5A00E3F6D8 /* Identifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Identifier.swift; sourceTree = "<group>"; };
+		BF7075FD2B16300B00E3F6D8 /* MOPModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPModule.swift; sourceTree = "<group>"; };
+		BF7076012B16594100E3F6D8 /* MOPRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPRoot.swift; sourceTree = "<group>"; };
 		BF797A332B0A23A90006A238 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		BF7FFCCA2B079CA3001D2F93 /* MOPChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPChannel.swift; sourceTree = "<group>"; };
-		BF7FFCCC2B079CB9001D2F93 /* MOPEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPEncoder.swift; sourceTree = "<group>"; };
-		BF7FFCCE2B079CDA001D2F93 /* MOPDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPDecoder.swift; sourceTree = "<group>"; };
+		BF7FFCCC2B079CB9001D2F93 /* MOPWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPWriter.swift; sourceTree = "<group>"; };
+		BF7FFCCE2B079CDA001D2F93 /* MOPReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPReader.swift; sourceTree = "<group>"; };
 		BF7FFCD02B079D10001D2F93 /* MOPValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPValue.swift; sourceTree = "<group>"; };
 		BF7FFCD22B079D48001D2F93 /* MOPObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPObject.swift; sourceTree = "<group>"; };
 		BF7FFCD42B079D67001D2F93 /* MOPPrimitive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPPrimitive.swift; sourceTree = "<group>"; };
@@ -121,16 +131,16 @@
 		BF9071602B11C281007F70EE /* Word.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Word.swift; sourceTree = "<group>"; };
 		BF9071642B11F148007F70EE /* UnsafeMutableRawPointer+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UnsafeMutableRawPointer+Extensions.swift"; sourceTree = "<group>"; };
 		BF9369422B0BF33700921D6E /* Page.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Page.swift; sourceTree = "<group>"; };
-		BFA944462B10783800526CF1 /* KeyEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyEntry.swift; sourceTree = "<group>"; };
+		BFA944462B10783800526CF1 /* KeyValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValue.swift; sourceTree = "<group>"; };
 		BFA944482B1078B400526CF1 /* Fragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fragment.swift; sourceTree = "<group>"; };
 		BFA944532B1111C100526CF1 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
-		BFA944592B11329F00526CF1 /* ValueBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueBox.swift; sourceTree = "<group>"; };
 		BFAAF0312B0F29CD00A2FFD1 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		BFAAF0322B0F2A1E00A2FFD1 /* Fletcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Fletcher.h; sourceTree = "<group>"; };
 		BFAAF0332B0F2A7C00A2FFD1 /* Fletcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Fletcher.c; sourceTree = "<group>"; };
 		BFAAF0372B0FC1F000A2FFD1 /* PageBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageBuffer.swift; sourceTree = "<group>"; };
 		BFAAF03B2B0FDF4300A2FFD1 /* FreeList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeList.swift; sourceTree = "<group>"; };
 		BFAAF03D2B0FE55A00A2FFD1 /* SystemIssue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemIssue.swift; sourceTree = "<group>"; };
+		BFBAF5122B172BC1003ED388 /* FileIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileIdentifier.swift; sourceTree = "<group>"; };
 		BFD674442B05E79F0086932A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BFD674462B05EAE20086932A /* Medusa.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Medusa.swift; sourceTree = "<group>"; };
 		BFD6744C2B05EBE60086932A /* MedusaTester */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MedusaTester; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -195,8 +205,8 @@
 				BF7FFCDA2B07A04F001D2F93 /* MOPBuffer.swift */,
 				BF7FFCCA2B079CA3001D2F93 /* MOPChannel.swift */,
 				BF7FFCD62B079DA1001D2F93 /* MOPClass.swift */,
-				BF7FFCCE2B079CDA001D2F93 /* MOPDecoder.swift */,
-				BF7FFCCC2B079CB9001D2F93 /* MOPEncoder.swift */,
+				BF7FFCCE2B079CDA001D2F93 /* MOPReader.swift */,
+				BF7FFCCC2B079CB9001D2F93 /* MOPWriter.swift */,
 				BF7FFCDE2B07AA72001D2F93 /* MOPEnumeration.swift */,
 				BF7FFCE22B07AB3D001D2F93 /* MOPEnumerationCase.swift */,
 				BF7FFCE02B07AB01001D2F93 /* MOPEnumerationKind.swift */,
@@ -206,7 +216,8 @@
 				BF7FFCE42B07FEF9001D2F93 /* MOPRepository.swift */,
 				BF7FFCD02B079D10001D2F93 /* MOPValue.swift */,
 				BF7FFCDC2B07A591001D2F93 /* ObjectID.swift */,
-				BFA944592B11329F00526CF1 /* ValueBox.swift */,
+				BF7075FD2B16300B00E3F6D8 /* MOPModule.swift */,
+				BF7076012B16594100E3F6D8 /* MOPRoot.swift */,
 			);
 			path = "Medusa Object Protocol";
 			sourceTree = "<group>";
@@ -356,16 +367,20 @@
 		BFD734AE2B06D7DA00CD500D /* Plumbing */ = {
 			isa = PBXGroup;
 			children = (
+				BF7075F72B16016300E3F6D8 /* BTree.swift */,
 				BFFB2E902B05364B00254090 /* BTreePage.swift */,
 				BFD6747A2B065ADF0086932A /* Buffer.swift */,
 				BF6C7E182B0E28AF006DB858 /* Field.swift */,
+				BFBAF5122B172BC1003ED388 /* FileIdentifier.swift */,
 				BFA944482B1078B400526CF1 /* Fragment.swift */,
 				BFAAF03B2B0FDF4300A2FFD1 /* FreeList.swift */,
-				BFA944462B10783800526CF1 /* KeyEntry.swift */,
-				BF6C7E1E2B0E4ACC006DB858 /* MedusaBytes.swift */,
+				BF7075FB2B162D5A00E3F6D8 /* Identifier.swift */,
+				BFA944462B10783800526CF1 /* KeyValue.swift */,
+				BF6C7E1E2B0E4ACC006DB858 /* Bytes.swift */,
 				BF9369422B0BF33700921D6E /* Page.swift */,
 				BFAAF0372B0FC1F000A2FFD1 /* PageBuffer.swift */,
 				BFD674832B0689990086932A /* PermissionsToken.swift */,
+				BF7075F92B1626C100E3F6D8 /* Stack.swift */,
 				BF9071602B11C281007F70EE /* Word.swift */,
 			);
 			path = Plumbing;
@@ -536,11 +551,12 @@
 				BFAAF0382B0FC1F000A2FFD1 /* PageBuffer.swift in Sources */,
 				BF6C7E192B0E28AF006DB858 /* Field.swift in Sources */,
 				BF7FFCE32B07AB3D001D2F93 /* MOPEnumerationCase.swift in Sources */,
+				BF7075FC2B162D5A00E3F6D8 /* Identifier.swift in Sources */,
 				BFA944542B1111C100526CF1 /* File.swift in Sources */,
-				BFA9445A2B11329F00526CF1 /* ValueBox.swift in Sources */,
 				BFFB2E962B05364C00254090 /* Agent.swift in Sources */,
-				BFA944472B10783800526CF1 /* KeyEntry.swift in Sources */,
+				BFA944472B10783800526CF1 /* KeyValue.swift in Sources */,
 				BFD674672B0607720086932A /* IPV6Address.swift in Sources */,
+				BFBAF5132B172BC1003ED388 /* FileIdentifier.swift in Sources */,
 				BF7FFCD12B079D10001D2F93 /* MOPValue.swift in Sources */,
 				BF6C7E1D2B0E3543006DB858 /* FieldCellField.swift in Sources */,
 				BFFB2E9C2B05364C00254090 /* LoggingAgent.swift in Sources */,
@@ -560,22 +576,26 @@
 				BFD6747B2B065ADF0086932A /* Buffer.swift in Sources */,
 				BF7FFCDF2B07AA72001D2F93 /* MOPEnumeration.swift in Sources */,
 				BFD6746F2B0638A70086932A /* MessageBuffer.swift in Sources */,
+				BF7075FE2B16300B00E3F6D8 /* MOPModule.swift in Sources */,
 				BFFB2E9A2B05364C00254090 /* FreePageAgent.swift in Sources */,
 				BF6C7E232B0EB18B006DB858 /* NSFont+Extensions.swift in Sources */,
 				BF7FFCD72B079DA1001D2F93 /* MOPClass.swift in Sources */,
 				BF7FFCE12B07AB01001D2F93 /* MOPEnumerationKind.swift in Sources */,
-				BF7FFCCD2B079CB9001D2F93 /* MOPEncoder.swift in Sources */,
+				BF7FFCCD2B079CB9001D2F93 /* MOPWriter.swift in Sources */,
 				BFD6746D2B0637510086932A /* MessageSocket.swift in Sources */,
 				BF7FFCD32B079D48001D2F93 /* MOPObject.swift in Sources */,
+				BF7075FA2B1626C100E3F6D8 /* Stack.swift in Sources */,
 				BFAAF03C2B0FDF4300A2FFD1 /* FreeList.swift in Sources */,
 				BFFB2E952B05364C00254090 /* PageAgent.swift in Sources */,
 				BF7FFCDB2B07A04F001D2F93 /* MOPBuffer.swift in Sources */,
-				BF6C7E1F2B0E4ACC006DB858 /* MedusaBytes.swift in Sources */,
+				BF6C7E1F2B0E4ACC006DB858 /* Bytes.swift in Sources */,
 				BFD674762B0659DA0086932A /* BufferBrowserWindowController.swift in Sources */,
+				BF7075F82B16016300E3F6D8 /* BTree.swift in Sources */,
 				BF9369432B0BF33700921D6E /* Page.swift in Sources */,
 				BFFB2E7D2B05363300254090 /* AppDelegate.swift in Sources */,
 				BF9071652B11F148007F70EE /* UnsafeMutableRawPointer+Extensions.swift in Sources */,
 				BF7FFCCB2B079CA3001D2F93 /* MOPChannel.swift in Sources */,
+				BF7076022B16594100E3F6D8 /* MOPRoot.swift in Sources */,
 				BF521F3B2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift in Sources */,
 				BF7FFCE52B07FEF9001D2F93 /* MOPRepository.swift in Sources */,
 				BF6473892B13A91D0049B583 /* SmalltalkMonads.swift in Sources */,
@@ -585,7 +605,7 @@
 				BF7FFCDD2B07A591001D2F93 /* ObjectID.swift in Sources */,
 				BFAAF0342B0F2A7C00A2FFD1 /* Fletcher.c in Sources */,
 				BF6C7E1B2B0E307E006DB858 /* FieldValueField.swift in Sources */,
-				BF7FFCCF2B079CDA001D2F93 /* MOPDecoder.swift in Sources */,
+				BF7FFCCF2B079CDA001D2F93 /* MOPReader.swift in Sources */,
 				BFFB2E982B05364C00254090 /* AgentState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

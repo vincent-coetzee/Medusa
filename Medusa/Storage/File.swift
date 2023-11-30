@@ -26,7 +26,7 @@ public class File
         {
         guard let somePath = Path(path) else
             {
-            throw(SystemIssue(code: .invalidPath,agentKind: .storageAgent,agentLocation: .unknown))
+            throw(SystemIssue(code: .invalidPath,agentKind: .storageAgent))
             }
         self.path = somePath
         self.mode = mode
@@ -34,49 +34,49 @@ public class File
             {
             guard self.path.exists else
                 {
-                throw(SystemIssue(code: .fileDoesNotExist,agentKind: .storageAgent,agentLocation: .unknown))
+                throw(SystemIssue(code: .fileDoesNotExist,agentKind: .storageAgent))
                 }
             self.handle = fopen(self.path.string, "r")
             if handle.isNil
                 {
                 let errorString = String(describing: strerror(errno))
-                throw(SystemIssue(code: .fileOpenFailed,message: "Opening \(self.path.string) failed with error (\(errno)) \(errorString)",agentKind: .storageAgent,agentLocation: .unknown))
+                throw(SystemIssue(code: .fileOpenFailed,agentKind: .storageAgent,message: "Opening \(self.path.string) failed with error (\(errno)) \(errorString)"))
                 }
             }
         else if mode == .create
             {
             guard !self.path.exists else
                 {
-                throw(SystemIssue(code: .fileExists,message: "The file \(self.path.string) could not be created because it exists.",agentKind: .storageAgent,agentLocation: .unknown))
+                throw(SystemIssue(code: .fileExists,agentKind: .storageAgent,message: "The file \(self.path.string) could not be created because it exists."))
                 }
             self.handle = fopen(self.path.string, "r")
             if handle.isNil
                 {
                 let errorString = String(describing: strerror(errno))
-                throw(SystemIssue(code: .fileCreationFailed,message: "Opening \(self.path.string) failed with error (\(errno)) \(errorString)",agentKind: .storageAgent,agentLocation: .unknown))
+                throw(SystemIssue(code: .fileCreationFailed,agentKind: .storageAgent,message: "Opening \(self.path.string) failed with error (\(errno)) \(errorString)"))
                 }
             }
         else
             {
             guard self.path.exists else
                 {
-                throw(SystemIssue(code: .fileDoesNotExist,message: "The file \(self.path.string) could not be opened because it does not exist.",agentKind: .storageAgent,agentLocation: .unknown))
+                throw(SystemIssue(code: .fileDoesNotExist,agentKind: .storageAgent,message: "The file \(self.path.string) could not be opened because it does not exist."))
                 }
             self.handle = fopen(self.path.string, "r")
             if handle.isNil
                 {
                 let errorString = String(describing: strerror(errno))
-                throw(SystemIssue(code: .fileOpenFailed,message: "Opening \(self.path.string) failed with error (\(errno)) \(errorString)",agentKind: .storageAgent,agentLocation: .unknown))
+                throw(SystemIssue(code: .fileOpenFailed,agentKind: .storageAgent,message: "Opening \(self.path.string) failed with error (\(errno)) \(errorString)"))
                 }
             }
         }
         
-    public func seek(pageAddress: Medusa.PageAddress) throws
+    public func seek(pageAddress: Medusa.Address) throws
         {
         guard fseek(self.handle, pageAddress.fileOffset, SEEK_SET) == 0 else
             {
             let errorString = String(describing: strerror(errno))
-            throw(SystemIssue(code: .filePositioningFailed,message: "Seeking \(self.path.string) failed with error (\(errno)) \(errorString)",agentKind: .storageAgent,agentLocation: .unknown))
+            throw(SystemIssue(code: .filePositioningFailed,agentKind: .storageAgent,message: "Seeking \(self.path.string) failed with error (\(errno)) \(errorString)"))
             }
         self.seekOffset = pageAddress.fileOffset
         }
@@ -85,13 +85,13 @@ public class File
         {
         guard feof(self.handle) == 0 else
             {
-            throw(SystemIssue(code: .endOfFileReached,agentKind: .storageAgent,agentLocation: .unknown))
+            throw(SystemIssue(code: .endOfFileReached,agentKind: .storageAgent))
             }
         let buffer = UnsafeMutableRawPointer.allocate(byteCount: sizeInBytes, alignment: 1)
         let bytesRead = fread(buffer,1,sizeInBytes,self.handle)
         guard bytesRead == sizeInBytes else
             {
-            throw(SystemIssue(code: .fileReadFailedShort,agentKind: .storageAgent,agentLocation: .unknown))
+            throw(SystemIssue(code: .fileReadFailedShort,agentKind: .storageAgent))
             }
         return(buffer)
         }

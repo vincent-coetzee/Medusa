@@ -17,19 +17,19 @@ public struct Medusa
     public typealias String = Swift.String
     public typealias Byte = Swift.UInt8
     public typealias ObjectID = Swift.UInt64
-    public typealias Atom = ObjectID
+    public typealias Atom = Integer64
     public typealias Boolean = Swift.Bool
     public typealias Enumeration = MOPEnumeration
     public typealias MagicNumber = UInt64
-    public typealias Offset = Integer64
     public typealias Checksum = UInt64
-    public typealias PagePointer = Integer64
-    public typealias Bytes = MedusaBytes
-    public typealias PageAddress = Integer64
+    public typealias Address = Integer64
     public typealias Unsigned64 = UInt64
     public typealias Unsigned32 = UInt32
     public typealias Unsigned16 = UInt16
-    public typealias FileIdentifier = Int
+    public typealias Buffer = UnsafeMutableRawPointer
+    public typealias Buffers = Array<Buffer>
+    public typealias UnicodeScalar = Unicode.Scalar
+    public typealias PagePointer = Integer64
     
     public static let kMedusaServiceType = "_medusa._tcp."
     public static let kHostName = Host.current().localizedName!
@@ -48,18 +48,39 @@ public struct Medusa
     public static let kPageFreeCellCountOffset              = 32
     public static let kPageHeaderSizeInBytes                = 40
     
-    public static let kBTreePageRightPointerOffset               = 40
-    public static let kBTreePageKeyEntryCountOffset              = 48
-    public static let kBTreePageKeysPerPageOffset                = 56
-    public static let kBTreePageHeaderSizeInBytes                = 64
+    public static let kBTreePageKeyCountOffset                   = 40
+    public static let kBTreePageKeysPerPageOffset                = 48
+    public static let kBTreePageIsLeafOffset                     = 56
+    public static let kBTreePageHeaderSizeInBytes                = Medusa.kBTreePageIsLeafOffset + MemoryLayout<Medusa.Boolean>.size
+    
+    public static let kBTreePageKeysOffset                       = Medusa.kBTreePageHeaderSizeInBytes
     
     public static let kPageSizeInBytes                           = 16 * 1024
     public static let kBTreePageSizeInBytes                      = Medusa.kPageSizeInBytes
-    public static let kBTreePageDefaultKeysPerPage               = 50
-    public static let kBTreePageFirstCellOffset                  = 50 * MemoryLayout<Int>.size + Self.kBTreePageHeaderSizeInBytes
+    public static let kBTreePageDefaultKeysPerPage               = 100
+    
+    public static let kMaximumStringLength                       = 4_294_967_295
     
     public static let kBTreePageMagicNumber: MagicNumber    = 0xFADE0000D00DF00D
     
+    public enum Endian: Int
+        {
+        case unknown
+        case big
+        case little
+        }
+        
+    public static var endian: Endian
+        {
+        let number = 0x123456789
+        let bigEndian = number.bigEndian
+        if number == bigEndian
+            {
+            return(.big)
+            }
+        return(.little)
+        }
+        
     public static func bitString(_ word: Word) -> String
         {
         let little = word.littleEndian
@@ -179,6 +200,23 @@ public struct Medusa
         return(String(string.reversed()))
         }
         
+    public static func bitString(_ uint: UInt) -> String
+        {
+        let little = uint.littleEndian
+        var bit: UInt = 1
+        var string = String()
+        for index in 0..<8
+            {
+            if index % 8 == 0 && index != 0
+                {
+                string += " "
+                }
+            string += (little & bit == bit ? "1" : "0")
+            bit <<= 1
+            }
+        return(String(string.reversed()))
+        }
+        
     public static func bitString(_ float: Medusa.Float) -> String
         {
         let floatPointer = UnsafeMutablePointer<Medusa.Float>.allocate(capacity: 1)
@@ -196,14 +234,21 @@ public struct Medusa
         
     public static func runTests()
         {
-        testFields()
-        testFletcher()
-        testTags()
-        testBTreePages()
+        do
+            {
+            testFields()
+            testFletcher()
+            testTags()
+            try testBTreePages()
+            }
+        catch let error
+            {
+            print(error)
+            }
         }
     }
 
-extension Medusa.PagePointer
+extension Medusa.Address
     {
     public init(page: Int,offset: Int)
         {
@@ -214,18 +259,18 @@ extension Medusa.PagePointer
         self = number
         }
         
-    public var pageValue: Int
+    public var page: Int
         {
         Int(self >> Medusa.kPageOffsetBits)
         }
         
-    public var offsetValue: Int
+    public var offset: Int
         {
         Int(self & Medusa.kPageOffsetMask)
         }
     }
 
-extension Medusa.PageAddress
+extension Medusa.Address
     {
     public var fileOffset: Int
         {
@@ -262,10 +307,10 @@ public func testFletcher()
 public func testTags()
     {
     var word = Word(0)
-    word.tag = .zilch
+    word.tag = .nothing
     print("BITS OF zilch ARE   : \(word.bitString)")
     var wordTag = word.tag
-    assert(wordTag.rawValue == Tag.zilch.rawValue,"TAG OF zilch SHOULD BE \(Tag.zilch.rawValue.bitString) BUT IS \(wordTag.rawValue.bitString).")
+    assert(wordTag.rawValue == Tag.nothing.rawValue,"TAG OF zilch SHOULD BE \(Tag.nothing.rawValue.bitString) BUT IS \(wordTag.rawValue.bitString).")
     let minusOne = Int(-1)
     let minusOneWord = Word(bitPattern: minusOne)
     print("BITS OF -1 ARE      : \(minusOneWord.bitString)")
@@ -292,22 +337,22 @@ public func testTags()
 
 public func testFields()
     {
-    let field = Field(index: 1, name: "field", value: .fixedLengthString(21,""), offset: 11)
+    let field = Field(name: "field", value: .fixedLengthString(21,""), offset: 11)
     let sections = field.sections(withRowWidth: 4)
     print(sections)
     }
     
-public func testBTreePages()
+public func testBTreePages() throws
     {
-    let page1 = BTreePage<String,String>(magicNumber: 0xDEADB00BDEADB00B)
+    let page1 = BTreePage<String,String>(fileIdentifier: .empty,magicNumber: 0xDEADB00BDEADB00B,keysPerPage: 50)
 //    let page2 = BTreePage<String,String>(magicNumber: 0xCAFEBABEDEADBEEF)
     do
         {
-        try page1.insertKeyEntry(key: "George VI",value: "This is a royal string.",pointer: 27_270_270)
+//        page1.keys[0] = try page1.insert(key: "George VI",value: "This is a royal string.")
 //        try page2.insertKeyEntry(key: "George VI",value: "This is a royal string.",pointer: 27_270_270)
-        try page1.insertKeyEntry(key: "Charles III",value: "He is the latest king of England. Son of the later Queen.",pointer: 3_333_333)
+//        page1.keys[1] = try page1.insert(key: "Charles III",value: "He is the latest king of England. Son of the late Queen.")
 //        try page2.insertKeyEntry(key: "Charles III",value: "He is the latest king of England.",pointer: 3_333_333)
-        try page1.insertKeyEntry(key: "Wattled Grebe",value: "The plainest of birds to be found in the Kruger Park.",pointer: 9_999_999)
+//        page1.keys[2] = try page1.insert(key: "Wattled Grebe",value: "The plainest of birds to be found in the Kruger Park.")
 //        try page2.insertKeyEntry(key: "Leopard-Tailed Barbet",value: "A most unusual bird.",pointer: 1_111_111)
         }
     catch let error as SystemIssue
@@ -318,24 +363,25 @@ public func testBTreePages()
         {
         print("error")
         }
-    page1.write()
+    try page1.write()
     let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
     let windowController = storyboard.instantiateController(withIdentifier: "bufferBrowserWindowController") as! NSWindowController
     let viewController = windowController.contentViewController as! BufferBrowserViewController
+    windowController.window?.title = "Page 1"
     windowController.showWindow(nil)
-    let page3 = BTreePage<String,String>(from: page1)
-    viewController.leftBuffer = PageWrapper(page: page1)
-    viewController.rightBuffer = PageWrapper(page: page3)
-    let windowController1 = storyboard.instantiateController(withIdentifier: "btreePageInspectorWindowController") as! NSWindowController
-    let viewController1 = windowController1.contentViewController as! BTreePageInspectorViewController
-    windowController1.showWindow(nil)
-    windowController1.window?.title = "Page 1"
-    viewController1.btreePage = page1
-    let windowController2 = storyboard.instantiateController(withIdentifier: "btreePageInspectorWindowController") as! NSWindowController
-    let viewController2 = windowController2.contentViewController as! BTreePageInspectorViewController
-    windowController2.showWindow(nil)
-    windowController2.window?.title = "Page 3"
-    viewController2.btreePage = page3
+//    let page3 = BTreePage<String,String>(from: page1)
+//    viewController.leftBuffer = PageWrapper(page: page1)
+//    viewController.rightBuffer = PageWrapper(page: page1)
+//    let windowController1 = storyboard.instantiateController(withIdentifier: "btreePageInspectorWindowController") as! NSWindowController
+//    let viewController1 = windowController1.contentViewController as! BTreePageInspectorViewController
+//    windowController1.showWindow(nil)
+//    windowController1.window?.title = "Page 1"
+//    viewController1.btreePage = page1
+//    let windowController2 = storyboard.instantiateController(withIdentifier: "btreePageInspectorWindowController") as! NSWindowController
+//    let viewController2 = windowController2.contentViewController as! BTreePageInspectorViewController
+//    windowController2.showWindow(nil)
+//    windowController2.window?.title = "Page 3"
+//    viewController2.btreePage = page3
 //    let windowController2 = storyboard.instantiateController(withIdentifier: "btreePageInspectorWindowController") as! NSWindowController
 //    let viewController2 = windowController2.contentViewController as! BTreePageInspectorViewController
 //    windowController2.showWindow(nil)

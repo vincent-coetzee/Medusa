@@ -13,9 +13,18 @@ class BufferBrowserWindowController: NSWindowController {
         {
         super.windowDidLoad()
         let browserController = self.contentViewController as! BufferBrowserViewController
-        let page = BTreePage<String,String>(magicNumber: Medusa.kBTreePageMagicNumber)
-        page.write()
-        browserController.leftBuffer = PageWrapper(page: page)
-        browserController.rightBuffer = PageWrapper(page: page)
+        let page = BTreePage<String,String>(fileIdentifier: .empty,magicNumber: Medusa.kBTreePageMagicNumber,keysPerPage: 50)
+        do
+            {
+            try page.write()
+            }
+        catch let error as SystemIssue
+            {
+            print(error)
+            }
+        catch
+            {
+            }
+        browserController.buffer = PageWrapper(page: page)
         }
     }

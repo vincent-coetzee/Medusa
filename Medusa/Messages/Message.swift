@@ -31,7 +31,7 @@ public class Message
         {
         if self._klass.isNil
             {
-            let someKlass = MOPClass(name: "Message")
+            let someKlass = MOPClass(module: MOPClass.argonModule,name: "Message")
             someKlass.addInstanceVariable(name: "messageType", klass: .messageType)
             someKlass.addInstanceVariable(name: "sequenceNumber", klass: .integer)
             someKlass.addInstanceVariable(name: "sourceIP", klass: .ipv6Address)
@@ -80,11 +80,11 @@ public class Message
         let messageTypeValue = buffer.decodeInteger()
         guard let messageType = MessageType(rawValue: messageTypeValue) else
             {
-            throw(SystemIssue(code: .invalidMessageTypeInDecodeMessage,agentKind: .unknown,agentLocation: .unknown))
+            throw(SystemIssue(code: .invalidMessageTypeInDecodeMessage,agentKind: .unknown))
             }
         guard let messageClass = Self.messageClasses[messageType] else
             {
-            throw(SystemIssue(code: .messageDecodingClassNotFound,agentKind: .unknown,agentLocation: .unknown))
+            throw(SystemIssue(code: .messageDecodingClassNotFound,agentKind: .unknown))
             }
         let message = messageClass.init()
         try message.decode(from: buffer)
@@ -172,7 +172,7 @@ public class Message
         let sizeRead = try socket.read(into: pointer,bufSize: intSize)
         if sizeRead != intSize
             {
-            throw(SystemIssue(code: .incorrectReadSizeInDecodeMessage,agentKind: .unknown,agentLocation: .unknown))
+            throw(SystemIssue(code: .incorrectReadSizeInDecodeMessage,agentKind: .unknown))
             }
         var integerValue: Int!
         pointer.withMemoryRebound(to: Int.self, capacity: 1)
@@ -200,7 +200,7 @@ public class Message
         let sizeRead = try socket.read(into: pointer,bufSize: stringSize)
         if sizeRead != stringSize
             {
-            throw(SystemIssue(code: .incorrectReadSizeInDecodeMessage,agentKind: .unknown,agentLocation: .unknown))
+            throw(SystemIssue(code: .incorrectReadSizeInDecodeMessage,agentKind: .unknown))
             }
         let string = String(cString: pointer)
         return(string)
@@ -224,7 +224,7 @@ public class Message
         let sizeRead = try socket.read(into: pointer,bufSize: floatSize)
         if sizeRead != floatSize
             {
-            throw(SystemIssue(code: .incorrectReadSizeInDecodeMessage,agentKind: .unknown,agentLocation: .unknown))
+            throw(SystemIssue(code: .incorrectReadSizeInDecodeMessage,agentKind: .unknown))
             }
         var floatValue: Medusa.Float!
         pointer.withMemoryRebound(to: Medusa.Float.self, capacity: 1)
@@ -241,7 +241,7 @@ public class Message
         let integerValue = try self.decodeInteger(from: socket)
         guard let enumerationValue = T(rawValue: integerValue) else
             {
-            throw(SystemIssue(code: .enumerationRawValueNotValidInDecodeEnumeration,agentKind: .unknown,agentLocation: .unknown))
+            throw(SystemIssue(code: .enumerationRawValueNotValidInDecodeEnumeration,agentKind: .unknown))
             }
         return(enumerationValue)
         }
@@ -258,7 +258,7 @@ public class Message
         let sizeRead = try socket.read(into: pointer,bufSize: addressSize)
         if sizeRead != addressSize
             {
-            throw(SystemIssue(code: .incorrectReadSizeInDecodeMessage,agentKind: .unknown,agentLocation: .unknown))
+            throw(SystemIssue(code: .incorrectReadSizeInDecodeMessage,agentKind: .unknown))
             }
         var bytes = Array<CChar>()
         pointer.withMemoryRebound(to: CChar.self, capacity: addressSize)

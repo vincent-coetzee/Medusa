@@ -11,10 +11,10 @@ public class MOPEnumerationKind: MOPClass
     {
     public var cases: Array<MOPEnumerationCase>
     
-    public init(name: String,cases: Array<MOPEnumerationCase> = Array())
+    public init(module: MOPModule,name: String,cases: Array<MOPEnumerationCase> = Array())
         {
         self.cases = cases
-        super.init(name: name)
+        super.init(module: module,name: name)
         }
         
     public func `case`(name: String) -> MOPEnumerationKind

@@ -37,7 +37,7 @@ public class MOPRepository
         
     private func initMessageClass() -> MOPClass
         {
-        let someKlass = MOPClass(name: "Message")
+        let someKlass = MOPClass(module: MOPClass.argonModule,name: "Message")
         someKlass.addInstanceVariable(name: "messageType", klass: .messageType)
         someKlass.addInstanceVariable(name: "sequenceNumber", klass: .integer)
         someKlass.addInstanceVariable(name: "sourceIP", klass: .ipv6Address)
@@ -50,32 +50,32 @@ public class MOPRepository
         
     private func initConnectMessageClass() -> MOPClass
         {
-        MOPClass(name: "ConnectMessage")
+        MOPClass(module: MOPClass.argonModule,name: "ConnectMessage")
         }
         
     private func initConnectConfirmMessageClass() -> MOPClass
         {
-        MOPClass(name: "ConnectConfirmMessage")
+        MOPClass(module: MOPClass.argonModule,name: "ConnectConfirmMessage")
         }
         
     private func initPingMessageClass() -> MOPClass
         {
-        MOPClass(name: "PingMessage")
+        MOPClass(module: MOPClass.argonModule,name: "PingMessage")
         }
         
     private func initPongMessageClass() -> MOPClass
         {
-        MOPClass(name: "PongMessage")
+        MOPClass(module: MOPClass.argonModule,name: "PongMessage")
         }
         
     private func initRequestMessageClass() -> MOPClass
         {
-        MOPClass(name: "RequestMessage")
+        MOPClass(module: MOPClass.argonModule,name: "RequestMessage")
         }
         
     private func initResponseMessageClass() -> MOPClass
         {
-        MOPClass(name: "ResponseMessage")
+        MOPClass(module: MOPClass.argonModule,name: "ResponseMessage")
         }
         
     public subscript(dynamicMember key: String) -> MOPClass
