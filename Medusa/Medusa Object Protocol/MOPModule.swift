@@ -9,6 +9,8 @@ import Foundation
 
 public class MOPModule: MOPObject
     {
+    public static let argonModule = MOPModule(module: nil,name: "Argon")
+    
     public let module: MOPModule?
     public let name: String
     
@@ -21,6 +23,6 @@ public class MOPModule: MOPObject
         {
         self.module = module
         self.name = name
-        super.init()
+        super.init(ofClass: MOPClass.module, hasBytes: false)
         }
     }

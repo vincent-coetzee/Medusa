@@ -25,7 +25,7 @@ public class MOPInstanceVariable
         self.offset = offset
         }
         
-    public func value<T>(in: Medusa.Buffer,as someType: T.Type) -> T
+    public func value<T>(in: Medusa.RawBuffer,as someType: T.Type) -> T
         {
         fatalError()
         }
@@ -46,7 +46,7 @@ public class MOPPrimitiveInstanceVariable<Root,ValueType>: MOPInstanceVariable
         super.init(name: name,klass: klass,offset: offset)
         }
         
-    public override func value<T>(in buffer: Medusa.Buffer,as someType: T.Type) -> T
+    public override func value<T>(in buffer: Medusa.RawBuffer,as someType: T.Type) -> T
         {
         buffer.load(fromByteOffset: self.offset, as: T.self)
         }

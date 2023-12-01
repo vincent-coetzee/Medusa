@@ -140,6 +140,7 @@ extension BTreePageInspectorViewController: NSOutlineViewDelegate
                 textField.font = NSFont.systemFont(ofSize: 12)
                 textField.isBordered = false
                 textField.isEditable = false
+                textField.alignment = .right
                 textField.textColor = self.lowlightColor
                 textField.backgroundColor = self.outlineView.backgroundColor
                 textField.drawsBackground = true
@@ -151,7 +152,6 @@ extension BTreePageInspectorViewController: NSOutlineViewDelegate
                 let textField = NSTextField(frame: .zero)
                 textField.font = NSFont.systemFont(ofSize: 12)
                 textField.isBordered = false
-                textField.alignment = .right
                 textField.textColor = self.highlightColor
                 textField.backgroundColor = self.outlineView.backgroundColor
                 textField.drawsBackground = true

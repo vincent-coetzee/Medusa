@@ -12,9 +12,9 @@ public class MOPChannel
     internal var offset: Medusa.Integer64
     internal var sizeInBytes: Int
     private var offsetStack: Stack<Medusa.Integer64>
-    internal var buffers: Medusa.Buffers
+    internal var buffers: Medusa.RawBuffers
     
-    public init(offset:Medusa.Integer64,buffers: Medusa.Buffers,sizeInBytes: Int)
+    public init(offset:Medusa.Integer64,buffers: Medusa.RawBuffers,sizeInBytes: Int)
         {
         self.offset = offset
         self.offsetStack = Stack<Medusa.Integer64>()

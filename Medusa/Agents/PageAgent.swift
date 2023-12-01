@@ -49,7 +49,7 @@ public class PageAgent: BaseAgent
         fatalError("Not yet implemented")
         }
         
-    internal func allocatePage(fileIdentifier: FileIdentifier,sizeInBytes: Int) throws -> Medusa.Buffer
+    internal func allocatePage(fileIdentifier: FileIdentifier,sizeInBytes: Int) throws -> Medusa.RawBuffer
         {
         fatalError("Not yet implemented")
         }

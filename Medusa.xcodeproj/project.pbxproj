@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BF1927B02B1A6B4200643243 /* MOPMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1927AF2B1A6B4200643243 /* MOPMessage.swift */; };
+		BF1927B22B1A741700643243 /* MOPString.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1927B12B1A741700643243 /* MOPString.swift */; };
+		BF1927B42B1A7F6400643243 /* MOPIPv6AddressPrimitive.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1927B32B1A7F6400643243 /* MOPIPv6AddressPrimitive.swift */; };
+		BF1927B62B1A7FC200643243 /* MOPBitsPrimitive.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1927B52B1A7FC200643243 /* MOPBitsPrimitive.swift */; };
 		BF521F3B2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF521F3A2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift */; };
 		BF6473892B13A91D0049B583 /* SmalltalkMonads.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6473882B13A91D0049B583 /* SmalltalkMonads.swift */; };
 		BF6C7E132B0E259A006DB858 /* BTreePageInspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E122B0E259A006DB858 /* BTreePageInspectorWindowController.swift */; };
@@ -27,13 +31,11 @@
 		BF7FFCCF2B079CDA001D2F93 /* MOPReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCCE2B079CDA001D2F93 /* MOPReader.swift */; };
 		BF7FFCD12B079D10001D2F93 /* MOPValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCD02B079D10001D2F93 /* MOPValue.swift */; };
 		BF7FFCD32B079D48001D2F93 /* MOPObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCD22B079D48001D2F93 /* MOPObject.swift */; };
-		BF7FFCD52B079D67001D2F93 /* MOPPrimitive.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCD42B079D67001D2F93 /* MOPPrimitive.swift */; };
+		BF7FFCD52B079D67001D2F93 /* MOPPrimitives.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCD42B079D67001D2F93 /* MOPPrimitives.swift */; };
 		BF7FFCD72B079DA1001D2F93 /* MOPClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCD62B079DA1001D2F93 /* MOPClass.swift */; };
 		BF7FFCD92B079DC1001D2F93 /* MOPInstanceVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCD82B079DC1001D2F93 /* MOPInstanceVariable.swift */; };
 		BF7FFCDB2B07A04F001D2F93 /* MOPBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCDA2B07A04F001D2F93 /* MOPBuffer.swift */; };
-		BF7FFCDD2B07A591001D2F93 /* ObjectID.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCDC2B07A591001D2F93 /* ObjectID.swift */; };
 		BF7FFCDF2B07AA72001D2F93 /* MOPEnumeration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCDE2B07AA72001D2F93 /* MOPEnumeration.swift */; };
-		BF7FFCE12B07AB01001D2F93 /* MOPEnumerationKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCE02B07AB01001D2F93 /* MOPEnumerationKind.swift */; };
 		BF7FFCE32B07AB3D001D2F93 /* MOPEnumerationCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCE22B07AB3D001D2F93 /* MOPEnumerationCase.swift */; };
 		BF7FFCE52B07FEF9001D2F93 /* MOPRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCE42B07FEF9001D2F93 /* MOPRepository.swift */; };
 		BF7FFCE72B08010B001D2F93 /* Optional+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCE62B08010B001D2F93 /* Optional+Extensions.swift */; };
@@ -97,6 +99,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BF1927AF2B1A6B4200643243 /* MOPMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPMessage.swift; sourceTree = "<group>"; };
+		BF1927B12B1A741700643243 /* MOPString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPString.swift; sourceTree = "<group>"; };
+		BF1927B32B1A7F6400643243 /* MOPIPv6AddressPrimitive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPIPv6AddressPrimitive.swift; sourceTree = "<group>"; };
+		BF1927B52B1A7FC200643243 /* MOPBitsPrimitive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPBitsPrimitive.swift; sourceTree = "<group>"; };
 		BF521F3A2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferBrowserPopoverViewController.swift; sourceTree = "<group>"; };
 		BF6473882B13A91D0049B583 /* SmalltalkMonads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmalltalkMonads.swift; sourceTree = "<group>"; };
 		BF6C7E122B0E259A006DB858 /* BTreePageInspectorWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTreePageInspectorWindowController.swift; sourceTree = "<group>"; };
@@ -117,13 +123,11 @@
 		BF7FFCCE2B079CDA001D2F93 /* MOPReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPReader.swift; sourceTree = "<group>"; };
 		BF7FFCD02B079D10001D2F93 /* MOPValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPValue.swift; sourceTree = "<group>"; };
 		BF7FFCD22B079D48001D2F93 /* MOPObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPObject.swift; sourceTree = "<group>"; };
-		BF7FFCD42B079D67001D2F93 /* MOPPrimitive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPPrimitive.swift; sourceTree = "<group>"; };
+		BF7FFCD42B079D67001D2F93 /* MOPPrimitives.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPPrimitives.swift; sourceTree = "<group>"; };
 		BF7FFCD62B079DA1001D2F93 /* MOPClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPClass.swift; sourceTree = "<group>"; };
 		BF7FFCD82B079DC1001D2F93 /* MOPInstanceVariable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPInstanceVariable.swift; sourceTree = "<group>"; };
 		BF7FFCDA2B07A04F001D2F93 /* MOPBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPBuffer.swift; sourceTree = "<group>"; };
-		BF7FFCDC2B07A591001D2F93 /* ObjectID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectID.swift; sourceTree = "<group>"; };
 		BF7FFCDE2B07AA72001D2F93 /* MOPEnumeration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPEnumeration.swift; sourceTree = "<group>"; };
-		BF7FFCE02B07AB01001D2F93 /* MOPEnumerationKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPEnumerationKind.swift; sourceTree = "<group>"; };
 		BF7FFCE22B07AB3D001D2F93 /* MOPEnumerationCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPEnumerationCase.swift; sourceTree = "<group>"; };
 		BF7FFCE42B07FEF9001D2F93 /* MOPRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPRepository.swift; sourceTree = "<group>"; };
 		BF7FFCE62B08010B001D2F93 /* Optional+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Optional+Extensions.swift"; sourceTree = "<group>"; };
@@ -203,19 +207,21 @@
 				BF7FFCDA2B07A04F001D2F93 /* MOPBuffer.swift */,
 				BF7FFCCA2B079CA3001D2F93 /* MOPChannel.swift */,
 				BF7FFCD62B079DA1001D2F93 /* MOPClass.swift */,
-				BF7FFCCE2B079CDA001D2F93 /* MOPReader.swift */,
-				BF7FFCCC2B079CB9001D2F93 /* MOPWriter.swift */,
 				BF7FFCDE2B07AA72001D2F93 /* MOPEnumeration.swift */,
 				BF7FFCE22B07AB3D001D2F93 /* MOPEnumerationCase.swift */,
-				BF7FFCE02B07AB01001D2F93 /* MOPEnumerationKind.swift */,
 				BF7FFCD82B079DC1001D2F93 /* MOPInstanceVariable.swift */,
-				BF7FFCD22B079D48001D2F93 /* MOPObject.swift */,
-				BF7FFCD42B079D67001D2F93 /* MOPPrimitive.swift */,
-				BF7FFCE42B07FEF9001D2F93 /* MOPRepository.swift */,
-				BF7FFCD02B079D10001D2F93 /* MOPValue.swift */,
-				BF7FFCDC2B07A591001D2F93 /* ObjectID.swift */,
 				BF7075FD2B16300B00E3F6D8 /* MOPModule.swift */,
+				BF7FFCD22B079D48001D2F93 /* MOPObject.swift */,
+				BF7FFCD42B079D67001D2F93 /* MOPPrimitives.swift */,
+				BF7FFCCE2B079CDA001D2F93 /* MOPReader.swift */,
+				BF7FFCE42B07FEF9001D2F93 /* MOPRepository.swift */,
 				BF7076012B16594100E3F6D8 /* MOPRoot.swift */,
+				BF7FFCD02B079D10001D2F93 /* MOPValue.swift */,
+				BF7FFCCC2B079CB9001D2F93 /* MOPWriter.swift */,
+				BF1927AF2B1A6B4200643243 /* MOPMessage.swift */,
+				BF1927B12B1A741700643243 /* MOPString.swift */,
+				BF1927B32B1A7F6400643243 /* MOPIPv6AddressPrimitive.swift */,
+				BF1927B52B1A7FC200643243 /* MOPBitsPrimitive.swift */,
 			);
 			path = "Medusa Object Protocol";
 			sourceTree = "<group>";
@@ -253,6 +259,7 @@
 		BFA9444F2B11101F00526CF1 /* Buffer Browser */ = {
 			isa = PBXGroup;
 			children = (
+				BF521F3A2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift */,
 				BFD674782B065A9C0086932A /* BufferBrowserView.swift */,
 				BFD6747C2B06689E0086932A /* BufferBrowserViewController.swift */,
 				BFD674742B0659DA0086932A /* BufferBrowserWindowController.swift */,
@@ -281,6 +288,7 @@
 			isa = PBXGroup;
 			children = (
 				BFA944532B1111C100526CF1 /* File.swift */,
+				BFBAF5122B172BC1003ED388 /* FileIdentifier.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -332,7 +340,6 @@
 				BFA9444F2B11101F00526CF1 /* Buffer Browser */,
 				BFA944502B11102C00526CF1 /* Miscellaneous */,
 				BFA944512B11106500526CF1 /* Primary View Controller */,
-				BF521F3A2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift */,
 			);
 			path = "User Interface";
 			sourceTree = "<group>";
@@ -368,13 +375,12 @@
 				BF7075F72B16016300E3F6D8 /* BTree.swift */,
 				BFFB2E902B05364B00254090 /* BTreePage.swift */,
 				BFD6747A2B065ADF0086932A /* Buffer.swift */,
+				BF6C7E1E2B0E4ACC006DB858 /* Bytes.swift */,
 				BF6C7E182B0E28AF006DB858 /* Field.swift */,
-				BFBAF5122B172BC1003ED388 /* FileIdentifier.swift */,
 				BFA944482B1078B400526CF1 /* Fragment.swift */,
 				BFAAF03B2B0FDF4300A2FFD1 /* FreeList.swift */,
 				BF7075FB2B162D5A00E3F6D8 /* Identifier.swift */,
 				BFA944462B10783800526CF1 /* KeyValue.swift */,
-				BF6C7E1E2B0E4ACC006DB858 /* Bytes.swift */,
 				BF9369422B0BF33700921D6E /* Page.swift */,
 				BFD674832B0689990086932A /* PermissionsToken.swift */,
 				BF7075F92B1626C100E3F6D8 /* Stack.swift */,
@@ -550,6 +556,7 @@
 				BF7075FC2B162D5A00E3F6D8 /* Identifier.swift in Sources */,
 				BFA944542B1111C100526CF1 /* File.swift in Sources */,
 				BFFB2E962B05364C00254090 /* Agent.swift in Sources */,
+				BF1927B02B1A6B4200643243 /* MOPMessage.swift in Sources */,
 				BFA944472B10783800526CF1 /* KeyValue.swift in Sources */,
 				BFD674672B0607720086932A /* IPV6Address.swift in Sources */,
 				BFBAF5132B172BC1003ED388 /* FileIdentifier.swift in Sources */,
@@ -559,7 +566,9 @@
 				BFD674842B0689990086932A /* PermissionsToken.swift in Sources */,
 				BFD6747D2B06689E0086932A /* BufferBrowserViewController.swift in Sources */,
 				BF7FFCE72B08010B001D2F93 /* Optional+Extensions.swift in Sources */,
+				BF1927B62B1A7FC200643243 /* MOPBitsPrimitive.swift in Sources */,
 				BFD6745E2B05FBEC0086932A /* ConnectMessage.swift in Sources */,
+				BF1927B22B1A741700643243 /* MOPString.swift in Sources */,
 				BFD674792B065A9C0086932A /* BufferBrowserView.swift in Sources */,
 				BFFB2E7F2B05363300254090 /* PrimaryViewController.swift in Sources */,
 				BFD674602B05FC230086932A /* ConnectConfirmMessage.swift in Sources */,
@@ -567,7 +576,7 @@
 				BF6C7E132B0E259A006DB858 /* BTreePageInspectorWindowController.swift in Sources */,
 				BF7FFCD92B079DC1001D2F93 /* MOPInstanceVariable.swift in Sources */,
 				BFD674472B05EAE20086932A /* Medusa.swift in Sources */,
-				BF7FFCD52B079D67001D2F93 /* MOPPrimitive.swift in Sources */,
+				BF7FFCD52B079D67001D2F93 /* MOPPrimitives.swift in Sources */,
 				BFD674582B05F5A80086932A /* ResponseMessage.swift in Sources */,
 				BFD6747B2B065ADF0086932A /* Buffer.swift in Sources */,
 				BF7FFCDF2B07AA72001D2F93 /* MOPEnumeration.swift in Sources */,
@@ -576,7 +585,6 @@
 				BFFB2E9A2B05364C00254090 /* FreePageAgent.swift in Sources */,
 				BF6C7E232B0EB18B006DB858 /* NSFont+Extensions.swift in Sources */,
 				BF7FFCD72B079DA1001D2F93 /* MOPClass.swift in Sources */,
-				BF7FFCE12B07AB01001D2F93 /* MOPEnumerationKind.swift in Sources */,
 				BF7FFCCD2B079CB9001D2F93 /* MOPWriter.swift in Sources */,
 				BFD6746D2B0637510086932A /* MessageSocket.swift in Sources */,
 				BF7FFCD32B079D48001D2F93 /* MOPObject.swift in Sources */,
@@ -589,6 +597,7 @@
 				BF7075F82B16016300E3F6D8 /* BTree.swift in Sources */,
 				BF9369432B0BF33700921D6E /* Page.swift in Sources */,
 				BFFB2E7D2B05363300254090 /* AppDelegate.swift in Sources */,
+				BF1927B42B1A7F6400643243 /* MOPIPv6AddressPrimitive.swift in Sources */,
 				BF9071652B11F148007F70EE /* UnsafeMutableRawPointer+Extensions.swift in Sources */,
 				BF7FFCCB2B079CA3001D2F93 /* MOPChannel.swift in Sources */,
 				BF7076022B16594100E3F6D8 /* MOPRoot.swift in Sources */,
@@ -598,7 +607,6 @@
 				BFD6745A2B05F60C0086932A /* Message.swift in Sources */,
 				BFFB2E972B05364C00254090 /* StorageAgent.swift in Sources */,
 				BF797A342B0A23A90006A238 /* String+Extensions.swift in Sources */,
-				BF7FFCDD2B07A591001D2F93 /* ObjectID.swift in Sources */,
 				BFAAF0342B0F2A7C00A2FFD1 /* Fletcher.c in Sources */,
 				BF6C7E1B2B0E307E006DB858 /* FieldValueField.swift in Sources */,
 				BF7FFCCF2B079CDA001D2F93 /* MOPReader.swift in Sources */,

@@ -10,22 +10,22 @@ import Foundation
 //Values:
 //    SIGN BIT    4 TAG BITS     TYPE
 //    ===============================
-//            1   0000     Integer              = 0
-//            0   0001     Object               = 1
-//            0   0010     Tuple                = 2
-//            0   0011     Boolean              = 3
-//            0   0100     String               = 4
-//            0   0101     Float16              = 5
-//            0   0110     Float32              = 6
-//            0   0111     Float64              = 7
-//            0   1000     Emnumeration         = 8
-//            0   1001     Address              = 9
-//            0   1010     Header               = 10
-//            0   1011     Bits                 = 11
-//            0   1100     Atom                 = 12
-//            0   1101     Array                = 13
-//            0   1110     Persistent           = 14
-//            0   1111     nil                  = 15
+//            1   0000     Integer64            = 0     Don't follow
+//            0   0001     Integer32            = 1     Don't follow
+//            0   0010     Integer16            = 2     Follow
+//            0   0011     Float64              = 3     Don't follow
+//            0   0100     Float32              = 4     Don't follow
+//            0   0101     Float16              = 5     Don't follow
+//            0   0110     Array                = 6     Follow
+//            0   0111     Atom                 = 7     Don't follow
+//            0   1000     Bits                 = 8     Don't follow
+//            0   1001     Header               = 9     Don't follow
+//            0   1010     True                 = 10    Don't follow
+//            0   1011     False                = 11    Don't follow
+//            0   1100     Object               = 12    Follow
+//            0   1101     Address              = 13    Follow
+//            0   1110     Class                = 14    Follow
+//            0   1111     Nothing              = 15    Don't follow
 //
 //            
 //Object Structure
@@ -47,38 +47,38 @@ import Foundation
 
 public class MOPClass: MOPObject
     {
-    public static let argonModule = MOPModule(module: nil,name: "Argon")
-    public static let ipv6Address = MOPClass(module: MOPClass.argonModule,name: "IPv6Address",sizeInBytes: 8)
-    public static let messageType = MOPEnumerationKind(module: MOPClass.argonModule,name: "MessageType").cases("none","ping","pong","connect","connectAccept","connectReject","disconnect","disconnectAccept","Request","Response")
-    public static let integer = MOPInteger(module: MOPClass.argonModule,name: "Integer",sizeInBytes: MemoryLayout<Int>.size)
-    public static let string = MOPString(module: MOPClass.argonModule,name: "String")
-    public static let boolean = MOPBoolean(module: MOPClass.argonModule,name: "Boolean",sizeInBytes: 1)
-    public static let float = MOPInteger(module: MOPClass.argonModule,name: "Float",sizeInBytes: MemoryLayout<Medusa.Float>.size)
+
+    public static let ipv6Address = MOPIPv6AddressPrimitive(module: .argonModule,name: "IPv6Address").initialize()
+    public static let messageType = MOPEnumerationPrimitive(module: .argonModule,name: "MessageType",caseNames: "none","ping","pong","connect","connectAccept","connectReject","disconnect","disconnectAccept","Request","Response").initialize()
+    public static let integer64 = MOPInteger64Primitive()
+    public static let string = MOPStringPrimitive()
+    public static let boolean = MOPBooleanPrimitive()
+    public static let float64 = MOPFloat64Primitive()
+    public static let byte = MOPBytePrimitive()
+    public static let unsigned64 = MOPUnsigned64Primitive()
+    public static let module = MOPModuleClass(module: .argonModule, name: "Module").initialize()
     
     public var superklasses = MOPClasses()
     public var instanceVariables = Dictionary<String,MOPInstanceVariable>()
     public let name: String
     private var nextOffset = 8
-    public let sizeInBytes: Medusa.Integer64?
     public let module: MOPModule
+    private var _sizeInBytes: Integer64 = 0
     
+    public override var sizeInBytes: Integer64
+        {
+        self._sizeInBytes
+        }
+        
     public var identifier: Identifier
         {
         self.module.identifier + self.name
-        }
-        
-    public init(module: MOPModule,name: String,sizeInBytes: Medusa.Integer64)
-        {
-        self.module = module
-        self.name = name
-        self.sizeInBytes = sizeInBytes
         }
         
     public init(module: MOPModule,name: String)
         {
         self.module = module
         self.name = name
-        self.sizeInBytes = nil
         }
         
     public func addInstanceVariable(name: String,klass: MOPClass)
@@ -95,12 +95,54 @@ public class MOPClass: MOPObject
         self.nextOffset += instanceVariable.sizeInBytes
         }
         
+    @discardableResult
+    public func initialize() -> Self
+        {
+        self
+        }
+        
     public func instanciate() -> MOPObject
         {
         let object = MOPObject()
         object.klass = self
         return(object)
         }
+        
+    public func encode<T>(_ value: T,into rawBuffer: RawBuffer,toByteOffset:inout Integer64) throws
+        {
+        if T.self == Integer64.self
+            {
+            MOPInteger64.encode(value as! Integer64,into: rawBuffer,toByteOffset: &toByteOffset)
+            }
+        else if T.self == Float64.self
+            {
+            MOPFloat64.encode(value as! Float64,into: rawBuffer,toByteOffset: &toByteOffset)
+            }
+        else if T.self == String.self
+            {
+            MOPString.encode(value as! String,into: rawBuffer,toByteOffset: &toByteOffset)
+            }
+        else if T.self == Boolean.self
+            {
+            MOPBoolean.encode(value as! String,into: rawBuffer,toByteOffset: &toByteOffset)
+            }
+        else if T.self == Byte.self
+            {
+            MOPByte.encode(value as! String,into: rawBuffer,toByteOffset: &toByteOffset)
+            }
+        else if T.self == Enumeration.self
+            {
+            MOPEnumeration.encode(value as! String,into: rawBuffer,toByteOffset: &toByteOffset)
+            }
+        }
+        
+    public func decode<T>(from: RawBuffer,atByteOffset: Integer64) throws -> T
+        {
+        }
     }
 
 public typealias MOPClasses = Array<MOPClass>
+
+public class MOPModuleClass: MOPClass
+    {
+    }

@@ -7,17 +7,18 @@
 
 import Foundation
 
-public class MOPEnumeration: MOPPrimitive
+public class MOPEnumerationPrimitive: MOPPrimitive
     {
-    public weak var enumerationKind: MOPEnumerationKind?
-    public var enumerationKindID: Medusa.ObjectID
-    public var caseIndex: Int
+    public var cases = Array<MOPEnumerationCase>()
     
-    public init(module: MOPModule,name: String,enumerationKind: MOPEnumerationKind,caseIndex: Int)
+    public init(module: MOPModule,name: String,caseNames: String...)
         {
-        self.enumerationKindID = enumerationKind.objectID
-        self.enumerationKind = enumerationKind
-        self.caseIndex = caseIndex
+        var index = 0
+        for caseName in caseNames
+            {
+            self.cases.append(MOPEnumerationCase(name: caseName, index: index))
+            index += 1
+            }
         super.init(module: module,name: name)
         }
     }

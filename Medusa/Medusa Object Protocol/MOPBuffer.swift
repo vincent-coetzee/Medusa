@@ -16,7 +16,7 @@ public class MOPBuffer
     init(sizeInBytes: Int)
         {
         self.sizeInBytes = sizeInBytes
-        self.pointer = Medusa.Buffer.allocate(byteCount: self.sizeInBytes, alignment: 1)
+        self.pointer = Medusa.RawBuffer.allocate(byteCount: self.sizeInBytes, alignment: 1)
         }
     
     public func nextPut(_ integer: Medusa.Integer64,atByteOffset: inout Int)

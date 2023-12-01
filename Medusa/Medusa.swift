@@ -10,7 +10,7 @@ import Fletcher
 
 public struct Medusa
     {
-    public typealias Float = Swift.Double
+    public typealias Float64 = Swift.Double
     public typealias Integer64 = Swift.Int
     public typealias Integer32 = Swift.Int32
     public typealias Integer16 = Swift.Int16
@@ -26,10 +26,11 @@ public struct Medusa
     public typealias Unsigned64 = UInt64
     public typealias Unsigned32 = UInt32
     public typealias Unsigned16 = UInt16
-    public typealias Buffer = UnsafeMutableRawPointer
-    public typealias Buffers = Array<Buffer>
+    public typealias RawBuffer = UnsafeMutableRawPointer
+    public typealias RawBuffers = Array<RawBuffer>
     public typealias UnicodeScalar = Unicode.Scalar
     public typealias PagePointer = Medusa.Integer64
+    public typealias ObjectBuffer = MOPBuffer
     
     public static let kMedusaServiceType = "_medusa._tcp."
     public static let kHostName = Host.current().localizedName!
@@ -216,9 +217,9 @@ public struct Medusa
         return(String(string.reversed()))
         }
         
-    public static func bitString(_ float: Medusa.Float) -> String
+    public static func bitString(_ float: Medusa.Float64) -> String
         {
-        let floatPointer = UnsafeMutablePointer<Medusa.Float>.allocate(capacity: 1)
+        let floatPointer = UnsafeMutablePointer<Medusa.Float64>.allocate(capacity: 1)
         floatPointer.pointee = float
         let rawPointer = UnsafeRawPointer(OpaquePointer(floatPointer))
         var string = String()
@@ -248,6 +249,15 @@ public struct Medusa
     }
 
 public typealias Integer64 = Medusa.Integer64
+public typealias ObjectBuffer = Medusa.ObjectBuffer
+public typealias Boolean = Medusa.Boolean
+public typealias Unsigned64 = Medusa.Unsigned64
+public typealias Byte = Medusa.Byte
+public typealias Atom = Medusa.Atom
+public typealias Enumeration = Medusa.Enumeration
+public typealias ObjectID = Medusa.ObjectID
+public typealias Float64 = Medusa.Float64
+public typealias RawBuffer = Medusa.RawBuffer
 
 extension Medusa.Address
     {
