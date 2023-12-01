@@ -38,7 +38,7 @@ public class BufferBrowserPopoverViewController: NSViewController
             {
             self.nameLabel.stringValue = field.name
             self.startOffsetLabel.stringValue = "\(field.startOffset)"
-            self.stopOffsetLabel.stringValue = "\(field.stopOffset)"
+            self.stopOffsetLabel.stringValue = "\(field.stopOffset - 1)"
             if buffer.isNotNil && self.field.isNotNil
                 {
                 self.onKindSelected(self)

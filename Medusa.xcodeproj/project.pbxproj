@@ -45,7 +45,6 @@
 		BFA944542B1111C100526CF1 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA944532B1111C100526CF1 /* File.swift */; };
 		BFA944582B1113EE00526CF1 /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = BFA944572B1113EE00526CF1 /* Path */; };
 		BFAAF0342B0F2A7C00A2FFD1 /* Fletcher.c in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF0332B0F2A7C00A2FFD1 /* Fletcher.c */; };
-		BFAAF0382B0FC1F000A2FFD1 /* PageBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF0372B0FC1F000A2FFD1 /* PageBuffer.swift */; };
 		BFAAF03C2B0FDF4300A2FFD1 /* FreeList.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF03B2B0FDF4300A2FFD1 /* FreeList.swift */; };
 		BFAAF03E2B0FE55A00A2FFD1 /* SystemIssue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF03D2B0FE55A00A2FFD1 /* SystemIssue.swift */; };
 		BFBAF5132B172BC1003ED388 /* FileIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAF5122B172BC1003ED388 /* FileIdentifier.swift */; };
@@ -137,7 +136,6 @@
 		BFAAF0312B0F29CD00A2FFD1 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		BFAAF0322B0F2A1E00A2FFD1 /* Fletcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Fletcher.h; sourceTree = "<group>"; };
 		BFAAF0332B0F2A7C00A2FFD1 /* Fletcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Fletcher.c; sourceTree = "<group>"; };
-		BFAAF0372B0FC1F000A2FFD1 /* PageBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageBuffer.swift; sourceTree = "<group>"; };
 		BFAAF03B2B0FDF4300A2FFD1 /* FreeList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeList.swift; sourceTree = "<group>"; };
 		BFAAF03D2B0FE55A00A2FFD1 /* SystemIssue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemIssue.swift; sourceTree = "<group>"; };
 		BFBAF5122B172BC1003ED388 /* FileIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileIdentifier.swift; sourceTree = "<group>"; };
@@ -378,7 +376,6 @@
 				BFA944462B10783800526CF1 /* KeyValue.swift */,
 				BF6C7E1E2B0E4ACC006DB858 /* Bytes.swift */,
 				BF9369422B0BF33700921D6E /* Page.swift */,
-				BFAAF0372B0FC1F000A2FFD1 /* PageBuffer.swift */,
 				BFD674832B0689990086932A /* PermissionsToken.swift */,
 				BF7075F92B1626C100E3F6D8 /* Stack.swift */,
 				BF9071602B11C281007F70EE /* Word.swift */,
@@ -548,7 +545,6 @@
 				BFD674642B05FD6C0086932A /* PongMessage.swift in Sources */,
 				BFFB2E992B05364C00254090 /* BTreePage.swift in Sources */,
 				BFA944492B1078B400526CF1 /* Fragment.swift in Sources */,
-				BFAAF0382B0FC1F000A2FFD1 /* PageBuffer.swift in Sources */,
 				BF6C7E192B0E28AF006DB858 /* Field.swift in Sources */,
 				BF7FFCE32B07AB3D001D2F93 /* MOPEnumerationCase.swift in Sources */,
 				BF7075FC2B162D5A00E3F6D8 /* Identifier.swift in Sources */,

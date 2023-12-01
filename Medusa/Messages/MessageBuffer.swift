@@ -79,6 +79,10 @@ public class MessageBuffer: Buffer
         {
         }
         
+    public func compact() throws
+        {
+        }
+        
     public init(socket: Socket) throws
         {
         let intSize = MemoryLayout<Int>.size
@@ -106,6 +110,11 @@ public class MessageBuffer: Buffer
         self.bufferSize = integerValue
         self.offset = integerValue
         self.sizeKind = .fixed(integerValue)
+        }
+        
+    public func fill(atByteOffset: Medusa.Integer64,with: Medusa.Byte,count: Medusa.Integer64)
+        {
+        fatalError("Not yet implemented.")
         }
         
     public func allocate(sizeInBytes: Medusa.Integer64) -> Medusa.Integer64

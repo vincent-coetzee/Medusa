@@ -24,10 +24,12 @@ public enum SystemIssueCode: String
     case invalidNumberOfBytesReadInRead                             = "Number of bytes read does not match buffer size in ByteBuffer.read(from:)"
     case invalidPath                                                = "The specified path can not be opened."
     case insufficientFreeSpace                                      = "There is not enough space to fit the object"
+    case insufficientFreeSpaceInPage                                = "There is not enough space to fit the object in the specified page"
     case incorrectReadSizeInDecodeMessage                           = "Incorrect byte count found when decoding message."
     case invalidMessageTypeInDecodeMessage                          = "Invalid message type value found when decoding message."
     case invalidFileDescriptor                                      = "The file descriptor is not valid, was the file opened ?"
     case invalidIntraPageAddress                                    = "The specified address is not valid for an intra page address."
+    case invalidDeallocationAddress                                 = "The specified address is invalid in this allocator."
     }
     
 public enum AgentKind

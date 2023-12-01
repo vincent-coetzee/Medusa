@@ -80,6 +80,22 @@ public class Bytes: Buffer,Fragment
         lhs.djb2Hash == rhs.djb2Hash
         }
 
+    public func compact() throws
+        {
+        }
+        
+    public func fill(atByteOffset: Medusa.Integer64,with: Medusa.Byte,count: Medusa.Integer64)
+        {
+        for index in atByteOffset..<min(atByteOffset + count,self.bytes.count)
+            {
+            self.bytes[index] = with
+            }
+        for _ in min(atByteOffset + count,self.bytes.count)..<(atByteOffset + count)
+            {
+            self.bytes.append(with)
+            }
+        }
+        
     public required init(from page: UnsafeMutableRawPointer,atByteOffset offset: Medusa.Integer64)
         {
         var localOffset = offset

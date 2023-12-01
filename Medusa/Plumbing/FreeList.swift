@@ -10,20 +10,37 @@ import Fletcher
 
 public class FreeListCell: Equatable
     {
+    public static let kCellHeaderSizeInBytes = MemoryLayout<Medusa.Integer64>.size * 2 + MemoryLayout<Medusa.Byte>.size
+    private static let kAllocatedBitOffset = 32
+    private static let kAllocatedBits = 1 << FreeListCell.kAllocatedBitOffset
+    
+    // This is the difference between size of cell and requested allocation size
     public var deltaSize: Int = 0
+    // This is the byte offset of the START OF THE CELL, not the start of the freee space,
+    // the free space starts 2 words ahead of this beacuse every block has a header
+    // containing a pointer to the next cell and the size of the block ( which includes
+    // the 2 extra words )
     public var byteOffset: Int
+    // The size in bytes of the whole cell
     public var sizeInBytes: Int
+    // Pointer to next cell
     internal var lastCell: FreeListCell?
+    // Pointer tom previous cell
     internal var nextCell: FreeListCell?
+    public var isAllocated = false
      
     public var count: Medusa.Integer64
         {
         1 + (self.nextCell?.count ?? 0)
         }
-        
-    public var cellSizeInBytes: Int
+    
+    public var endCell: FreeListCell
         {
-        Int(MemoryLayout<Medusa.Integer64>.size * 2)
+        if self.nextCell.isNotNil
+            {
+            return(self.nextCell!.endCell)
+            }
+        return(self)
         }
         
     public static func ==(lhs: FreeListCell,rhs: FreeListCell) -> Bool
@@ -38,18 +55,27 @@ public class FreeListCell: Equatable
         self.lastCell = nil
         self.nextCell = nil
         }
-        
+    //
+    // Read in the free list
+    //
     public init(in page: UnsafeMutableRawPointer,atByteOffset: Int,lastCell: FreeListCell?)
         {
         var offset = atByteOffset
         let nextCellOffset = readIntegerWithOffset(page,&offset)
         self.sizeInBytes = readIntegerWithOffset(page,&offset)
+        self.isAllocated = readByte(page,offset) == 1
         self.byteOffset = atByteOffset
         if nextCellOffset != 0
             {
             self.nextCell = FreeListCell(in: page,atByteOffset: nextCellOffset,lastCell: self)
             }
         self.lastCell = lastCell
+        }
+        
+    public func writeAll(to pageBuffer: UnsafeMutableRawPointer,number: Int = 0)
+        {
+        self.write(to: pageBuffer)
+        self.nextCell?.write(to: pageBuffer,number: number + 1)
         }
         
     public func write(to pageBuffer: UnsafeMutableRawPointer,number: Int = 0)
@@ -61,20 +87,21 @@ public class FreeListCell: Equatable
         print("     NEXT CELL OFFSET \(value)")
         writeIntegerWithOffset(pageBuffer,self.sizeInBytes,&offset)
         print("     SIZE IN BYTES \(self.sizeInBytes)")
-        self.nextCell?.write(to: pageBuffer,number: number + 1)
+        writeByte(pageBuffer,self.isAllocated ? 1 : 0,offset)
+        print("     ALLOCATED \(self.isAllocated)")
         }
         
-    public func cellsWithSufficientSpace(sizeInBytes: Int) -> Array<FreeListCell>
+    public func cellsWithSufficientSpace(sizeInBytes size: Int) -> Array<FreeListCell>
         {
         var cells = Array<FreeListCell>()
-        if self.sizeInBytes > sizeInBytes
+        if self.sizeInBytes > size && !self.isAllocated
             {
-            self.deltaSize = self.sizeInBytes - sizeInBytes
+            self.deltaSize = self.sizeInBytes - size
             cells.append(self)
             }
         if self.nextCell.isNotNil
             {
-            cells.append(contentsOf: self.nextCell!.cellsWithSufficientSpace(sizeInBytes: sizeInBytes))
+            cells.append(contentsOf: self.nextCell!.cellsWithSufficientSpace(sizeInBytes: size))
             }
         return(cells)
         }
@@ -82,30 +109,22 @@ public class FreeListCell: Equatable
 
 public class FreeList
     {
-    public struct CellReference
-        {
-        public let byteoffset: Medusa.Integer64
-        public let sizeInBytes: Medusa.Integer64
-        }
-        
-    public static let kCellSizeInBytes = 2 * MemoryLayout<Int>.size
-    public static let kSmallestFreeSpaceSizeInBytes = 10 * MemoryLayout<Int>.size * 2
-    
     public var count: Medusa.Integer64
         {
-        self.firstCell?.count ?? 0
+        self.firstCell.count
         }
         
     public var fields: CompositeField
         {
         let fields = CompositeField(name: "Free Cell Fields")
-        var cell = self.firstCell
+        var cell:FreeListCell? = self.firstCell
         var count = 0
         while cell.isNotNil
             {
             assert(cell!.byteOffset != 0,"ByteOffset should not be 0 but is.")
-            fields.append(Field(name: "Free \(count) Next",value: .integer(cell!.nextCell?.byteOffset ?? 0),offset: cell!.byteOffset))
-            fields.append(Field(name: "Free \(count) Size",value: .integer(cell!.sizeInBytes),offset: cell!.byteOffset + MemoryLayout<Medusa.Integer64>.size))
+            fields.append(Field(name: "Cell \(count) Next",value: .integer(cell!.nextCell?.byteOffset ?? 0),offset: cell!.byteOffset))
+            fields.append(Field(name: "Cell \(count) Size",value: .integer(cell!.sizeInBytes),offset: cell!.byteOffset + MemoryLayout<Medusa.Integer64>.size))
+            fields.append(Field(name: "Cell \(count) Allocated",value: .boolean(cell!.isAllocated),offset: cell!.byteOffset + 2 * MemoryLayout<Medusa.Integer64>.size))
             count += 1
             cell = cell?.nextCell
             }
@@ -113,102 +132,101 @@ public class FreeList
         }
         
     private var buffer: UnsafeMutableRawPointer
-    public private(set) var firstCell: FreeListCell?
+    public private(set) var firstCell: FreeListCell
+    private var endCell: FreeListCell
     
     init(buffer: UnsafeMutableRawPointer,atByteOffset: Int,sizeInBytes: Int)
         {
         self.buffer = buffer
         self.firstCell = FreeListCell(atByteOffset: atByteOffset,sizeInBytes: sizeInBytes)
+        self.endCell = self.firstCell.endCell
         }
         
     init(buffer: UnsafeMutableRawPointer,atByteOffset: Int)
         {
         self.buffer = buffer
         self.firstCell = FreeListCell(in: buffer,atByteOffset: Int(atByteOffset),lastCell: nil)
+        self.endCell = self.firstCell.endCell
         }
-        
+
     public func allocate(from buffer: UnsafeMutableRawPointer,sizeInBytes: Int) throws -> Medusa.Integer64
         {
-        guard let someCell = self.firstCell else
+        // Try the endCell to see if it has space
+        let actualSize = sizeInBytes + FreeListCell.kCellHeaderSizeInBytes
+        if self.endCell.sizeInBytes > actualSize
             {
-            throw(SystemIssue(code: .insufficientFreeSpace,agentKind: .pageServer,message: "Insufficient free space in free space list."))
+            // It has space, grab actualSize bytes and add a new end cell to the list
+            let lastOffset = self.endCell.byteOffset
+            let nextOffset = self.endCell.byteOffset + actualSize
+            let nextSize = self.endCell.sizeInBytes - actualSize
+            self.endCell.sizeInBytes = actualSize
+            self.endCell.isAllocated = true
+            let newEndCell = FreeListCell(atByteOffset: nextOffset,sizeInBytes: nextSize)
+            self.endCell.nextCell = newEndCell
+            newEndCell.lastCell = self.endCell
+            let oldEndCell = self.endCell
+            self.endCell = newEndCell
+            oldEndCell.writeAll(to: buffer)
+            return(lastOffset + FreeListCell.kCellHeaderSizeInBytes)
             }
-        let actualSize = sizeInBytes + MemoryLayout<Int>.size
-        let cells = someCell.cellsWithSufficientSpace(sizeInBytes: actualSize).sorted{$0.deltaSize < $1.deltaSize}
+        // There was no space in the end, see if we can find some free space in the list
+        var cells = self.firstCell.cellsWithSufficientSpace(sizeInBytes: actualSize).sorted{$0.deltaSize < $1.deltaSize}
+        if cells.isEmpty
+            {
+            self.coalesceFreeSpace(buffer: buffer)
+            cells = self.firstCell.cellsWithSufficientSpace(sizeInBytes: actualSize).sorted{$0.deltaSize < $1.deltaSize}
+            }
         guard !cells.isEmpty else
             {
-            throw(SystemIssue(code: .insufficientFreeSpace,agentKind: .pageServer))
+            throw(SystemIssue(code: .insufficientFreeSpaceInPage, agentKind: .pageServer))
             }
         let bestCell = cells.first!
-        let oldCellSize = bestCell.sizeInBytes
-        let newCellSize = bestCell.sizeInBytes - actualSize
-        assert(newCellSize>0,"newCellSize SHOULD BE > 0 BUT IS NOT.")
-        //
-        // If it's the first cell and the cell is too small
-        // then transfer free space to allocation
-        //
-        if bestCell == self.firstCell && newCellSize < FreeList.kSmallestFreeSpaceSizeInBytes
-            {
-            var oldOffset = bestCell.byteOffset
-            bestCell.nextCell?.lastCell = nil
-            self.firstCell = bestCell.nextCell
-            bestCell.byteOffset = oldOffset + MemoryLayout<Medusa.Integer64>.size
-            // Write the size of the allocation one word back from the start of the allocation
-            writeIntegerWithOffset(buffer,oldCellSize,&oldOffset)
-            return(bestCell.byteOffset)
-            }
-        //
-        // If it's the first cell AND there is sufficient space for a cell
-        //
-        else if bestCell == self.firstCell
-            {
-            var oldOffset = bestCell.byteOffset
-            bestCell.sizeInBytes = newCellSize
-            bestCell.byteOffset += actualSize
-            // Write the size of the allocation one word back from the start of the allocation
-            writeIntegerWithOffset(buffer,actualSize,&oldOffset)
-            return(oldOffset + MemoryLayout<Medusa.Integer64>.size)
-            }
-        //
-        // It's not the first cell, and it does not have sufficient space for another cell
-        // so attach the extra space to the allocation
-        //
-        else if bestCell.sizeInBytes - actualSize < FreeList.kSmallestFreeSpaceSizeInBytes
-            {
-            var oldOffset = bestCell.byteOffset
-            bestCell.lastCell?.nextCell = bestCell.nextCell
-            bestCell.nextCell?.lastCell = bestCell.lastCell
-            // Write the size of the allocation one word back from the start of the allocation
-            writeIntegerWithOffset(buffer,oldCellSize,&oldOffset)
-            return(oldOffset + MemoryLayout<Medusa.Integer64>.size)
-            }
-        //
-        // So it's not the first cell but it DOES have enough space to store a cell
-        // so adjust its values accordingly
-        //
-        else
-            {
-            var oldOffset = bestCell.byteOffset
-            bestCell.sizeInBytes = newCellSize
-            bestCell.byteOffset = oldOffset + actualSize
-            // Write the size of the allocation one word back from the start of the allocation
-            writeIntegerWithOffset(buffer,actualSize,&oldOffset)
-            return(oldOffset + MemoryLayout<Medusa.Integer64>.size)
-            }
+        // Use the space in the best cell by allocating it to the caller
+        bestCell.isAllocated = true
+        bestCell.write(to: buffer)
+        return(bestCell.byteOffset + FreeListCell.kCellHeaderSizeInBytes)
         }
         
-    public func deallocate(from buffer: UnsafeMutableRawPointer,atByteOffset: Medusa.Integer64,sizeInBytes: Int)
+    public func deallocate(from buffer: UnsafeMutableRawPointer,atByteOffset: Medusa.Integer64) throws -> Medusa.Integer64
         {
-        let address = atByteOffset - MemoryLayout<Medusa.Integer64>.size
-        let newCell = FreeListCell(atByteOffset: address, sizeInBytes: sizeInBytes)
-        newCell.nextCell = self.firstCell
-        self.firstCell?.nextCell = newCell
-        newCell.write(to: buffer)
+        var cell: FreeListCell? = self.firstCell
+        while cell.isNotNil
+            {
+            if atByteOffset - FreeListCell.kCellHeaderSizeInBytes == cell!.byteOffset
+                {
+                cell!.isAllocated = false
+                cell!.write(to: buffer)
+                return(cell!.sizeInBytes)
+                }
+            cell = cell!.nextCell
+            }
+        throw(SystemIssue(code: .invalidDeallocationAddress,agentKind: .pageServer))
         }
         
-    public func write(to buffer: UnsafeMutableRawPointer)
+    public func writeAll(to buffer: UnsafeMutableRawPointer)
         {
         print("WRITING FREE LIST FOR BUFFER \(buffer)")
-        self.firstCell?.write(to: buffer,number: 0)
+        self.firstCell.writeAll(to: buffer,number: 0)
+        }
+        
+    private func coalesceFreeSpace(buffer: UnsafeMutableRawPointer)
+        {
+        var cell: FreeListCell? = self.firstCell
+        while cell.isNotNil && cell!.nextCell.isNotNil
+            {
+            if !cell!.isAllocated && !cell!.nextCell!.isAllocated
+                {
+                cell!.sizeInBytes += cell!.nextCell!.sizeInBytes
+                cell!.nextCell = cell!.nextCell!.nextCell
+                cell!.nextCell!.lastCell = cell
+                // calculate offset from which to zero out the new empty space
+                let offsetBuffer = buffer + cell!.byteOffset + FreeListCell.kCellHeaderSizeInBytes
+                // calculate the number of bytes to zero
+                let size = cell!.sizeInBytes - FreeListCell.kCellHeaderSizeInBytes
+                // zero the coalesced memory
+                offsetBuffer.initializeMemory(as: Medusa.Byte.self,repeating: 0,count: cell!.sizeInBytes)
+                }
+            }
+        self.firstCell.writeAll(to: buffer)
         }
     }

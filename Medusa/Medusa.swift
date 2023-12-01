@@ -17,19 +17,19 @@ public struct Medusa
     public typealias String = Swift.String
     public typealias Byte = Swift.UInt8
     public typealias ObjectID = Swift.UInt64
-    public typealias Atom = Integer64
+    public typealias Atom = Medusa.Integer64
     public typealias Boolean = Swift.Bool
     public typealias Enumeration = MOPEnumeration
     public typealias MagicNumber = UInt64
     public typealias Checksum = UInt64
-    public typealias Address = Integer64
+    public typealias Address = Medusa.Integer64
     public typealias Unsigned64 = UInt64
     public typealias Unsigned32 = UInt32
     public typealias Unsigned16 = UInt16
     public typealias Buffer = UnsafeMutableRawPointer
     public typealias Buffers = Array<Buffer>
     public typealias UnicodeScalar = Unicode.Scalar
-    public typealias PagePointer = Integer64
+    public typealias PagePointer = Medusa.Integer64
     
     public static let kMedusaServiceType = "_medusa._tcp."
     public static let kHostName = Host.current().localizedName!
@@ -42,16 +42,15 @@ public struct Medusa
     public static let kPageBitsMask = 1_125_899_906_842_623
     
     public static let kPageMagicNumberOffset                = 0
-    public static let kPageChecksumOffset                   = 8
-    public static let kPageFreeByteCountOffset              = 16
-    public static let kPageFirstFreeCellOffsetOffset        = 24
-    public static let kPageFreeCellCountOffset              = 32
-    public static let kPageHeaderSizeInBytes                = 40
+    public static let kPageChecksumOffset                   = kPageMagicNumberOffset + MemoryLayout<Medusa.Integer64>.size
+    public static let kPageFreeByteCountOffset              = kPageChecksumOffset + MemoryLayout<Medusa.Integer64>.size
+    public static let kPageFreeCellCountOffset              = kPageFreeByteCountOffset + MemoryLayout<Medusa.Integer64>.size
+    public static let kPageHeaderSizeInBytes                = kPageFreeCellCountOffset + MemoryLayout<Medusa.Integer64>.size
     
-    public static let kBTreePageKeyCountOffset                   = 40
-    public static let kBTreePageKeysPerPageOffset                = 48
-    public static let kBTreePageIsLeafOffset                     = 56
-    public static let kBTreePageHeaderSizeInBytes                = Medusa.kBTreePageIsLeafOffset + MemoryLayout<Medusa.Boolean>.size
+    public static let kBTreePageKeyCountOffset                   = kPageHeaderSizeInBytes
+    public static let kBTreePageKeysPerPageOffset                = kBTreePageKeyCountOffset + MemoryLayout<Medusa.Integer64>.size
+    public static let kBTreePageIsLeafOffset                     = kBTreePageKeysPerPageOffset + MemoryLayout<Medusa.Integer64>.size
+    public static let kBTreePageHeaderSizeInBytes                = kBTreePageIsLeafOffset + MemoryLayout<Medusa.Boolean>.size
     
     public static let kBTreePageKeysOffset                       = Medusa.kBTreePageHeaderSizeInBytes
     
@@ -248,6 +247,8 @@ public struct Medusa
         }
     }
 
+public typealias Integer64 = Medusa.Integer64
+
 extension Medusa.Address
     {
     public init(page: Int,offset: Int)
@@ -369,6 +370,10 @@ public func testBTreePages() throws
     let viewController = windowController.contentViewController as! BufferBrowserViewController
     windowController.window?.title = "Page 1"
     windowController.showWindow(nil)
+    let windowController1 = storyboard.instantiateController(withIdentifier: "btreePageInspectorWindowController") as! NSWindowController
+    let viewController1 = windowController1.contentViewController as! BTreePageInspectorViewController
+    viewController1.btreePage = page1
+    windowController1.showWindow(nil)
 //    let page3 = BTreePage<String,String>(from: page1)
 //    viewController.leftBuffer = PageWrapper(page: page1)
 //    viewController.rightBuffer = PageWrapper(page: page1)

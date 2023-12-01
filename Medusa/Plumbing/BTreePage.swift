@@ -20,11 +20,17 @@ public class BTreePage<Key,Value>: Page where Key:Fragment,Value:Fragment
     private var childPointersOffset: Int = 0
     internal var keys: Keys!
     
-    internal override var basePageSizeInBytes: Medusa.Integer64
+    internal override var initialFreeCellOffset: Medusa.Integer64
         {
-        super.basePageSizeInBytes + 3 * MemoryLayout<Medusa.Integer64>.size + self.keysPerPage * MemoryLayout<Medusa.Integer64>.size
+        Medusa.kBTreePageHeaderSizeInBytes + self.keysPerPage * MemoryLayout<Medusa.Integer64>.size + (self.keysPerPage + 1) * MemoryLayout<Medusa.Integer64>.size
         }
- 
+        
+    public override var initialFreeByteCount: Medusa.Integer64
+        {
+        // The page size               less the header size                 less size of the key pointers                            less the size of the child pointers                            less the size of the first free cell
+        Medusa.kBTreePageSizeInBytes - Medusa.kBTreePageHeaderSizeInBytes - self.keysPerPage * MemoryLayout<Medusa.Integer64>.size - (self.keysPerPage + 1) * MemoryLayout<Medusa.Integer64>.size - 2 * MemoryLayout<Medusa.Integer64>.size
+        }
+        
     public override var fields: CompositeField
         {
         let superFields = super.fields
@@ -100,9 +106,9 @@ public class BTreePage<Key,Value>: Page where Key:Fragment,Value:Fragment
         self.writeChecksum()
         }
         
-    internal override func rewritePage() throws
+    internal override func rewrite() throws
         {
-        try super.rewritePage()
+        try super.rewrite()
         try self.rewriteKeysAndChildren()
         super.writeChecksum()
         self.needsDefragmentation = false

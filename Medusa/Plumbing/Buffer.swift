@@ -12,6 +12,8 @@ public protocol Buffer
     var rawPointer: UnsafeMutableRawPointer { get }
     var fields: CompositeField { get }
     var sizeInBytes: Int { get }
+    func compact() throws
+    func fill(atByteOffset: Medusa.Integer64,with: Medusa.Byte,count: Medusa.Integer64)
     func flush()
     func bytes(atByteOffset: Int,sizeInBytes: Int) -> Array<Medusa.Byte>
     func allocate(sizeInBytes: Int) throws -> Int

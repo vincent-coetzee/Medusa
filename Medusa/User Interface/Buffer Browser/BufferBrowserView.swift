@@ -274,7 +274,55 @@ class BufferBrowserView: NSView
             }
         }
         
-    public override func draw(_ rect: NSRect)
+//    public override func draw(_ rectangle: NSRect)
+//        {
+//        if buffer.isNil
+//            {
+//            return
+//            }
+//        var rectCount = 0
+//        var rects: UnsafePointer<NSRect>?
+//        var theRects = Array<NSRect>()
+//        self.getRectsBeingDrawn(&rects, count: &rectCount)
+//        if let rects = rects
+//            {
+//            var pointer = rects
+//            for _ in 0..<rectCount
+//                {
+//                theRects.append(rects.pointee)
+//                pointer += 1
+//                }
+//            }
+//        var offset = CGPoint(x: self.leftTextInset + self.columnGutterWidth,y: 6 + self.rowHeight)
+//        var rowCount = 0
+//        self.insertRowMarker(row: rowCount,at: CGPoint(x: self.leftLabelInset,y: offset.y))
+//        
+//        for index in 1...buffer.sizeInBytes
+//            {
+//            if rectangle.contains(offset)
+//                {
+//                let value = self.buffer[index - 1]
+//                let text = self.valueType.format(Int(value))
+//                let someFont = value == 0 ? self.font! : self.boldFont!
+//                let color = value == 0 ? self.lowlightColor : self.highlightColor
+//                let string = NSAttributedString(string: text,attributes: [.font: someFont,.foregroundColor: color])
+//                string.draw(at: offset)
+//                offset.x += self.columnGutterWidth + self.columnWidth
+//                if (index % self.columnCount == 0) && index > 0
+//                    {
+//                    offset.y += rowHeight
+//                    rowCount += 1
+//                    offset.x = self.leftTextInset + self.columnGutterWidth
+//                    offset.y += self.rowHeight
+//                    self.insertRowMarker(row: rowCount * self.columnCount,at: CGPoint(x: self.leftLabelInset,y: offset.y))
+//                    }
+//                    
+//                }
+//            }
+//        self.drawFields()
+//        }
+        
+    public override func draw(_ rectangle: NSRect)
         {
         if buffer.isNil
             {
@@ -298,26 +346,24 @@ class BufferBrowserView: NSView
         self.insertRowMarker(row: rowCount,at: CGPoint(x: self.leftLabelInset,y: offset.y))
         for index in 1...buffer.sizeInBytes
             {
-            for rect in theRects
+            let value = self.buffer[index - 1]
+            let text = self.valueType.format(Int(value))
+            let someFont = value == 0 ? self.font! : self.boldFont!
+            let color = value == 0 ? self.lowlightColor : self.highlightColor
+            let string = NSAttributedString(string: text,attributes: [.font: someFont,.foregroundColor: color])
+            let rectToDraw = CGRect(origin: offset,size: string.size())
+            if self.needsToDraw(rectToDraw)
                 {
-                if rect.contains(offset)
-                    {
-                    let value = self.buffer[index - 1]
-                    let text = self.valueType.format(Int(value))
-                    let someFont = value == 0 ? self.font! : self.boldFont!
-                    let color = value == 0 ? self.lowlightColor : self.highlightColor
-                    let string = NSAttributedString(string: text,attributes: [.font: someFont,.foregroundColor: color])
-                    string.draw(at: offset)
-                    offset.x += self.columnGutterWidth + self.columnWidth
-                    if (index % self.columnCount == 0) && index > 0
-                        {
-                        offset.y += rowHeight
-                        rowCount += 1
-                        offset.x = self.leftTextInset + self.columnGutterWidth
-                        offset.y += self.rowHeight
-                        self.insertRowMarker(row: rowCount * self.columnCount,at: CGPoint(x: self.leftLabelInset,y: offset.y))
-                        }
-                    }
+                string.draw(at: offset)
+                }
+            offset.x += self.columnGutterWidth + self.columnWidth
+            if (index % self.columnCount == 0) && index > 0
+                {
+                offset.y += rowHeight
+                rowCount += 1
+                offset.x = self.leftTextInset + self.columnGutterWidth
+                offset.y += self.rowHeight
+                self.insertRowMarker(row: rowCount * self.columnCount,at: CGPoint(x: self.leftLabelInset,y: offset.y))
                 }
             }
         self.drawFields()
@@ -345,44 +391,41 @@ class BufferBrowserView: NSView
         self.sections = Array()
         for field in self.buffer.fields.flattenedFields.filter({$0.isBufferBased}).sorted(by: {$0.startOffset < $1.startOffset})
             {
-            if field.isBufferBased
+            let sections = field.sections(withRowWidth: self.columnCount)
+            let color = (flipper == 0 ? self.colorA : self.colorB)
+            flipper = flipper == 0 ? 1 : 0
+            for section in sections
                 {
-                let sections = field.sections(withRowWidth: self.columnCount)
-                let color = (flipper == 0 ? self.colorA : self.colorB)
-                flipper = flipper == 0 ? 1 : 0
-                for section in sections
+                let minY = CGFloat(section.startRow) * twiceRowHeight + 6
+                let minX = CGFloat(section.startColumn) * totalWidth + self.leftTextInset + 4
+                let maxY = minY + twiceRowHeight + 1
+                let maxX = minX + CGFloat(section.stopColumn - section.startColumn) * totalWidth - 4
+                let rect = CGRect(x: minX,y: minY,width: maxX - minX,height: maxY - minY)
+                section.frame = rect
+                self.sections.append(section)
+                let left =  NSAttributedString(string:"\(section.startOffset(rowWidth: self.columnCount))",attributes: attributes)
+                left.draw(at: NSPoint(x: minX,y: minY))
+                let nameString = NSAttributedString(string: field.name,attributes: attributes)
+                let nameSize = nameString.size()
+                let xPoint = minX + (rect.width - nameSize.width) / 2
+                let leftMax = minX + left.size().width
+                if xPoint > leftMax
                     {
-                    let minY = CGFloat(section.startRow) * twiceRowHeight + 6
-                    let minX = CGFloat(section.startColumn) * totalWidth + self.leftTextInset + 4
-                    let maxY = minY + twiceRowHeight + 1
-                    let maxX = minX + CGFloat(section.stopColumn - section.startColumn) * totalWidth - 4
-                    let rect = CGRect(x: minX,y: minY,width: maxX - minX,height: maxY - minY)
-                    section.frame = rect
-                    self.sections.append(section)
-                    let left =  NSAttributedString(string:"\(section.startOffset(rowWidth: self.columnCount))",attributes: attributes)
-                    left.draw(at: NSPoint(x: minX,y: minY))
-                    let nameString = NSAttributedString(string: field.name,attributes: attributes)
-                    let nameSize = nameString.size()
-                    let xPoint = minX + (rect.width - nameSize.width) / 2
-                    let leftMax = minX + left.size().width
-                    if xPoint > leftMax
-                        {
-                        nameString.draw(at: NSPoint(x: xPoint,y:minY))
-                        }
-                    let right = NSAttributedString(string:"\(section.stopOffset(rowWidth: self.columnCount) - 1)",attributes: attributes)
-                    let rightSize = right.size()
-                    let rightX = maxX - rightSize.width
-                    if rightX > leftMax
-                        {
-                        right.draw(at: NSPoint(x: rightX,y: minY))
-                        }
-                    let path = NSBezierPath(rect: rect)
-                    color.set()
-                    path.fill()
-                    path.lineWidth = 1
-                    self.lineColor.set()
-                    path.stroke()
+                    nameString.draw(at: NSPoint(x: xPoint,y:minY))
                     }
+                let right = NSAttributedString(string:"\(section.stopOffset(rowWidth: self.columnCount) - 1)",attributes: attributes)
+                let rightSize = right.size()
+                let rightX = maxX - rightSize.width
+                if rightX > leftMax
+                    {
+                    right.draw(at: NSPoint(x: rightX,y: minY))
+                    }
+                let path = NSBezierPath(rect: rect)
+                color.set()
+                path.fill()
+                path.lineWidth = 1
+                self.lineColor.set()
+                path.stroke()
                 }
             }
         }
@@ -394,7 +437,10 @@ class BufferBrowserView: NSView
         let string = NSAttributedString(string: text,attributes: [.font: self.smallBoldFont!,.foregroundColor: self.regularColor])
         let size = string.size()
         frame.origin.x += frame.size.width - size.width
-        string.draw(in: frame)
+        if self.needsToDraw(frame)
+            {
+            string.draw(in: frame)
+            }
         }
 
     private func measureColumnWidth() -> NSSize
