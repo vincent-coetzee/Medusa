@@ -224,9 +224,9 @@ public class MessageBuffer: Buffer
             self.grow()
             }
         let double = date.timeIntervalSinceReferenceDate
-        self.alignOffset(to: Medusa.Float.self)
-        self.bytes.storeBytes(of: double, toByteOffset: self.offset,as: Medusa.Float.self)
-        self.offset += MemoryLayout<Medusa.Float>.size
+        self.alignOffset(to: Medusa.Float64.self)
+        self.bytes.storeBytes(of: double, toByteOffset: self.offset,as: Medusa.Float64.self)
+        self.offset += MemoryLayout<Medusa.Float64>.size
         }
         
     public func encode(_ boolean: Bool)
@@ -240,15 +240,15 @@ public class MessageBuffer: Buffer
         self.offset += MemoryLayout<Bool>.size
         }
         
-    public func encode(_ float: Medusa.Float)
+    public func encode(_ float: Medusa.Float64)
         {
-        if self.offset + MemoryLayout<Medusa.Float>.size >= self.bufferSize
+        if self.offset + MemoryLayout<Medusa.Float64>.size >= self.bufferSize
             {
             self.grow()
             }
-        self.alignOffset(to: Medusa.Float.self)
-        self.bytes.storeBytes(of: float,toByteOffset: self.offset,as: Medusa.Float.self)
-        self.offset += MemoryLayout<Medusa.Float>.size
+        self.alignOffset(to: Medusa.Float64.self)
+        self.bytes.storeBytes(of: float,toByteOffset: self.offset,as: Medusa.Float64.self)
+        self.offset += MemoryLayout<Medusa.Float64>.size
         }
         
     public func encode(_ string: String)
@@ -298,10 +298,10 @@ public class MessageBuffer: Buffer
         return(value)
         }
         
-    public func decodeFloat() -> Medusa.Float
+    public func decodeFloat() -> Medusa.Float64
         {
-        let value = self.bytes.load(fromByteOffset: self.offset, as: Medusa.Float.self)
-        self.offset += MemoryLayout<Medusa.Float>.size
+        let value = self.bytes.load(fromByteOffset: self.offset, as: Medusa.Float64.self)
+        self.offset += MemoryLayout<Medusa.Float64>.size
         return(value)
         }
         

@@ -11,6 +11,8 @@ import Fletcher
 public struct Medusa
     {
     public typealias Float64 = Swift.Double
+    public typealias Float32 = Swift.Float
+    public typealias Float16 = Swift.Int16
     public typealias Integer64 = Swift.Int
     public typealias Integer32 = Swift.Int32
     public typealias Integer16 = Swift.Int16
@@ -31,6 +33,8 @@ public struct Medusa
     public typealias UnicodeScalar = Unicode.Scalar
     public typealias PagePointer = Medusa.Integer64
     public typealias ObjectBuffer = MOPBuffer
+    public typealias Instance = MOPInstance
+    public typealias Instances = Array<Instance>
     
     public static let kMedusaServiceType = "_medusa._tcp."
     public static let kHostName = Host.current().localizedName!
@@ -249,15 +253,24 @@ public struct Medusa
     }
 
 public typealias Integer64 = Medusa.Integer64
+public typealias Integer32 = Medusa.Integer32
+public typealias Integer16 = Medusa.Integer16
 public typealias ObjectBuffer = Medusa.ObjectBuffer
 public typealias Boolean = Medusa.Boolean
 public typealias Unsigned64 = Medusa.Unsigned64
+public typealias Unsigned32 = Medusa.Unsigned32
+public typealias Unsigned16 = Medusa.Unsigned16
 public typealias Byte = Medusa.Byte
 public typealias Atom = Medusa.Atom
 public typealias Enumeration = Medusa.Enumeration
 public typealias ObjectID = Medusa.ObjectID
 public typealias Float64 = Medusa.Float64
+public typealias Float32 = Medusa.Float32
+public typealias Float16 = Medusa.Float16
 public typealias RawBuffer = Medusa.RawBuffer
+public typealias Address = Medusa.Address
+public typealias Instance = Medusa.Instance
+public typealias Instances = Medusa.Instances
 
 extension Medusa.Address
     {

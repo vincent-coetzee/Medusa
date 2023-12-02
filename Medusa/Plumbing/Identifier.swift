@@ -169,6 +169,16 @@ public struct Identifier: Hashable, Sequence
         {
         IdentifierIterator(identifier: self)
         }
+        
+    public func storeBytes(in buffer: RawBuffer,atByteOffset: inout Integer64)
+        {
+        buffer.storeBytes(of: self.count,toByteOffset: atByteOffset,as: Integer64.self)
+        atByteOffset += MemoryLayout<Integer64>.size
+        for part in self.parts
+            {
+            part.storeBytes(in: buffer,atByteOffset: &atByteOffset)
+            }
+        }
     }
 
 extension String.StringInterpolation

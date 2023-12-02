@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class MOPEnumerationPrimitive: MOPPrimitive
+public class MOPEnumeration: MOPPrimitive
     {
     public var cases = Array<MOPEnumerationCase>()
     
@@ -21,4 +21,28 @@ public class MOPEnumerationPrimitive: MOPPrimitive
             }
         super.init(module: module,name: name)
         }
+        
+    public init()
+        {
+        super.init(module: .argonModule,name: "Integer64")
+        }
+        
+    public override var sizeInBytes: Integer64
+        {
+        get
+            {
+            MemoryLayout<Medusa.Byte>.size
+            }
+        set
+            {
+            }
+        }
+    }
+
+
+public struct MOPEnumerationInstance
+    {
+    public let enumeration: MOPEnumeration
+    public let caseIndex: Integer64
+    public var associatedValues: Instances
     }

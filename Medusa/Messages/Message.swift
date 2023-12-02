@@ -27,26 +27,26 @@ public class Message
     {
     private static var _klass: MOPClass?
 
-    private static var klass: MOPClass
-        {
-        if self._klass.isNil
-            {
-            let someKlass = MOPClass(module: MOPClass.argonModule,name: "Message")
-            someKlass.addInstanceVariable(name: "messageType", klass: .messageType)
-            someKlass.addInstanceVariable(name: "sequenceNumber", klass: .integer)
-            someKlass.addInstanceVariable(name: "sourceIP", klass: .ipv6Address)
-            someKlass.addInstanceVariable(name: "targetIP", klass: .ipv6Address)
-            someKlass.addInstanceVariable(name: "totalMessageSize", klass: .integer)
-            someKlass.addInstanceVariable(name: "payloadSize", klass: .integer)
-            someKlass.addInstanceVariable(name: "payloadOffset", klass: .integer)
-            }
-        return(self._klass!)
-        }
-        
-    public var klass: MOPClass
-        {
-        Self.klass
-        }
+//    private static var klass: MOPClass
+//        {
+//        if self._klass.isNil
+//            {
+//            let someKlass = MOPClass(module: .argonModule,name: "Message")
+//            someKlass.addInstanceVariable(name: "messageType", klass: .messageType)
+//            someKlass.addInstanceVariable(name: "sequenceNumber", klass: .integer64)
+//            someKlass.addInstanceVariable(name: "sourceIP", klass: .ipv6Address)
+//            someKlass.addInstanceVariable(name: "targetIP", klass: .ipv6Address)
+//            someKlass.addInstanceVariable(name: "totalMessageSize", klass: .integer64)
+//            someKlass.addInstanceVariable(name: "payloadSize", klass: .integer64)
+//            someKlass.addInstanceVariable(name: "payloadOffset", klass: .integer64)
+//            }
+//        return(self._klass!)
+//        }
+//        
+//    public var klass: MOPClass
+//        {
+//        Self.klass
+//        }
     //
     // Message class state
     //
@@ -139,10 +139,10 @@ public class Message
         }
         
     @inlinable
-    public func encode(_ float: Medusa.Float,on socket: Socket) throws
+    public func encode(_ float: Medusa.Float64,on socket: Socket) throws
         {
         var value = float
-        try socket.write(from: &value,bufSize: MemoryLayout<Medusa.Float>.size)
+        try socket.write(from: &value,bufSize: MemoryLayout<Medusa.Float64>.size)
         }
         
     @inlinable
@@ -213,9 +213,9 @@ public class Message
         }
         
     @inlinable
-    public func decodeFloat(from socket: Socket) throws -> Medusa.Float
+    public func decodeFloat(from socket: Socket) throws -> Medusa.Float64
         {
-        let floatSize = MemoryLayout<Float>.size
+        let floatSize = MemoryLayout<Float64>.size
         let pointer = UnsafeMutablePointer<CChar>.allocate(capacity: floatSize)
         defer
             {
@@ -226,8 +226,8 @@ public class Message
             {
             throw(SystemIssue(code: .incorrectReadSizeInDecodeMessage,agentKind: .unknown))
             }
-        var floatValue: Medusa.Float!
-        pointer.withMemoryRebound(to: Medusa.Float.self, capacity: 1)
+        var floatValue: Medusa.Float64!
+        pointer.withMemoryRebound(to: Medusa.Float64.self, capacity: 1)
             {
             floatPointer in
             floatValue = floatPointer.pointee

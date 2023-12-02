@@ -52,11 +52,11 @@ public class MOPBuffer
         self.byteCounter += MemoryLayout<Medusa.Boolean>.size
         }
         
-    public func nextPut(_ float: Medusa.Float,atByteOffset:inout Int)
+    public func nextPut(_ float: Medusa.Float64,atByteOffset:inout Int)
         {
-        self.pointer.storeBytes(of: float, toByteOffset: atByteOffset, as: Medusa.Float.self)
-        atByteOffset += MemoryLayout<Medusa.Float>.size
-        self.byteCounter += MemoryLayout<Medusa.Float>.size
+        self.pointer.storeBytes(of: float, toByteOffset: atByteOffset, as: Medusa.Float64.self)
+        atByteOffset += MemoryLayout<Medusa.Float64>.size
+        self.byteCounter += MemoryLayout<Medusa.Float64>.size
         }
         
     public func nextPut(_ identifier: Identifier,atByteOffset:inout Int)
@@ -89,9 +89,9 @@ public class MOPBuffer
         self.byteCounter = 0
         }
         
-    public func nextPut(_ enumeration: MOPEnumeration,atByteOffset:inout Int)
+    public func nextPut(_ enumeration: MOPEnumeration,caseIndex: Integer64,atByteOffset:inout Int)
         {
-        self.nextPut(enumeration.enumerationKind!.identifier,atByteOffset: &atByteOffset)
-        self.nextPut(enumeration.caseIndex,atByteOffset: &atByteOffset)
+        self.nextPut(enumeration.identifier,atByteOffset: &atByteOffset)
+        self.nextPut(caseIndex,atByteOffset: &atByteOffset)
         }
     }

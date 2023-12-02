@@ -13,6 +13,8 @@ class AppDelegate: NSObject, NSApplicationDelegate
     func applicationDidFinishLaunching(_ aNotification: Notification)
         {
         Medusa.runTests()
+        let module = MOPArgonModule.shared
+        module.initHierarchy()
         }
 
     func applicationWillTerminate(_ aNotification: Notification)

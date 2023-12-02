@@ -7,13 +7,16 @@
 
 import Cocoa
 
-class PrimaryViewController: NSViewController
+class PrimaryViewController: NSViewController,NSMenuItemValidation,NSMenuDelegate
     {
     private var netService: NetService!
     
     override func viewDidLoad()
         {
         super.viewDidLoad()
+        NSApplication.shared.mainMenu!.item(withTitle: "Tools")!.submenu!.item(withTitle: "Browse Repository...")!.target = self
+        NSApplication.shared.mainMenu!.item(withTitle: "Tools")!.submenu!.item(withTitle: "Browse Repository...")!.action = #selector(PrimaryViewController.onBrowseRepositoryClicked)
+        NSApplication.shared.mainMenu!.item(withTitle: "Tools")!.submenu!.item(withTitle: "Browse Repository...")!.isEnabled = true
         self.initializeBonjour()
         self.browseBuffer(self)
         self.browseBTreePage(self)
@@ -33,6 +36,11 @@ class PrimaryViewController: NSViewController
             }
         }
         
+    @objc public func validateMenuItem(_ menuItem: NSMenuItem) -> Bool
+        {
+        true
+        }
+        
     @IBAction func browseBuffer(_ sender: Any?)
         {
         let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
@@ -46,6 +54,14 @@ class PrimaryViewController: NSViewController
         let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
         let windowController = storyboard.instantiateController(withIdentifier: "btreePageInspectorWindowController") as! NSWindowController
         let _ = windowController.contentViewController as! BTreePageInspectorViewController
+        windowController.showWindow(self)
+        }
+        
+    @IBAction func onBrowseRepositoryClicked(_ sender: Any?)
+        {
+        let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
+        let windowController = storyboard.instantiateController(withIdentifier: "repositoryBrowserWindowController") as! NSWindowController
+        let _ = windowController.contentViewController as! RepositoryBrowserViewController
         windowController.showWindow(self)
         }
     }

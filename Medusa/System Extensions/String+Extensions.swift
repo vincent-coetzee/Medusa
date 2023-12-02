@@ -60,6 +60,11 @@ extension String: Fragment
         return(newString)
         }
         
+    public func storeBytes(in buffer: RawBuffer,atByteOffset: inout Integer64)
+        {
+        self.write(to: buffer,atByteOffset: &atByteOffset)
+        }
+        
     public var sizeInBytes: Int
         {
         return(self.count * MemoryLayout<Unicode.Scalar>.size + 8)

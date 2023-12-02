@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		BF1927B02B1A6B4200643243 /* MOPMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1927AF2B1A6B4200643243 /* MOPMessage.swift */; };
 		BF1927B22B1A741700643243 /* MOPString.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1927B12B1A741700643243 /* MOPString.swift */; };
-		BF1927B42B1A7F6400643243 /* MOPIPv6AddressPrimitive.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1927B32B1A7F6400643243 /* MOPIPv6AddressPrimitive.swift */; };
-		BF1927B62B1A7FC200643243 /* MOPBitsPrimitive.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1927B52B1A7FC200643243 /* MOPBitsPrimitive.swift */; };
+		BF1927B42B1A7F6400643243 /* MOPIPv6Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1927B32B1A7F6400643243 /* MOPIPv6Address.swift */; };
+		BF1927B62B1A7FC200643243 /* MOPBits.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1927B52B1A7FC200643243 /* MOPBits.swift */; };
 		BF521F3B2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF521F3A2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift */; };
 		BF6473892B13A91D0049B583 /* SmalltalkMonads.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6473882B13A91D0049B583 /* SmalltalkMonads.swift */; };
 		BF6C7E132B0E259A006DB858 /* BTreePageInspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E122B0E259A006DB858 /* BTreePageInspectorWindowController.swift */; };
@@ -84,6 +84,10 @@
 		BFFB2E9A2B05364C00254090 /* FreePageAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E912B05364B00254090 /* FreePageAgent.swift */; };
 		BFFB2E9B2B05364C00254090 /* BaseAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E922B05364C00254090 /* BaseAgent.swift */; };
 		BFFB2E9C2B05364C00254090 /* LoggingAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E932B05364C00254090 /* LoggingAgent.swift */; };
+		BFFE7E7A2B1B5D1100776231 /* MOPMetaclass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFE7E792B1B5D1100776231 /* MOPMetaclass.swift */; };
+		BFFE7E7C2B1B980C00776231 /* RepositoryBrowserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFE7E7B2B1B980C00776231 /* RepositoryBrowserViewController.swift */; };
+		BFFE7E7F2B1B988C00776231 /* WeakReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFE7E7E2B1B988C00776231 /* WeakReference.swift */; };
+		BFFE7E812B1B990D00776231 /* WeakArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFE7E802B1B990D00776231 /* WeakArray.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -101,8 +105,8 @@
 /* Begin PBXFileReference section */
 		BF1927AF2B1A6B4200643243 /* MOPMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPMessage.swift; sourceTree = "<group>"; };
 		BF1927B12B1A741700643243 /* MOPString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPString.swift; sourceTree = "<group>"; };
-		BF1927B32B1A7F6400643243 /* MOPIPv6AddressPrimitive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPIPv6AddressPrimitive.swift; sourceTree = "<group>"; };
-		BF1927B52B1A7FC200643243 /* MOPBitsPrimitive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPBitsPrimitive.swift; sourceTree = "<group>"; };
+		BF1927B32B1A7F6400643243 /* MOPIPv6Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPIPv6Address.swift; sourceTree = "<group>"; };
+		BF1927B52B1A7FC200643243 /* MOPBits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPBits.swift; sourceTree = "<group>"; };
 		BF521F3A2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferBrowserPopoverViewController.swift; sourceTree = "<group>"; };
 		BF6473882B13A91D0049B583 /* SmalltalkMonads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmalltalkMonads.swift; sourceTree = "<group>"; };
 		BF6C7E122B0E259A006DB858 /* BTreePageInspectorWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTreePageInspectorWindowController.swift; sourceTree = "<group>"; };
@@ -179,6 +183,10 @@
 		BFFB2E912B05364B00254090 /* FreePageAgent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreePageAgent.swift; sourceTree = "<group>"; };
 		BFFB2E922B05364C00254090 /* BaseAgent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseAgent.swift; sourceTree = "<group>"; };
 		BFFB2E932B05364C00254090 /* LoggingAgent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggingAgent.swift; sourceTree = "<group>"; };
+		BFFE7E792B1B5D1100776231 /* MOPMetaclass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPMetaclass.swift; sourceTree = "<group>"; };
+		BFFE7E7B2B1B980C00776231 /* RepositoryBrowserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryBrowserViewController.swift; sourceTree = "<group>"; };
+		BFFE7E7E2B1B988C00776231 /* WeakReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeakReference.swift; sourceTree = "<group>"; };
+		BFFE7E802B1B990D00776231 /* WeakArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeakArray.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -220,8 +228,9 @@
 				BF7FFCCC2B079CB9001D2F93 /* MOPWriter.swift */,
 				BF1927AF2B1A6B4200643243 /* MOPMessage.swift */,
 				BF1927B12B1A741700643243 /* MOPString.swift */,
-				BF1927B32B1A7F6400643243 /* MOPIPv6AddressPrimitive.swift */,
-				BF1927B52B1A7FC200643243 /* MOPBitsPrimitive.swift */,
+				BF1927B32B1A7F6400643243 /* MOPIPv6Address.swift */,
+				BF1927B52B1A7FC200643243 /* MOPBits.swift */,
+				BFFE7E792B1B5D1100776231 /* MOPMetaclass.swift */,
 			);
 			path = "Medusa Object Protocol";
 			sourceTree = "<group>";
@@ -340,6 +349,7 @@
 				BFA9444F2B11101F00526CF1 /* Buffer Browser */,
 				BFA944502B11102C00526CF1 /* Miscellaneous */,
 				BFA944512B11106500526CF1 /* Primary View Controller */,
+				BFFE7E7D2B1B981600776231 /* RepositoryBrowser */,
 			);
 			path = "User Interface";
 			sourceTree = "<group>";
@@ -384,6 +394,8 @@
 				BF9369422B0BF33700921D6E /* Page.swift */,
 				BFD674832B0689990086932A /* PermissionsToken.swift */,
 				BF7075F92B1626C100E3F6D8 /* Stack.swift */,
+				BFFE7E802B1B990D00776231 /* WeakArray.swift */,
+				BFFE7E7E2B1B988C00776231 /* WeakReference.swift */,
 				BF9071602B11C281007F70EE /* Word.swift */,
 			);
 			path = Plumbing;
@@ -429,6 +441,14 @@
 				BFD674822B06749A0086932A /* User Interface */,
 			);
 			path = Medusa;
+			sourceTree = "<group>";
+		};
+		BFFE7E7D2B1B981600776231 /* RepositoryBrowser */ = {
+			isa = PBXGroup;
+			children = (
+				BFFE7E7B2B1B980C00776231 /* RepositoryBrowserViewController.swift */,
+			);
+			path = RepositoryBrowser;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -541,12 +561,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF6C7E162B0E25B8006DB858 /* BTreePageInspectorViewController.swift in Sources */,
+				BFFE7E812B1B990D00776231 /* WeakArray.swift in Sources */,
 				BFFB2E9B2B05364C00254090 /* BaseAgent.swift in Sources */,
 				BFD674562B05F5900086932A /* RequestMessage.swift in Sources */,
 				BFD734B02B06F15500CD500D /* NSColor+Extensions.swift in Sources */,
 				BFFB2E942B05364C00254090 /* ExecutionAgent.swift in Sources */,
 				BFD674542B05F5700086932A /* SocketQueue.swift in Sources */,
 				BFAAF03E2B0FE55A00A2FFD1 /* SystemIssue.swift in Sources */,
+				BFFE7E7F2B1B988C00776231 /* WeakReference.swift in Sources */,
 				BFD674622B05FD450086932A /* PingMessage.swift in Sources */,
 				BFD674642B05FD6C0086932A /* PongMessage.swift in Sources */,
 				BFFB2E992B05364C00254090 /* BTreePage.swift in Sources */,
@@ -566,7 +588,7 @@
 				BFD674842B0689990086932A /* PermissionsToken.swift in Sources */,
 				BFD6747D2B06689E0086932A /* BufferBrowserViewController.swift in Sources */,
 				BF7FFCE72B08010B001D2F93 /* Optional+Extensions.swift in Sources */,
-				BF1927B62B1A7FC200643243 /* MOPBitsPrimitive.swift in Sources */,
+				BF1927B62B1A7FC200643243 /* MOPBits.swift in Sources */,
 				BFD6745E2B05FBEC0086932A /* ConnectMessage.swift in Sources */,
 				BF1927B22B1A741700643243 /* MOPString.swift in Sources */,
 				BFD674792B065A9C0086932A /* BufferBrowserView.swift in Sources */,
@@ -580,6 +602,7 @@
 				BFD674582B05F5A80086932A /* ResponseMessage.swift in Sources */,
 				BFD6747B2B065ADF0086932A /* Buffer.swift in Sources */,
 				BF7FFCDF2B07AA72001D2F93 /* MOPEnumeration.swift in Sources */,
+				BFFE7E7C2B1B980C00776231 /* RepositoryBrowserViewController.swift in Sources */,
 				BFD6746F2B0638A70086932A /* MessageBuffer.swift in Sources */,
 				BF7075FE2B16300B00E3F6D8 /* MOPModule.swift in Sources */,
 				BFFB2E9A2B05364C00254090 /* FreePageAgent.swift in Sources */,
@@ -594,10 +617,11 @@
 				BF7FFCDB2B07A04F001D2F93 /* MOPBuffer.swift in Sources */,
 				BF6C7E1F2B0E4ACC006DB858 /* Bytes.swift in Sources */,
 				BFD674762B0659DA0086932A /* BufferBrowserWindowController.swift in Sources */,
+				BFFE7E7A2B1B5D1100776231 /* MOPMetaclass.swift in Sources */,
 				BF7075F82B16016300E3F6D8 /* BTree.swift in Sources */,
 				BF9369432B0BF33700921D6E /* Page.swift in Sources */,
 				BFFB2E7D2B05363300254090 /* AppDelegate.swift in Sources */,
-				BF1927B42B1A7F6400643243 /* MOPIPv6AddressPrimitive.swift in Sources */,
+				BF1927B42B1A7F6400643243 /* MOPIPv6Address.swift in Sources */,
 				BF9071652B11F148007F70EE /* UnsafeMutableRawPointer+Extensions.swift in Sources */,
 				BF7FFCCB2B079CA3001D2F93 /* MOPChannel.swift in Sources */,
 				BF7076022B16594100E3F6D8 /* MOPRoot.swift in Sources */,

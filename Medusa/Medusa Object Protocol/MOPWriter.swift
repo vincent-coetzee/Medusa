@@ -9,12 +9,17 @@ import Foundation
 
 public class MOPWriter: MOPReader
     {
-    private let packetSizeInBytes: Int
+    private let pageAgent: PageAgent
+    private var startPage: Page?
+    private var pages = Pages()
+    private let startOffset: Integer64
     
-    public init(offset:Medusa.Integer64,sizeInBytes: Int,packetSizeInBytes: Int)
+    public init(pageAgent: PageAgent,startPage: Page?,startOffset: Integer64)
         {
-        self.packetSizeInBytes = packetSizeInBytes
-        super.init(offset: offset,sizeInBytes: sizeInBytes)
+        self.pageAgent = pageAgent
+        self.startPage = startPage
+        self.startOffset = startOffset
+        super.init()
         }
         
     public func encode(_ integer: Medusa.Integer64)

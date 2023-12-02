@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class MOPBitsPrimitive: MOPPrimitive
+public class MOPBits: MOPPrimitive
     {
     public let sizeInBits: Integer64
     

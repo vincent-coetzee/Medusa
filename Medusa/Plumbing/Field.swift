@@ -78,7 +78,7 @@ public class Field: Sequence
                 case .boolean:
                     return(MemoryLayout<Medusa.Boolean>.size)
                 case .float:
-                    return(MemoryLayout<Medusa.Float>.size)
+                    return(MemoryLayout<Medusa.Float64>.size)
                 case .string(let string):
                     return(MemoryLayout<Int32>.size + string.count * MemoryLayout<Character>.size)
                 case .magicNumber:
@@ -101,7 +101,7 @@ public class Field: Sequence
         case empty
         case integer(Medusa.Integer64)
         case boolean(Medusa.Boolean)
-        case float(Medusa.Float)
+        case float(Medusa.Float64)
         case string(Medusa.String)
         case magicNumber(Medusa.MagicNumber)
         case checksum(Medusa.Checksum)

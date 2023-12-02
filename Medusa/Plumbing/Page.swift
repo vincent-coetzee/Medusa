@@ -164,7 +164,7 @@ public class Page
             }
         // but pass the allocator the exact size the caller wants not the adjusted size
         let byteOffset = try self.freeList.allocate(from: self.buffer,sizeInBytes: sizeInBytes)
-        self.freeByteCount -= sizeInBytes + FreeListCell.kCellHeaderSizeInBytes
+        self.freeByteCount -= sizeInBytes + FreeListBlockCell.kCellHeaderSizeInBytes
         return(byteOffset)
         }
         
@@ -264,3 +264,5 @@ public class PageWrapper: Buffer
         try self.page.rewrite()
         }
     }
+
+public typealias Pages = Array<Page>

@@ -7,17 +7,19 @@
 
 import Foundation
 
-public enum MOPValue
+public enum MOPInstance
     {
-    case integer(Medusa.Integer64)
-    case unsigned(Medusa.Unsigned64)
-    case float(Medusa.Float)
-    case string(Medusa.String)
-    case boolean(Medusa.Boolean)
-    case byte(Medusa.Byte)
+    case integer64(Integer64)
+    case unsigned64(Unsigned64)
+    case float64(Float64)
+    case string(String)
+    case boolean(Boolean)
+    case byte(Byte)
     case unicodeScalar(Medusa.UnicodeScalar)
-    case atom(Medusa.Atom)
-    case objectId(Medusa.ObjectID)
-    case address(Medusa.Address)
+    case atom(Atom)
     case object(MOPObject)
+    case address(Address)
+    case enumeration(MOPEnumeration,Integer64,Instances)
+    case identifier(Identifier)
     }
+

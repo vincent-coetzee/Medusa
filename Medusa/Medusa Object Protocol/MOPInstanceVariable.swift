@@ -15,7 +15,7 @@ public class MOPInstanceVariable
     
     public var sizeInBytes: Medusa.Integer64
         {
-        self.klass.sizeInBytes!
+        self.klass.sizeInBytes
         }
         
     public init(name: String,klass: MOPClass,offset: Int)
