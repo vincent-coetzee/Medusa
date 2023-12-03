@@ -10,14 +10,9 @@ import os
 
 public class StorageAgent
     {
-    internal static func nextAvailableAgent() -> StorageAgent
-        {
-        fatalError("Not yet implemented")
-        }
+    internal static private(set) var shared: StorageAgent!
         
-    private let eventLogger = Logger(subsystem: "com.macsemantics.xenon",category: "Boss")
-    
-    public func boot()
+    public func createFilesIfNeeded()
         {
         }
     }

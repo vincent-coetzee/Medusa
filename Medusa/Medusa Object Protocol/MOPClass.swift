@@ -13,38 +13,54 @@ import Foundation
 //            1   000     Integer64            = 0     Copy
 //            0   001     Float64              = 1     Copy
 //            0   010     Atom                 = 2     Copy
-//            0   011     Bits                 = 3     Copy
-//            0   100     Header               = 4     Copy
-//            0   101     Object               = 5     Follow
-//            0   110     Address              = 6     Follow
+//            0   011     Header               = 3     Copy
+//            0   100     Object               = 4     Follow
+//            0   101     Address              = 5     Follow
+//            0   110     Boolean              = 6     Copy
 //            0   111     Nothing              = 7     Copy
 //
 //            
 //Object Structure
 //
-//            Header 64 Bits           Sign ( 1 bit )           0                                                                          0   1
-//                                     Tag ( 3 bits )            000                                                                       1   4
-//                                     SizeInWords ( 36 bits )      0000 00000000 00000000 00000000 00000000                               4  40
-//                                     HasBytes ( 1 bit )                                                   0                            40  41
-//                                     FlipCount ( 13 bits = 8191 )                                          0000000 000000              41  54
-//                                     IsForwarded ( 1 bit )                                                               0             54  55
-//                                     Reserved ( 9 bits = 512 )                                                            0 00000000   55  64
+//            Header 64 Bits           Sign ( 1 bit )                   0                                                                          0   1
+//                                     Tag ( 3 bits )                    000                                                                       1   4
+//                                     SizeInWords ( 36 bits )              0000 00000000 00000000 00000000 0000000                                4  40
+//                                     HasBytes ( 1 bit )                                                          0                              40  41
+//                                     FlipCount ( 13 bits = 8191 )                                                  00000000 000000              41  54
+//                                     IsForwarded ( 1 bit )                                                                        0             54  55
+//                                     IsMarked   ( 1 bit )                                                                          0            55  56
+//                                     Reserved ( 8 bits = 512 )                                                                       RESERVED   56  64
 //
-//            Header                                            00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-//            Class Pointer                                     00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-//            Slot 0                                            00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+//            Header                                                    00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000    0   8
+//            Class Pointer                                             00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000    8  16
+//            Slot 0 ( Hash value )                                     00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000   16  24
+//            ...
+//            ...
+//            ...
+//            Slot N                                                    00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000   16 + ( ivar count * 8 )
 //
-//            Slot N                                            00000000 00000000 00000000 00000000 000000000 00000000 00000000 00000000
-//            Block Header             Sign Bit ( 1 bit )       0
-//                                     Overflow Bit ( 1 bit )    0
-//                                     Size in Words ( 36 bits )  000000 00000000 00000000 00000000 0000000
-//                                                                                                         00 00000000 00000000 00000000
+//            In an object with hasBytes = true then the last slot is followed by a count and an address, the count is the number of words in the bytes part of the object and the address is the page address of the first block
 //
-//            Next Block Address                                00000000 00000000 00000000 00000000 000000000 00000000 00000000 00000000
-//            Bytes                                             0011???? ???????? ???????? ???????? ????????? ???????? ???????? ????????
-//                                                              0011???? ???????? ???????? ???????? ????????? ???????? ???????? ????????
-//                                                              0011???? ???????? ???????? ???????? ????????? ???????? ???????? ????????
+//            The initial number of slots allocated inside an object 
+//            Block Header             Sign + Tag ( 4 bits )            0000
+//                                     Block Slot Count ( 30 bits )         CCCC CCCCCCCC CCCCCCCC CCCCCCCC CC                                    The total number of slots in this block ( typically 128 - 2 slots )
+//                                     Block Used Slot Count ( 30 bits )                                      UUUUUU UUUUUUUU UUUUUUUU UUUUUUUU   The number of used slots in this block ( 0 in object block i.e. first block header )
+//                                     Address Next Block ( 60 bits )   S101AAAA AAAAAAAA AAAAAAAA AAAAAAAA AAAAAAAA AAAAAAAA AAAAAAAA AAAAAAAA   The page/offset address of the next block of slots
 //
+//
+//            Addresses and object pointers are defined as follows
+//
+//                                     Address:
+//                                               Sign ( 1 bit )         0
+//                                               Tag ( 3 bits )          101
+//                                     Page offset ( 36 bits )              0000 00000000 00000000 00000000 00000000
+//                                     Intra page offset ( 24 bits )                                                 00000000 00000000 00000000
+//
+//                                     Object Pointer:
+//                                               Sign ( 1 bit )         0
+//                                               Tag ( 3 bits )          100
+//                                     Page offset ( 36 bits )              0000 00000000 00000000 00000000 00000000
+//                                     Intra page offset ( 24 bits )                                                 00000000 00000000 00000000
 
 public class MOPClass: MOPObject
     {
@@ -203,27 +219,6 @@ public class MOPClass: MOPObject
         MOPArgonModule.shared.lookupClass(named: "WriteStream")!
         }()
 
-        
-
-        
-
-        
-
-        
-    public static let ipv6Address = MOPIPv6Address(module: .argonModule,name: "IPv6Address").initialize()
-    public static let messageType = MOPEnumeration(module: .argonModule,name: "MessageType",caseNames: "none","ping","pong","connect","connectAccept","connectReject","disconnect","disconnectAccept","Request","Response").initialize()
-    public static let integer64 = MOPInteger64().setClass(.primitive)
-    public static let string = MOPString().setClass(.primitive)
-    public static let boolean = MOPBoolean().setClass(.primitive)
-    public static let float64 = MOPFloat64().setClass(.primitive)
-    public static let byte = MOPByte().setClass(.primitive)
-    public static let unsigned64 = MOPUnsigned64().setClass(.primitive)
-    public static let module = MOPModuleClass(module: .argonModule, name: "Module",ofClass: .class).initialize()
-    public static let object = MOPClass(module: .argonModule,name: "Object",ofClass: .class)
-    public static let `class` = MOPClass(module: .argonModule,name: "Class")
-    public static let metaclass = MOPClass(module: .argonModule,name: "Metaclass")
-    public static let primitive = MOPPrimitive(module: .argonModule,name: "Primitive")
-    
     public var superklasses = WeakArray<MOPClass>()
     public var instanceVariables = Dictionary<String,MOPInstanceVariable>()
     public let name: String
@@ -259,14 +254,14 @@ public class MOPClass: MOPObject
         super.init(ofClass: ofClass,hasBytes: hasBytes)
         }
         
-    public func addInstanceVariable(name: String,klass: MOPClass)
+    public func addInstanceVariable(name: String,class klass: MOPClass)
         {
         let instanceVariable = MOPInstanceVariable(name: name,klass: klass,offset: self.nextOffset)
         self.instanceVariables[name] = instanceVariable
         self.nextOffset += instanceVariable.sizeInBytes
         }
         
-    public func addPrimitiveInstanceVariable<R,T>(name: String,klass: MOPClass,keyPath: KeyPath<R,T>)
+    public func addPrimitiveInstanceVariable<R,T>(name: String,class klass: MOPClass,keyPath: KeyPath<R,T>)
         {
         let instanceVariable = MOPPrimitiveInstanceVariable(name: name,klass: klass,offset: self.nextOffset,keyPath: keyPath)
         self.instanceVariables[name] = instanceVariable

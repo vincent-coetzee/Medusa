@@ -7,6 +7,7 @@
 
 import AppKit
 import Fletcher
+import Path
 
 public struct Medusa
     {
@@ -35,6 +36,20 @@ public struct Medusa
     public typealias ObjectBuffer = MOPBuffer
     public typealias Instance = MOPInstance
     public typealias Instances = Array<Instance>
+        
+//    public private(set) static var kMedusaDirectoryPath = Path(FileManager.default.homeDirectoryForCurrentUser.path + "/Medusa/")!
+    public private(set) static var kMedusaDirectoryPath = Path("/Users/vincent/Medusa")!
+    public private(set) static var kMedusaDataDirectoryPath = Medusa.kMedusaDirectoryPath + "/Data"
+    public private(set) static var kMedusaLogDirectoryPath = Medusa.kMedusaDirectoryPath + "/Logs"
+    public private(set) static var kMedusaDataFilePath = Medusa.kMedusaDataDirectoryPath + "/Data.medusa"
+    public private(set) static var kMedusaIndexFilePath = Medusa.kMedusaDataDirectoryPath + "/Index.medusa"
+    public private(set) static var kMedusaReplicateFilePath = Medusa.kMedusaDataDirectoryPath + "/Replicate.medusa"
+    
+    public static let kLogFilenameFormatString = "Medusa.%@.log"
+    public static let kBytesPerKilobyte = 1024
+    public static let kBytesPerMegabyte = Medusa.kBytesPerKilobyte * Medusa.kBytesPerKilobyte
+    public static let kBytesPerGigabyte = Medusa.kBytesPerMegabyte * Medusa.kBytesPerKilobyte
+    public static let kBytesPerDiskPage = 16 * Medusa.kBytesPerKilobyte
     
     public static let kMedusaServiceType = "_medusa._tcp."
     public static let kHostName = Host.current().localizedName!
@@ -250,6 +265,107 @@ public struct Medusa
             print(error)
             }
         }
+        
+    public private(set) static var kMappedSegmentSizeInBytes:Integer64 = 0
+    public private(set) static var kDataBaseAddress: Integer64 = 0
+    public private(set) static var kIndexBaseAddress: Integer64 = 0
+    public private(set) static var kReplicateBaseAddress: Integer64 = 0
+    
+    public static func boot()
+        {
+        let _ = LoggingAgent()
+        Self.initSegmentAddressing()
+        Self.initAgents()
+        let handles = Self.createFilesIfNeeded()
+        Self.mapSegments(fileHandles: handles)
+        self.finalizeBoot()
+        }
+        
+    private static func initSegmentAddressing()
+        {
+        LoggingAgent.shared.log("Initializing segment addressing.")
+        Self.kMappedSegmentSizeInBytes = 16 * Medusa.kBytesPerGigabyte * Medusa.kBytesPerDiskPage
+        LoggingAgent.shared.log("Segment length set to \(Self.kMappedSegmentSizeInBytes) bytes.")
+        let baseAddress = Self.kMappedSegmentSizeInBytes
+        LoggingAgent.shared.log("Setting base address to 0x\(String(baseAddress,radix: 16,uppercase: true)).")
+        Self.kDataBaseAddress = Self.align(baseAddress,to: Medusa.kBytesPerDiskPage)
+        LoggingAgent.shared.log("Setting desired data segment address to 0x\(String(Self.kDataBaseAddress,radix: 16,uppercase: true)).")
+        Self.kIndexBaseAddress = Self.align(Self.kDataBaseAddress + Self.kMappedSegmentSizeInBytes,to: Medusa.kBytesPerDiskPage)
+        LoggingAgent.shared.log("Setting desired index segment address to 0x\(String(Self.kIndexBaseAddress,radix: 16,uppercase: true)).")
+        Self.kReplicateBaseAddress = Self.align(Self.kIndexBaseAddress + Self.kMappedSegmentSizeInBytes,to: Medusa.kBytesPerDiskPage)
+        LoggingAgent.shared.log("Setting desired replicate segment address to 0x\(String(Self.kReplicateBaseAddress,radix: 16,uppercase: true)).")
+        }
+        
+    public static func align(_ address: Integer64,to someAlignment: Integer64) -> Integer64
+        {
+        var value = address
+        if value % someAlignment != 0
+            {
+            let mask = Int(someAlignment - 1)
+            value = Int((value + (-value & mask)) + Int(someAlignment))
+            }
+        print("Aligned \(address) to \(someAlignment) = \(value)")
+        return(value)
+        }
+        
+    private static func createFilesIfNeeded() -> Array<FileHandle>
+        {
+        if !Self.kMedusaDataDirectoryPath.isDirectory
+            {
+            LoggingAgent.shared.log("\(Self.kMedusaDataDirectoryPath.string) does not exist, files will be created.")
+            do
+                {
+                try FileManager.default.createDirectory(at: Self.kMedusaDataDirectoryPath.url, withIntermediateDirectories: true)
+                LoggingAgent.shared.log("Successfully created Data directory \(Self.kMedusaDataDirectoryPath.string).")
+                }
+            catch let error
+                {
+                LoggingAgent.shared.log("Creation of directory \(Self.kMedusaDataDirectoryPath.string) failed with \(error).")
+                fatalError("Creation of Date directory failed, Medusa will now terminate.")
+                }
+            }
+        else
+            {
+            LoggingAgent.shared.log("Found directory \(Self.kMedusaDataDirectoryPath.string).")
+            }
+        var handles = Array<FileHandle>()
+        do
+            {
+            handles.append(try FileHandle(path: kMedusaDataFilePath).open(mode: .write,.create,.truncate))
+            LoggingAgent.shared.log("Successfully created data file \(Self.kMedusaDataFilePath.string).")
+            handles.append(try FileHandle(path: kMedusaIndexFilePath).open(mode: .write,.create,.truncate))
+            LoggingAgent.shared.log("Successfully created index file \(Self.kMedusaIndexFilePath.string).")
+            handles.append(try FileHandle(path: kMedusaReplicateFilePath).open(mode: .write,.create,.truncate))
+            LoggingAgent.shared.log("Successfully created replicate file \(Self.kMedusaReplicateFilePath.string).")
+            LoggingAgent.shared.log("Successfully created all required files.")
+            self.initFileContents()
+            return(handles)
+            }
+        catch let error
+            {
+            LoggingAgent.shared.log("Creation of file failed with \(error).")
+            fatalError("Creation of files failed, Medusa will now terminate.")
+            }
+        }
+        
+    private static func initFileContents()
+        {
+        }
+        
+    public static func mapSegments(fileHandles: Array<FileHandle>)
+        {
+        LoggingAgent.shared.log("Mapping files to segments.")
+        }
+        
+    public static func initAgents()
+        {
+        LoggingAgent.shared.log("Initializing agents.")
+        }
+        
+    public static func finalizeBoot()
+        {
+        LoggingAgent.shared.log("Finalizing Medusa boot sequence.")
+        }
     }
 
 public typealias Integer64 = Medusa.Integer64
@@ -368,25 +484,25 @@ public func testFields()
     
 public func testBTreePages() throws
     {
-    let page1 = BTreePage<String,String>(fileIdentifier: .empty,magicNumber: 0xDEADB00BDEADB00B,keysPerPage: 50)
+    let page1 = BTreePage<String,String>(fileHandle: .empty,magicNumber: 0xDEADB00BDEADB00B,keysPerPage: 50)
 //    let page2 = BTreePage<String,String>(magicNumber: 0xCAFEBABEDEADBEEF)
-    do
-        {
+//    do
+//        {
 //        page1.keys[0] = try page1.insert(key: "George VI",value: "This is a royal string.")
 //        try page2.insertKeyEntry(key: "George VI",value: "This is a royal string.",pointer: 27_270_270)
 //        page1.keys[1] = try page1.insert(key: "Charles III",value: "He is the latest king of England. Son of the late Queen.")
 //        try page2.insertKeyEntry(key: "Charles III",value: "He is the latest king of England.",pointer: 3_333_333)
 //        page1.keys[2] = try page1.insert(key: "Wattled Grebe",value: "The plainest of birds to be found in the Kruger Park.")
 //        try page2.insertKeyEntry(key: "Leopard-Tailed Barbet",value: "A most unusual bird.",pointer: 1_111_111)
-        }
-    catch let error as SystemIssue
-        {
-        print("Insertion of key entries failed with error: \(error).")
-        }
-    catch
-        {
-        print("error")
-        }
+//        }
+//    catch let error as SystemIssue
+//        {
+//        print("Insertion of key entries failed with error: \(error).")
+//        }
+//    catch
+//        {
+//        print("error")
+//        }
     try page1.write()
     let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
     let windowController = storyboard.instantiateController(withIdentifier: "bufferBrowserWindowController") as! NSWindowController

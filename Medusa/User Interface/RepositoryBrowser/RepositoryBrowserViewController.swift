@@ -73,7 +73,7 @@ extension RepositoryBrowserViewController: NSOutlineViewDelegate
                 textField.isBordered = false
                 textField.isEditable = false
                 textField.backgroundColor = self.outlineView.backgroundColor
-                textField.textColor = NSColor.argonTribalSeaGreen
+                textField.textColor = NSColor.argonLivingCoral
                 textField.drawsBackground = false
                 textField.stringValue = someClass.name
                 return(textField)

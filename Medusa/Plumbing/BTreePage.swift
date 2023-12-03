@@ -75,14 +75,14 @@ public class BTreePage<Key,Value>: Page where Key:Fragment,Value:Fragment
         return(field)
         }
     
-    public required init(fileIdentifier: FileIdentifier,magicNumber: Medusa.MagicNumber,keysPerPage: Medusa.Integer64)
+    public required init(fileHandle: FileHandle,magicNumber: Medusa.MagicNumber,keysPerPage: Medusa.Integer64)
         {
         self.children = ChildPointers(repeating: 0,count: keysPerPage + 1)
         self.keys = Keys(repeating: 0, count: keysPerPage)
         self.keysPerPage = keysPerPage
         self.childPointersOffset = Medusa.kBTreePageKeysOffset + keysPerPage * MemoryLayout<Medusa.Integer64>.size
         super.init(magicNumber: magicNumber)
-        self.fileIdentifier = fileIdentifier
+        self.fileHandle = fileHandle
         }
         
     public override init(from buffer: UnsafeMutableRawPointer)
@@ -263,7 +263,7 @@ public class BTreePage<Key,Value>: Page where Key:Fragment,Value:Fragment
             }
         else
             {
-            let page2 = try PageAgent.nextAvailableAgent().readBTreePage(from: self.fileIdentifier, at: self.children[position], keyType: Key.self, valueType: Value.self)
+            let page2 = try PageAgent.nextAvailableAgent().readBTreePage(from: self.fileHandle, at: self.children[position], keyType: Key.self, valueType: Value.self)
             var middle: KeyValue<Key,Value>!
             let nextPage = try page2.insert(key: key, value: value, medianKeyValue: &middle)
             if let nextPage
@@ -285,7 +285,7 @@ public class BTreePage<Key,Value>: Page where Key:Fragment,Value:Fragment
             {
             let middle = self.keyCount / 2
             medianKeyValue = KeyValue(key: self.key(at: middle),value: self.value(at: middle))
-            let newPage = try PageAgent.nextAvailableAgent().allocateBTreePage(fileIdentifier: self.fileIdentifier, magicNumber: self.magicNumber, keysPerPage: self.keysPerPage, keyType: Key.self, valueType: Value.self)
+            let newPage = try PageAgent.nextAvailableAgent().allocateBTreePage(fileHandle: self.fileHandle, magicNumber: self.magicNumber, keysPerPage: self.keysPerPage, keyType: Key.self, valueType: Value.self)
             newPage.keyCount = self.keyCount - middle - 1
             newPage.isLeaf = self.isLeaf
             for index in 0..<newPage.keyCount

@@ -30,6 +30,9 @@ public enum SystemIssueCode: String
     case invalidFileDescriptor                                      = "The file descriptor is not valid, was the file opened ?"
     case invalidIntraPageAddress                                    = "The specified address is not valid for an intra page address."
     case invalidDeallocationAddress                                 = "The specified address is invalid in this allocator."
+    
+    case segmentMappingFailed                                       = "Memory mapping of segment ( mmap ) failed."
+    case segmentAdviseFailed                                        = "Giving OS advise about segment usage failed."
     }
     
 public enum AgentKind

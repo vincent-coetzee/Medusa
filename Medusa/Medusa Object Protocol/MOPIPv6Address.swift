@@ -12,8 +12,8 @@ public class MOPIPv6Address: MOPPrimitive
     public override func initialize() -> Self
         {
         _ = super.initialize()
-        self.addInstanceVariable(name: "network", klass: MOPBits(module: .argonModule,name: "Bits64", sizeInBits: 64))
-        self.addInstanceVariable(name: "node", klass: MOPBits(module: .argonModule,name: "Bits64", sizeInBits: 64))
+        self.addInstanceVariable(name: "network", class: MOPBits(module: .argonModule,name: "Bits64", sizeInBits: 64))
+        self.addInstanceVariable(name: "node", class: MOPBits(module: .argonModule,name: "Bits64", sizeInBits: 64))
         return(self)
         }
     }

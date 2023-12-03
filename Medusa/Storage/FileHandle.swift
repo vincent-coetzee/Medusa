@@ -8,9 +8,9 @@
 import Foundation
 import Path
 
-public struct FileIdentifier
+public class FileHandle
     {
-    public static let empty = try! FileIdentifier(path: "/")
+    public static let empty = try! FileHandle(path: Path("/")!)
     
     public struct Mode: OptionSet
         {
@@ -76,37 +76,57 @@ public struct FileIdentifier
         
     public var fileDescriptor: Int32!
     public let path: Path
-    public var address: Medusa.Address?
+    public var baseAddress: Medusa.Address?
     
-    public init(path: String) throws
+    public init(path: Path) throws
         {
-        if let somePath = Path(path)
-            {
-            self.path = somePath
-            }
-        else
-            {
-            throw(SystemIssue(code: .invalidPath,agentKind: .pageServer))
-            }
+        self.path = path
         }
         
-    public mutating func open(mode: Mode) throws
+    public func open(mode: Mode...) throws -> Self
         {
+        let modeValue = mode.reduce(0) { $0 | $1.modeValue }
         let string = self.path.string
-        self.fileDescriptor = Darwin.open(string,mode.modeValue)
+        self.fileDescriptor = Darwin.open(string,modeValue)
         if self.fileDescriptor == -1
             {
-            let message = String(cString: strerror(errno))
+            let string = String(cString: strerror(errno))
+            let message = "Opening file at \(string) in mode \(mode) failed with error(\(errno)) \(string)"
+            LoggingAgent.shared.log(message)
             throw(SystemIssue(code: .fileOpenFailed,agentKind: .pageServer,message: message))
             }
-        
+        LoggingAgent.shared.log("File at \(string) in mode \(mode) successfully opened for \(mode).")
+        return(self)
         }
         
-    public func map(to: Medusa.Address) throws
+    public func map(to address: Medusa.Address,sizeInBytes: Integer64,offset: Integer64) throws
         {
+        let stringAddress = String(address,radix: 16,uppercase: true)
+        LoggingAgent.shared.log("Preparing to map segment at \(stringAddress) to file\(path.string).")
         if self.fileDescriptor < 1
             {
+            LoggingAgent.shared.log("Invalid file descriptor (\(String(describing:self.fileDescriptor))) in FileHandle.map(to:sizeInBytes:offset).")
             throw(SystemIssue(code: .invalidFileDescriptor,agentKind: .pageServer))
             }
+        var actualAddress = UnsafeMutableRawPointer(bitPattern: address)
+        let result = mmap(actualAddress,sizeInBytes,PROT_WRITE,MAP_FIXED | MAP_SHARED,self.fileDescriptor,Int64(offset))
+        if result == MAP_FAILED
+            {
+            let string = String(cString: strerror(errno))
+            let message = "Mapping of segment at \(stringAddress) failed with error(\(errno)) \(string)"
+            LoggingAgent.shared.log(message)
+            throw(SystemIssue(code: .segmentMappingFailed,agentKind: .pageServer,message: message))
+            }
+        LoggingAgent.shared.log("Advising macOS of mmap usage: MADV_RANDOM,MADV_WILLNEED.")
+        actualAddress = UnsafeMutableRawPointer(bitPattern: address)
+        if madvise(actualAddress,sizeInBytes,MADV_RANDOM | MADV_WILLNEED) == -1
+            {
+            let string = String(cString: strerror(errno))
+            let message = "Advising OS of segment at \(stringAddress) failed with error(\(errno)) \(string)"
+            LoggingAgent.shared.log(message)
+            throw(SystemIssue(code: .segmentAdviseFailed,agentKind: .pageServer,message: message))
+            }
+        LoggingAgent.shared.log("File \(self.path.string) sucessfully mapped into segment at \(stringAddress).")
+        self.baseAddress = address
         }
     }

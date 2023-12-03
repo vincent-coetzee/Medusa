@@ -211,7 +211,7 @@ public class FreeList
         
     private func coalesceFreeSpace(buffer: UnsafeMutableRawPointer)
         {
-        var cell: FreeListBlockCell? = self.firstCell
+        let cell: FreeListBlockCell? = self.firstCell
         while cell.isNotNil && cell!.nextCell.isNotNil
             {
             if !cell!.isAllocated && !cell!.nextCell!.isAllocated
@@ -222,7 +222,7 @@ public class FreeList
                 // calculate offset from which to zero out the new empty space
                 let offsetBuffer = buffer + cell!.byteOffset + FreeListBlockCell.kCellHeaderSizeInBytes
                 // calculate the number of bytes to zero
-                let size = cell!.sizeInBytes - FreeListBlockCell.kCellHeaderSizeInBytes
+//                let size = cell!.sizeInBytes - FreeListBlockCell.kCellHeaderSizeInBytes
                 // zero the coalesced memory
                 offsetBuffer.initializeMemory(as: Medusa.Byte.self,repeating: 0,count: cell!.sizeInBytes)
                 }

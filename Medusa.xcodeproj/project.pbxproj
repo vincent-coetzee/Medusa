@@ -49,7 +49,7 @@
 		BFAAF0342B0F2A7C00A2FFD1 /* Fletcher.c in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF0332B0F2A7C00A2FFD1 /* Fletcher.c */; };
 		BFAAF03C2B0FDF4300A2FFD1 /* FreeList.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF03B2B0FDF4300A2FFD1 /* FreeList.swift */; };
 		BFAAF03E2B0FE55A00A2FFD1 /* SystemIssue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF03D2B0FE55A00A2FFD1 /* SystemIssue.swift */; };
-		BFBAF5132B172BC1003ED388 /* FileIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAF5122B172BC1003ED388 /* FileIdentifier.swift */; };
+		BFBAF5132B172BC1003ED388 /* FileHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAF5122B172BC1003ED388 /* FileHandle.swift */; };
 		BFD674432B05E6010086932A /* Socket in Frameworks */ = {isa = PBXBuildFile; productRef = BFD674422B05E6010086932A /* Socket */; };
 		BFD674452B05E79F0086932A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BFD674442B05E79F0086932A /* Info.plist */; };
 		BFD674472B05EAE20086932A /* Medusa.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD674462B05EAE20086932A /* Medusa.swift */; };
@@ -72,6 +72,8 @@
 		BFD674812B066A560086932A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BFD674802B066A560086932A /* Main.storyboard */; };
 		BFD674842B0689990086932A /* PermissionsToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD674832B0689990086932A /* PermissionsToken.swift */; };
 		BFD734B02B06F15500CD500D /* NSColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD734AF2B06F15500CD500D /* NSColor+Extensions.swift */; };
+		BFEEF9262B1C8CBD00F42C58 /* Path+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEEF9252B1C8CBD00F42C58 /* Path+Extensions.swift */; };
+		BFEEF92F2B1CFABC00F42C58 /* Task+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEEF92E2B1CFABC00F42C58 /* Task+Extensions.swift */; };
 		BFFB2E7D2B05363300254090 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E7C2B05363300254090 /* AppDelegate.swift */; };
 		BFFB2E7F2B05363300254090 /* PrimaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E7E2B05363300254090 /* PrimaryViewController.swift */; };
 		BFFB2E812B05363500254090 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BFFB2E802B05363500254090 /* Assets.xcassets */; };
@@ -146,7 +148,7 @@
 		BFAAF0332B0F2A7C00A2FFD1 /* Fletcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Fletcher.c; sourceTree = "<group>"; };
 		BFAAF03B2B0FDF4300A2FFD1 /* FreeList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeList.swift; sourceTree = "<group>"; };
 		BFAAF03D2B0FE55A00A2FFD1 /* SystemIssue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemIssue.swift; sourceTree = "<group>"; };
-		BFBAF5122B172BC1003ED388 /* FileIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileIdentifier.swift; sourceTree = "<group>"; };
+		BFBAF5122B172BC1003ED388 /* FileHandle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHandle.swift; sourceTree = "<group>"; };
 		BFD674442B05E79F0086932A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BFD674462B05EAE20086932A /* Medusa.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Medusa.swift; sourceTree = "<group>"; };
 		BFD6744C2B05EBE60086932A /* MedusaTester */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MedusaTester; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -169,6 +171,9 @@
 		BFD674802B066A560086932A /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		BFD674832B0689990086932A /* PermissionsToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsToken.swift; sourceTree = "<group>"; };
 		BFD734AF2B06F15500CD500D /* NSColor+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSColor+Extensions.swift"; sourceTree = "<group>"; };
+		BFEEF9252B1C8CBD00F42C58 /* Path+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Path+Extensions.swift"; sourceTree = "<group>"; };
+		BFEEF92E2B1CFABC00F42C58 /* Task+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Task+Extensions.swift"; sourceTree = "<group>"; };
+		BFEEF9302B1D03D900F42C58 /* Files.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Files.entitlements; sourceTree = "<group>"; };
 		BFFB2E792B05363300254090 /* Medusa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Medusa.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFFB2E7C2B05363300254090 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BFFB2E7E2B05363300254090 /* PrimaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryViewController.swift; sourceTree = "<group>"; };
@@ -244,6 +249,8 @@
 				BF6473882B13A91D0049B583 /* SmalltalkMonads.swift */,
 				BF797A332B0A23A90006A238 /* String+Extensions.swift */,
 				BF9071642B11F148007F70EE /* UnsafeMutableRawPointer+Extensions.swift */,
+				BFEEF9252B1C8CBD00F42C58 /* Path+Extensions.swift */,
+				BFEEF92E2B1CFABC00F42C58 /* Task+Extensions.swift */,
 			);
 			path = "System Extensions";
 			sourceTree = "<group>";
@@ -297,7 +304,7 @@
 			isa = PBXGroup;
 			children = (
 				BFA944532B1111C100526CF1 /* File.swift */,
-				BFBAF5122B172BC1003ED388 /* FileIdentifier.swift */,
+				BFBAF5122B172BC1003ED388 /* FileHandle.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -404,6 +411,7 @@
 		BFFB2E702B05363300254090 = {
 			isa = PBXGroup;
 			children = (
+				BFEEF9302B1D03D900F42C58 /* Files.entitlements */,
 				BFD674802B066A560086932A /* Main.storyboard */,
 				BFD674442B05E79F0086932A /* Info.plist */,
 				BFFB2E7B2B05363300254090 /* Medusa */,
@@ -572,6 +580,7 @@
 				BFD674622B05FD450086932A /* PingMessage.swift in Sources */,
 				BFD674642B05FD6C0086932A /* PongMessage.swift in Sources */,
 				BFFB2E992B05364C00254090 /* BTreePage.swift in Sources */,
+				BFEEF9262B1C8CBD00F42C58 /* Path+Extensions.swift in Sources */,
 				BFA944492B1078B400526CF1 /* Fragment.swift in Sources */,
 				BF6C7E192B0E28AF006DB858 /* Field.swift in Sources */,
 				BF7FFCE32B07AB3D001D2F93 /* MOPEnumerationCase.swift in Sources */,
@@ -581,12 +590,13 @@
 				BF1927B02B1A6B4200643243 /* MOPMessage.swift in Sources */,
 				BFA944472B10783800526CF1 /* KeyValue.swift in Sources */,
 				BFD674672B0607720086932A /* IPV6Address.swift in Sources */,
-				BFBAF5132B172BC1003ED388 /* FileIdentifier.swift in Sources */,
+				BFBAF5132B172BC1003ED388 /* FileHandle.swift in Sources */,
 				BF7FFCD12B079D10001D2F93 /* MOPValue.swift in Sources */,
 				BF6C7E1D2B0E3543006DB858 /* FieldCellField.swift in Sources */,
 				BFFB2E9C2B05364C00254090 /* LoggingAgent.swift in Sources */,
 				BFD674842B0689990086932A /* PermissionsToken.swift in Sources */,
 				BFD6747D2B06689E0086932A /* BufferBrowserViewController.swift in Sources */,
+				BFEEF92F2B1CFABC00F42C58 /* Task+Extensions.swift in Sources */,
 				BF7FFCE72B08010B001D2F93 /* Optional+Extensions.swift in Sources */,
 				BF1927B62B1A7FC200643243 /* MOPBits.swift in Sources */,
 				BFD6745E2B05FBEC0086932A /* ConnectMessage.swift in Sources */,

@@ -12,6 +12,8 @@ class AppDelegate: NSObject, NSApplicationDelegate
     {
     func applicationDidFinishLaunching(_ aNotification: Notification)
         {
+        Medusa.boot()
+        LoggingAgent.shared.logToConsole()
         Medusa.runTests()
         let module = MOPArgonModule.shared
         module.initHierarchy()

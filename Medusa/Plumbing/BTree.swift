@@ -12,16 +12,16 @@ public class BTree<Key,Value> where Key: Fragment,Value: Fragment
     public var rootPage: BTreePage<Key,Value>!
     public let magicNumber: Medusa.MagicNumber
     public let keysPerPage: Medusa.Integer64
-    public let fileIdentifier: FileIdentifier
+    public let fileHandle: FileHandle
     public let order: Medusa.Integer64
     
-    public init(fileIdentifier: FileIdentifier,order: Medusa.Integer64,magicNumber: Medusa.MagicNumber,keysPerPage: Medusa.Integer64) throws
+    public init(fileHandle: FileHandle,order: Medusa.Integer64,magicNumber: Medusa.MagicNumber,keysPerPage: Medusa.Integer64) throws
         {
         self.magicNumber = magicNumber
         self.keysPerPage = keysPerPage
-        self.fileIdentifier = fileIdentifier
+        self.fileHandle = fileHandle
         self.order = order
-            self.rootPage = try PageAgent.nextAvailableAgent().allocateBTreePage(fileIdentifier: self.fileIdentifier, magicNumber: Medusa.kBTreePageMagicNumber, keysPerPage: keysPerPage, keyType: Key.self, valueType: Value.self)
+            self.rootPage = try PageAgent.nextAvailableAgent().allocateBTreePage(fileHandle: self.fileHandle, magicNumber: Medusa.kBTreePageMagicNumber, keysPerPage: keysPerPage, keyType: Key.self, valueType: Value.self)
         self.rootPage.isLeaf = true
         self.rootPage.keyCount = 0
         }
@@ -32,7 +32,7 @@ public class BTree<Key,Value> where Key: Fragment,Value: Fragment
         var median: KeyValue<Key,Value>!
         if let right = try self.rootPage.insert(key: key, value: value, medianKeyValue: &median)
             {
-            left = try PageAgent.nextAvailableAgent().allocateBTreePage(fileIdentifier: self.fileIdentifier, magicNumber: Medusa.kBTreePageMagicNumber,keysPerPage: self.keysPerPage, keyType: Key.self, valueType: Value.self)
+            left = try PageAgent.nextAvailableAgent().allocateBTreePage(fileHandle: self.fileHandle, magicNumber: Medusa.kBTreePageMagicNumber,keysPerPage: self.keysPerPage, keyType: Key.self, valueType: Value.self)
             try left.copy(from: self.rootPage)
             try left.write()
             self.rootPage.keyCount = 1

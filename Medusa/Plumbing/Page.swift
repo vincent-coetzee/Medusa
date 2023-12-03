@@ -47,7 +47,7 @@ public class Page
     internal var freeList: FreeList!
     internal var freeCellCount: Medusa.Integer64 = 0
     internal var pageAddress: Medusa.Address = 0
-    internal var fileIdentifier: FileIdentifier = .empty
+    internal var fileHandle: FileHandle = .empty
     internal var isDirty = false
     internal var needsDefragmentation = false
     
@@ -75,7 +75,7 @@ public class Page
         
     public init(from page: Page)
         {
-        self.fileIdentifier = page.fileIdentifier
+        self.fileHandle = page.fileHandle
         self.pageAddress = page.pageAddress
         self.buffer = page.buffer
         self.pageAddress = 0
