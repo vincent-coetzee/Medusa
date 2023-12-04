@@ -20,6 +20,7 @@ public class MOPEnumeration: MOPPrimitive
             index += 1
             }
         super.init(module: module,name: name)
+        self.cases = self.cases.sorted { $0.index < $1.index }
         }
         
     public init()
@@ -36,6 +37,11 @@ public class MOPEnumeration: MOPPrimitive
         set
             {
             }
+        }
+        
+    public func caseName(atIndex: Int) -> String
+        {
+        return(self.cases[atIndex].name)
         }
     }
 

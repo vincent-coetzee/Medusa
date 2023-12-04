@@ -61,7 +61,7 @@ public struct Identifier: Hashable, Sequence
         return(Identifier())
         }
         
-    public var hash: Int
+    public var standardHash: Int
         {
         var hasher = Hasher()
         for part in self.parts
@@ -81,7 +81,7 @@ public struct Identifier: Hashable, Sequence
         
     public var description: String
         {
-        self.parts.map{$0}.joined(separator: "\\")
+        self.parts.map{$0}.joined(separator: "/")
         }
      
     public var firstPart: String
@@ -158,6 +158,11 @@ public struct Identifier: Hashable, Sequence
             {
             self.parts = string.components(separatedBy: "/")
             }
+        }
+        
+    public var string: String
+        {
+        self.parts.map{$0}.joined(separator: "/")
         }
         
     public subscript(_ index:Int) -> String

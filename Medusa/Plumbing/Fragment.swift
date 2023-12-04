@@ -9,6 +9,8 @@ import Foundation
 
 public protocol Fragment: Comparable
     {
+    var standardHash: Int { get }
+    var instanceValue: MOPInstance { get }
     var description: String { get }
     var sizeInBytes: Int { get }
     init(from: UnsafeMutableRawPointer,atByteOffset:inout Int)

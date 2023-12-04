@@ -16,7 +16,7 @@ import Foundation
 //            0   011     Header               = 3     Copy
 //            0   100     Object               = 4     Follow
 //            0   101     Address              = 5     Follow
-//            0   110     Boolean              = 6     Copy
+//            0   110     Enumeration          = 6     Follow
 //            0   111     Nothing              = 7     Copy
 //
 //            
@@ -53,17 +53,35 @@ import Foundation
 //                                     Address:
 //                                               Sign ( 1 bit )         0
 //                                               Tag ( 3 bits )          101
-//                                     Page offset ( 36 bits )              0000 00000000 00000000 00000000 00000000
-//                                     Intra page offset ( 24 bits )                                                 00000000 00000000 00000000
+//                                               Reserved ( 10 bits)        0000 000000
+//                                     Page offset ( 40 bits )                         PP PPPPPPPP PPPPPPPP PPPPPPPP PPPP
+//                                     Intra page offset ( 14 bits )                                                     PPPP PPPPPPII IIIIIIII
 //
 //                                     Object Pointer:
 //                                               Sign ( 1 bit )         0
 //                                               Tag ( 3 bits )          100
-//                                     Page offset ( 36 bits )              0000 00000000 00000000 00000000 00000000
-//                                     Intra page offset ( 24 bits )                                                 00000000 00000000 00000000
+//                                               Reserved ( 10 bits )       RRRR RRRRRR
+//                                     Page offset ( 40 bits )                         PP PPPPPPPP PPPPPPPP PPPPPPPP PPPP
+//                                     Intra page offset ( 14 bits )                                                     PPPP PPPPPPII IIIIIIII
+//
+//                                     Enumeration Pointer:
+//                                           Sign ( 1 bit )             0
+//                                           Tag ( 3 bits )              110
+//                                           Associates Flag ( 1 bit )      F
+//                                           Case Index ( 9 bits )           CCC CCCCC
+//                                     Page offset ( 40 bits )                         PP PPPPPPPP PPPPPPPP PPPPPPPP PPPP
+//                                     Intra page offset ( 14 bits )                                                     PPPP PPPPPPII IIIIIIII
 
-public class MOPClass: MOPObject
+
+public class MOPClass: MOPObjectInstance
     {
+    //
+    //
+    // Define convenience accessors for the classes used by the system, these
+    // are loaded either manually in prepartion for initalializing a database,
+    // or they are loaded from the SystemDictionary called 'Medusa'
+    //
+    //
     public static let arrayClass: MOPClass =
         {
         MOPArgonModule.shared.lookupClass(named: "Array")!
@@ -144,6 +162,11 @@ public class MOPClass: MOPObject
         MOPArgonModule.shared.lookupClass(named: "Integer64")!
         }()
         
+    public static let integer32Class: MOPClass =
+        {
+        MOPArgonModule.shared.lookupClass(named: "Integer32")!
+        }()
+        
     public static let ipAddressClass: MOPClass =
         {
         MOPArgonModule.shared.lookupClass(named: "IPAddress")!
@@ -167,6 +190,11 @@ public class MOPClass: MOPObject
     public static let moduleClass: MOPClass =
         {
         MOPArgonModule.shared.lookupClass(named: "Module")!
+        }()
+        
+    public static let nothingClass: MOPClass =
+        {
+        MOPArgonModule.shared.lookupClass(named: "Nothing")!
         }()
         
     public static let numberClass: MOPClass =
@@ -209,6 +237,11 @@ public class MOPClass: MOPObject
         MOPArgonModule.shared.lookupClass(named: "Time")!
         }()
         
+    public static let unicodeScalarClass: MOPClass =
+        {
+        MOPArgonModule.shared.lookupClass(named: "UnicodeScalar")!
+        }()
+        
     public static let writeFileClass: MOPClass =
         {
         MOPArgonModule.shared.lookupClass(named: "WriteFile")!
@@ -220,13 +253,14 @@ public class MOPClass: MOPObject
         }()
 
     public var superklasses = WeakArray<MOPClass>()
-    public var instanceVariables = Dictionary<String,MOPInstanceVariable>()
+    public var slots = Dictionary<String,MOPSlot>()
     public let name: String
     private var nextOffset = 8
     public private(set) var module: MOPModule
-    private var _sizeInBytes: Integer64 = 0
+    public private(set) var isIndexed = false
+    public private(set) var isKeyed = false
     public private(set) var subklasses = Array<MOPClass>()
-    
+        
     public var isRootClass: Bool
         {
         self.name == "Object"
@@ -237,9 +271,38 @@ public class MOPClass: MOPObject
         return(!self.subklasses.isEmpty)
         }
         
+    //
+    // This is the amount of space you have to allocate in a page to
+    // actually write an instance of this class into. Objects are layed
+    // out as follows ( as described above ):
+    //
+    // Object Header        8 bytes         0 offset
+    // Class Pointer        8 bytes         8 offset
+    // Slot 0               8 bytes         16 offset
+    // ...
+    // Slot N               8 bytes         N * 8 + 16
+    //
+    // The size in bytes is merely the sizes totalled EXCEPT
+    // for objects that have bytes in which case the object
+    // has a ByteBlock at the end of it which consists of
+    //
+    //  a Block Header which is 8 bytes in size
+    //  a Next Block Address which is 8 bytes in size
+    // so BytesBlock is of size 16 whihc has to be added
+    // to the sum in the previous calculation. This is only
+    // for objects that have the hasBytes flag bit set to 1.
+    //
     public override var sizeInBytes: Integer64
         {
-        self._sizeInBytes
+        var size = Medusa.kMedusaObjectFixedPartSizeInBytes
+        size += self.slots.values.reduce(0){$0 + $1.sizeInBytes}
+        size += self.hasBytes ? Medusa.kMedusaObjectArrayBlockSizeInBytes : 0
+        return(size)
+        }
+        
+    public var slotSizeInBytes: Integer64
+        {
+        MemoryLayout<Integer64>.size
         }
         
     public var identifier: Identifier
@@ -251,20 +314,19 @@ public class MOPClass: MOPObject
         {
         self.name = name
         self.module = module
-        super.init(ofClass: ofClass,hasBytes: hasBytes)
+        self._hasBytes = hasBytes
+        super.init(ofClass: ofClass)
         }
         
-    public func addInstanceVariable(name: String,class klass: MOPClass)
+    public static func ==(lhs: MOPClass,rhs: MOPClass) -> Bool
         {
-        let instanceVariable = MOPInstanceVariable(name: name,klass: klass,offset: self.nextOffset)
-        self.instanceVariables[name] = instanceVariable
-        self.nextOffset += instanceVariable.sizeInBytes
+        lhs.objectID == rhs.objectID
         }
         
-    public func addPrimitiveInstanceVariable<R,T>(name: String,class klass: MOPClass,keyPath: KeyPath<R,T>)
+    public func addSlot(name: String,class klass: MOPClass)
         {
-        let instanceVariable = MOPPrimitiveInstanceVariable(name: name,klass: klass,offset: self.nextOffset,keyPath: keyPath)
-        self.instanceVariables[name] = instanceVariable
+        let instanceVariable = MOPSlot(name: name,klass: klass,offset: self.nextOffset)
+        self.slots[name] = instanceVariable
         self.nextOffset += instanceVariable.sizeInBytes
         }
         
@@ -304,6 +366,12 @@ public class MOPClass: MOPObject
         {
         self.module = module
         return(self)
+        }
+        
+    public func writeValue<T>(_ value: T,into buffer: RawBuffer,atByteOffset offset: inout Integer64)
+        {
+        buffer.storeBytes(of: value, toByteOffset: offset, as: T.self)
+        offset += MemoryLayout<T>.size
         }
     }
 

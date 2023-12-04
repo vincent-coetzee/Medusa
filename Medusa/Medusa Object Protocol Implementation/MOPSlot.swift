@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class MOPInstanceVariable
+public class MOPSlot
     {
     public let name: String
     public let klass: MOPClass
@@ -15,7 +15,7 @@ public class MOPInstanceVariable
     
     public var sizeInBytes: Medusa.Integer64
         {
-        self.klass.sizeInBytes
+        self.klass.slotSizeInBytes
         }
         
     public init(name: String,klass: MOPClass,offset: Int)
@@ -34,25 +34,9 @@ public class MOPInstanceVariable
         {
         fatalError()
         }
-    }
-
-public class MOPPrimitiveInstanceVariable<Root,ValueType>: MOPInstanceVariable
-    {
-    private let keyPath: AnyKeyPath
-    
-    public init(name: String,klass: MOPClass,offset: Int,keyPath: KeyPath<Root,ValueType>)
-        {
-        self.keyPath = keyPath
-        super.init(name: name,klass: klass,offset: offset)
-        }
         
-    public override func value<T>(in buffer: Medusa.RawBuffer,as someType: T.Type) -> T
+    public func writeInstance(_ instance: MOPInstance,into buffer: UnsafeMutableRawPointer,atByteOffset offset:inout Integer64)
         {
-        buffer.load(fromByteOffset: self.offset, as: T.self)
-        }
-        
-    public override func value<R,T>(in root: R,as someType: T.Type) -> T
-        {
-        root[keyPath: self.keyPath as! KeyPath<R,T>]
+        self.klass.writeInstance(instance,into: buffer,atByteOffset: &offset)
         }
     }

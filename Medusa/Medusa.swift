@@ -33,6 +33,7 @@ public struct Medusa
     public typealias RawBuffers = Array<RawBuffer>
     public typealias UnicodeScalar = Unicode.Scalar
     public typealias PagePointer = Medusa.Integer64
+    public typealias Pointer = MedusaPointer
     public typealias ObjectBuffer = MOPBuffer
     public typealias Instance = MOPInstance
     public typealias Instances = Array<Instance>
@@ -44,6 +45,23 @@ public struct Medusa
     public private(set) static var kMedusaDataFilePath = Medusa.kMedusaDataDirectoryPath + "/Data.medusa"
     public private(set) static var kMedusaIndexFilePath = Medusa.kMedusaDataDirectoryPath + "/Index.medusa"
     public private(set) static var kMedusaReplicateFilePath = Medusa.kMedusaDataDirectoryPath + "/Replicate.medusa"
+    
+    // Page Magic Numbers
+    
+    public static let kMedusaPageMagicNumber: MagicNumber            = 0xFED_BAD_BEEF_F00D
+    public static let kMedusaBTreePageMagicNumber: MagicNumber       = 0xFADE_DEED_CAFE_BABE
+    public static let kMedusaPropertiesPageMagicNumber: MagicNumber  = 0xACED_CAFE_D00D_ABED
+    public static let kMedusaObjectPageMagicNumber: MagicNumber      = 0xBEE_BABE_B0D_D00D
+    public static let kMedusaOverlfowPageMagicNumber: MagicNumber    = 0xBAD_C0DE_D0D0_CAD
+    public static let kMedusaRootPageMagicNumber: MagicNumber        = 0xDEAD_C0D_BAD_F00D
+    
+    // Miscellaneous constants
+    
+    public static let kNothing: Medusa.ObjectID = 0b01110000_00000000_00000000_00000000_00000000_00000000_00000000_00000000
+    
+    public static let kMedusaSlotSizeInBytes = MemoryLayout<Medusa.Integer64>.size
+    public static let kMedusaObjectFixedPartSizeInBytes = MemoryLayout<Medusa.Integer64>.size * 2
+    public static let kMedusaObjectArrayBlockSizeInBytes = MemoryLayout<Medusa.Integer64>.size * 2
     
     public static let kLogFilenameFormatString = "Medusa.%@.log"
     public static let kBytesPerKilobyte = 1024
@@ -388,6 +406,12 @@ public typealias Address = Medusa.Address
 public typealias Instance = Medusa.Instance
 public typealias Instances = Medusa.Instances
 
+extension Integer64
+    {
+    public static let minimum: Integer64 = 0
+    public static let maximum: Integer64 = 0b00001111_11111111_11111111_11111111_11111111_11111111_11111111_11111111
+    }
+    
 extension Medusa.Address
     {
     public init(page: Int,offset: Int)
@@ -407,6 +431,11 @@ extension Medusa.Address
     public var offset: Int
         {
         Int(self & Medusa.kPageOffsetMask)
+        }
+        
+    public var cleanAddress: Address
+        {
+        self & ( 0b111111_11111111 << 50)
         }
     }
 

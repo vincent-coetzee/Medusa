@@ -146,6 +146,7 @@ public class MOPArgonModule: MOPModule
         self.addSystemClass(named: "Time").setClass(.metaclassClass).setSuperclass(.magnitudeClass)
         self.addSystemClass(named: "Tuple").setClass(.metaclassClass).setSuperclass(.objectClass)
         
+        self.addSystemClass(named: "UnicodeScalar").setClass(.metaclassClass)
         self.addSystemClass(MOPUnsigned64().setClass(.primitiveClass).setSuperclass(.fixedPointNumberClass))
         self.addSystemClass(MOPUnsigned32().setClass(.primitiveClass).setSuperclass(.fixedPointNumberClass))
         self.addSystemClass(MOPUnsigned16().setClass(.primitiveClass).setSuperclass(.fixedPointNumberClass))
@@ -215,6 +216,8 @@ public class MOPArgonModule: MOPModule
         self.lookupClass(named: "ReadStream")?.setSuperclass(.streamClass)
         self.lookupClass(named: "ReadWriteFile")?.setClass(.metaclassClass).setSuperclasses(.readFileClass,.writeFileClass)
         self.lookupClass(named: "ReadWriteStream")?.setClass(.metaclassClass).setSuperclasses(.readStreamClass,.writeStreamClass)
+        
+        self.lookupClass(named: "UnicodeScalar")?.setSuperclass(.integer32Class)
         
         //
         //  ^^^^ The rest were all done as they were created.

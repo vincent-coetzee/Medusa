@@ -83,6 +83,11 @@ public class Page
         self.freeList = FreeList(buffer: self.buffer, atByteOffset: self.initialFreeCellOffset)
         }
         
+    public convenience init(from address: Address)
+        {
+        self.init(from: UnsafeMutableRawPointer(bitPattern: address.cleanAddress)!)
+        }
+        
     internal func writeFreeList()
         {
         self.freeList.writeAll(to: self.buffer)

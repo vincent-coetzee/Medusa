@@ -10,10 +10,35 @@ import Fletcher
 
 extension String: Fragment
     {
+    public var standardHash: Int
+        {
+        // this is a PolynomialRollingHash hacked to work with Unicode.Scalars, not sure how correct it is
+        let p:Int64 = Int64(Int32.max) // there are Int32.max possible Unicode.Scalar values
+        let m:Int64 = Int64(1e9) + 9
+        var powerOfP:Int64 = 1
+        var hashValue:Int64 = 0
+        for char in self.unicodeScalars
+            {
+            hashValue = (hashValue + Int64(char.value) * powerOfP) % m
+            powerOfP = (powerOfP * p) % m
+            }
+        return(Int(hashValue) & Integer64.maximum)
+        }
+    
+    public var instanceValue: MOPInstance
+        {
+        .string(self)
+        }
+    
     public init(from page: UnsafeMutableRawPointer,atByteOffset:inout Medusa.Integer64)
         {
         self.init()
         self = self.readStringFromPointer(buffer: page,atByteOffset: &atByteOffset)
+        }
+        
+    public var polynomialRollingHash:Int
+        {
+        self.standardHash
         }
         
     public func write(to buffer: UnsafeMutableRawPointer,atByteOffset:inout Medusa.Integer64)
