@@ -1,0 +1,5 @@
+module Fletcher [system] [extern_c] {
+    header "./include/Fletcher.h"
+    export *
+    module * { export * }
+}

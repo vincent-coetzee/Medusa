@@ -292,7 +292,7 @@ public class MOPClass: MOPObjectInstance
     // to the sum in the previous calculation. This is only
     // for objects that have the hasBytes flag bit set to 1.
     //
-    public override var sizeInBytes: Integer64
+    public override var valueSizeInBytes: Integer64
         {
         var size = Medusa.kMedusaObjectFixedPartSizeInBytes
         size += self.slots.values.reduce(0){$0 + $1.sizeInBytes}

@@ -74,9 +74,9 @@ public class FileHandle
             }
         }
         
-    public var fileDescriptor: Int32!
+    public private(set) var fileDescriptor: Int32!
     public let path: Path
-    public var baseAddress: Medusa.Address?
+    public private(set) var mappedAddress: Medusa.Address?
     
     public init(path: Path) throws
         {
@@ -127,6 +127,6 @@ public class FileHandle
             throw(SystemIssue(code: .segmentAdviseFailed,agentKind: .pageServer,message: message))
             }
         LoggingAgent.shared.log("File \(self.path.string) sucessfully mapped into segment at \(stringAddress).")
-        self.baseAddress = address
+        self.mappedAddress = address
         }
     }

@@ -21,7 +21,7 @@ public class BTree<Key,Value> where Key: Fragment,Value: Fragment
         self.keysPerPage = keysPerPage
         self.fileHandle = fileHandle
         self.order = order
-            self.rootPage = try PageAgent.nextAvailableAgent().allocateBTreePage(fileHandle: self.fileHandle, magicNumber: Medusa.kBTreePageMagicNumber, keysPerPage: keysPerPage, keyType: Key.self, valueType: Value.self)
+            self.rootPage = try PageServer.shared.allocateBTreePage(fileHandle: self.fileHandle, magicNumber: Medusa.kBTreePageMagicNumber, keysPerPage: keysPerPage, keyType: Key.self, valueType: Value.self)
         self.rootPage.isLeaf = true
         self.rootPage.keyCount = 0
         }
@@ -32,7 +32,7 @@ public class BTree<Key,Value> where Key: Fragment,Value: Fragment
         var median: KeyValue<Key,Value>!
         if let right = try self.rootPage.insert(key: key, value: value, medianKeyValue: &median)
             {
-            left = try PageAgent.nextAvailableAgent().allocateBTreePage(fileHandle: self.fileHandle, magicNumber: Medusa.kBTreePageMagicNumber,keysPerPage: self.keysPerPage, keyType: Key.self, valueType: Value.self)
+            left = try PageServer.shared.allocateBTreePage(fileHandle: self.fileHandle, magicNumber: Medusa.kBTreePageMagicNumber,keysPerPage: self.keysPerPage, keyType: Key.self, valueType: Value.self)
             try left.copy(from: self.rootPage)
             try left.write()
             self.rootPage.keyCount = 1
@@ -64,7 +64,7 @@ public class MOPBTree
         self.keysPerPage = keysPerPage
         self.fileHandle = fileHandle
         self.order = order
-            self.rootPage = try PageAgent.nextAvailableAgent().allocateBTreePage(fileHandle: self.fileHandle, magicNumber: Medusa.kBTreePageMagicNumber, keysPerPage: keysPerPage, keyType: Key.self, valueType: Value.self)
+            self.rootPage = try PageServer.shared.allocateBTreePage(fileHandle: self.fileHandle, magicNumber: Medusa.kBTreePageMagicNumber, keysPerPage: keysPerPage, keyType: Key.self, valueType: Value.self)
         self.rootPage.isLeaf = true
         self.rootPage.keyCount = 0
         }
@@ -75,7 +75,7 @@ public class MOPBTree
         var median: KeyValue<Key,Value>!
         if let right = try self.rootPage.insert(key: key, value: value, medianKeyValue: &median)
             {
-            left = try PageAgent.nextAvailableAgent().allocateBTreePage(fileHandle: self.fileHandle, magicNumber: Medusa.kBTreePageMagicNumber,keysPerPage: self.keysPerPage, keyType: Key.self, valueType: Value.self)
+            left = try PageServer.shared.allocateBTreePage(fileHandle: self.fileHandle, magicNumber: Medusa.kBTreePageMagicNumber,keysPerPage: self.keysPerPage, keyType: Key.self, valueType: Value.self)
             try left.copy(from: self.rootPage)
             try left.write()
             self.rootPage.keyCount = 1

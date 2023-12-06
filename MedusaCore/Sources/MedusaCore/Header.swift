@@ -1,8 +1,8 @@
 //
-//  MOPHeader.swift
-//  Medusa
+//  Header.swift
+//  
 //
-//  Created by Vincent Coetzee on 04/12/2023.
+//  Created by Vincent Coetzee on 06/12/2023.
 //
 
 import Foundation
@@ -26,29 +26,18 @@ import Foundation
 //            0   1110     Reserved4                              = 14
 //            0   1111     Nothing                                = 15    Copy since this is a marker for the nothing value - in Argon it's an instance of the Nothing class
 
-//Object Structure
-//
-//            Header 64 Bits           Sign ( 1 bit )                   0                                                                          0   1
-//                                     Tag ( 3 bits )                    000                                                                       1   4
-//                                     SizeInWords ( 36 bits )              0000 00000000 00000000 00000000 0000000                                4  40
-//                                     HasBytes ( 1 bit )                                                          0                              40  41
-//                                     FlipCount ( 13 bits = 8191 )                                                  00000000 000000              41  54
-//                                     IsForwarded ( 1 bit )                                                                        0             54  55
-//                                     IsMarked   ( 1 bit )                                                                          0            55  56
-//                                     Reserved ( 8 bits = 512 )                                                                       RESERVED   56  64
-
-public class MOPHeader
+public class Header
     {
     public static let kSignMask: Unsigned64             = 0b10000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000 // 1 bit at at bit  63  -> this is ignored
-    public static let kTagMask: Unsigned64              = 0b01110000_00000000_00000000_00000000_00000000_00000000_00000000_00000000 // 3 bits at bit    60  -> this stores the tag defining the base type of the value
-    public static let kSizeInWordsMask: Unsigned64      = 0b00001111_11111111_11111111_11111111_11111111_00000000_00000000_00000000 // 36 bits at bit   24  -> this has the size in words of the object, total size = size in words * MemoryLayout<Integer64>.size
-    public static let kIndexedMask: Unsigned64          = 0b00000000_00000000_00000000_00000000_00000000_10000000_00000000_00000000 // 1 bit at bit     23  -> does this object have bytes
-    public static let kKeyedMask: Unsigned64            = 0b00000000_00000000_00000000_00000000_00000000_01000000_00000000_00000000 // 1 bit at bit     22  -> can this object's contents be accessed via a key
-    public static let kFlipCountMask: Unsigned64        = 0b00000000_00000000_00000000_00000000_00000000_00111111_11111111_00000000 // 14 bits at bit    8  -> how many times has this object been flipped by the GC
-    public static let kForwardedMask: Unsigned64        = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_10000000 // 1 bit at bit      7  -> has this object been moved, if so the new address is found immediately after this header
-    public static let kMarkedMask: Unsigned64           = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_01000000 // 1 bit at bit      6  -> during the database GC rocess this flag is used to note that we have visited the object
-    public static let kAssociatedMask: Unsigned64       = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00100000 // 1 bit at bit      5  -> this is an anumeration that has associated values
-    public static let kKindMask: Unsigned64             = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00011111 // 5 bits at bit     0
+    public static let kTagMask: Unsigned64              = 0b01111000_00000000_00000000_00000000_00000000_00000000_00000000_00000000 // 4 bits at bit    59  -> this stores the tag defining the base type of the value
+    public static let kSizeInWordsMask: Unsigned64      = 0b00000111_11111111_11111111_11111111_11111111_00000000_00000000_00000000 // 36 bits at bit   23  -> this has the size in words of the object, total size = size in words * MemoryLayout<Integer64>.size
+    public static let kIndexedMask: Unsigned64          = 0b00000000_00000000_00000000_00000000_00000000_11000000_00000000_00000000 // 1 bit at bit     22  -> does this object have bytes
+    public static let kKeyedMask: Unsigned64            = 0b00000000_00000000_00000000_00000000_00000000_00100000_00000000_00000000 // 1 bit at bit     21  -> can this object's contents be accessed via a key
+    public static let kFlipCountMask: Unsigned64        = 0b00000000_00000000_00000000_00000000_00000000_000111111_1111111_10000000 // 14 bits at bit    7  -> how many times has this object been flipped by the GC
+    public static let kForwardedMask: Unsigned64        = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_01000000 // 1 bit at bit      6  -> has this object been moved, if so the new address is found immediately after this header
+    public static let kMarkedMask: Unsigned64           = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00100000 // 1 bit at bit      5  -> during the database GC rocess this flag is used to note that we have visited the object
+    public static let kAssociatedMask: Unsigned64       = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00010000 // 1 bit at bit      4  -> this is an anumeration that has associated values
+    public static let kKindMask: Unsigned64             = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00001111 // 5 bits at bit     0
     
     public static let kSignBits: Unsigned64             = 0b1
     public static let kTagBits: Unsigned64              = 0b111
@@ -68,24 +57,37 @@ public class MOPHeader
     public static let kForwardedOffset: Unsigned64      = 7
     public static let kMarkedOffset: Unsigned64         = 6
     
+    public static let kInteger64Mask: Unsigned64                = Tag.integer64.rawValue << 59
+    public static let kFloat64Mask: Unsigned64                  = Tag.float64.rawValue << 59
+    public static let kAtomMask: Unsigned64                     = Tag.atom.rawValue << 59
+    public static let kHeaderMask: Unsigned64                   = Tag.header.rawValue << 59
+    public static let kObjectMask: Unsigned64                   = Tag.object.rawValue << 59
+    public static let kAddressMask: Unsigned64                  = Tag.address.rawValue << 59
+    public static let kEnumerationMask: Unsigned64              = Tag.enumeration.rawValue << 59
+    public static let kAssociatedEnumerationMask: Unsigned64    = Tag.associatedEnumeration.rawValue << 59
+    public static let kBooleanMask: Unsigned64                  = Tag.boolean.rawValue << 59
+    public static let kByteMask: Unsigned64                     = Tag.byte.rawValue << 59
+    public static let kUnicodeScalarMask: Unsigned64            = Tag.unicodeScalar.rawValue << 59
+    public static let kNothingMask: Unsigned64                  = Tag.nothing.rawValue << 59
+    
     public enum Tag: Unsigned64
         {
-        case integer64         = 0b0000
-        case float64           = 0b0001
-        case atom              = 0b0010
-        case header            = 0b0011
-        case object            = 0b0100
-        case address           = 0b0101
-        case enumeration       = 0b0110
-        case associated        = 0b0111
-        case boolean           = 0b1000
-        case byte              = 0b1001
-        case unicodeScalar     = 0b1010
-        case reserved1         = 0b1011
-        case reserved2         = 0b1100
-        case reserved3         = 0b1101
-        case reserved4         = 0b1110
-        case nothing           = 0b1111
+        case integer64              = 0b0000
+        case float64                = 0b0001
+        case atom                   = 0b0010
+        case header                 = 0b0011
+        case object                 = 0b0100
+        case address                = 0b0101
+        case enumeration            = 0b0110
+        case associatedEnumeration  = 0b0111
+        case boolean                = 0b1000
+        case byte                   = 0b1001
+        case unicodeScalar          = 0b1010
+        case reserved1              = 0b1011
+        case reserved2              = 0b1100
+        case reserved3              = 0b1101
+        case reserved4              = 0b1110
+        case nothing                = 0b1111
         }
         
     public var sign: Integer64
@@ -205,14 +207,14 @@ public class MOPHeader
         }
         
     private var _word: Unsigned64?
-    private var _pointer: RawBuffer?
+    private var _pointer: RawPointer?
     
     public init(bitPattern: Unsigned64)
         {
         self._word = bitPattern
         }
         
-    public init(pointer: RawBuffer)
+    public init(pointer: RawPointer)
         {
         self._pointer = pointer
         }

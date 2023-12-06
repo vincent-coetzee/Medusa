@@ -10,6 +10,8 @@ import Fletcher
 
 public class Page
     {
+    public static let kHeaderSizeInBytes = Medusa.kPageHeaderSizeInBytes
+    
     public var fields: CompositeField
         {
         let fields = CompositeField(name: "Header Fields")
@@ -65,7 +67,7 @@ public class Page
         self.freeList.writeAll(to: self.buffer)
         }
         
-    public init(from buffer: UnsafeMutableRawPointer)
+    public init(from buffer: RawBuffer)
         {
         self.buffer = buffer
         self.pageAddress = 0

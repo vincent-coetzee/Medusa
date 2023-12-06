@@ -1,83 +1,37 @@
 //
-//  Fletcher32.c
-//  Medusa
+//  MedusaStorage.c
+//  
 //
-//  Created by Vincent Coetzee on 23/11/2023.
+//  Created by Vincent Coetzee on 06/12/2023.
 //
 
-#include "Fletcher.h"
+#include <MedusaStorage.h>
 
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <memory.h>
-
-uint32_t fletcher32(const uint16_t *data, size_t len)
-    {
-	uint32_t c0, c1;
-	len = (len + 1) & ~1;      /* Round up len to words */
-
-	/* We similarly solve for n > 0 and n * (n+1) / 2 * (2^16-1) < (2^32-1) here. */
-	/* On modern computers, using a 64-bit c0/c1 could allow a group size of 23726746. */
-	for (c0 = c1 = 0; len > 0; )
-        {
-		size_t blocklen = len;
-		if (blocklen > 360*2)
-            {
-			blocklen = 360*2;
-            }
-		len -= blocklen;
-		do
-            {
-			c0 = c0 + *data++;
-			c1 = c1 + c0;
-            }
-        while ((blocklen -= 2));
-		c0 = c0 % 65535;
-		c1 = c1 % 65535;
-        }
-	return (c1 << 16 | c0);
-    }
-    
-uint64_t fletcher64(const uint32_t *data, size_t len)
-    {
-	uint64_t c0, c1;
-	len = (len + 1) & ~1;      /* Round up len to words */
-
-	/* We similarly solve for n > 0 and n * (n+1) / 2 * (2^16-1) < (2^32-1) here. */
-	/* On modern computers, using a 64-bit c0/c1 could allow a group size of 23726746. */
-	for (c0 = c1 = 0; len > 0; )
-        {
-		size_t blocklen = len;
-		if (blocklen > 360*2)
-            {
-			blocklen = 360*2;
-            }
-		len -= blocklen;
-		do
-            {
-			c0 = c0 + *data++;
-			c1 = c1 + c0;
-            }
-        while ((blocklen -= 2));
-		c0 = c0 % 4294967295;
-		c1 = c1 % 4294967295;
-        }
-	return (c1 << 32 | c0);
-    }
-
-void writeInteger(void* buffer,const long data,long offset)
+void writeInteger64(void* buffer,const long data,long offset)
     {
     char* pointer = ((char*)buffer) + offset;
     *((long*)pointer) = data;
     }
     
-void writeIntegerWithOffset(void* buffer,const long data,long* offset)
+void writeInteger64WithOffset(void* buffer,const long data,long* offset)
     {
     char* pointer = ((char*)buffer) + *offset;
     *((long*)pointer) = data;
     *offset += sizeof(long);
+    }
+    
+void writeFloat64WithOffset(void* buffer,const double data,long* offset)
+    {
+    char* pointer = ((char*)buffer) + *offset;
+    *((double*)pointer) = data;
+    *offset += sizeof(double);
+    }
+    
+void writeUnsigned64WithOffset(void* buffer,const uint64_t data,long* offset)
+    {
+    char* pointer = ((char*)buffer) + *offset;
+    *((uint64_t*)pointer) = data;
+    *offset += sizeof(uint64_t);
     }
     
 void writeByteWithOffset(void* buffer,uint8_t data,long* offset)
@@ -89,6 +43,17 @@ void writeByteWithOffset(void* buffer,uint8_t data,long* offset)
 void writeByte(void* buffer,uint8_t data,long offset)
     {
     *((uint8_t *)((char*)buffer + offset)) = data;
+    }
+    
+void writeBooleanWithOffset(void* buffer,const _Bool data,long* offset)
+    {
+    *((_Bool *)((char*)buffer + *offset)) = data;
+    *offset += sizeof(_Bool);
+    }
+    
+void writeBoolean(void* buffer,const _Bool data,long offset)
+    {
+    *((_Bool *)((char*)buffer + offset)) = data;
     }
     
 void writeUnicodeScalarWithOffset(void* buffer,void* data,long* offset)
@@ -105,6 +70,11 @@ void writeUnicodeScalarWithOffset(void* buffer,void* data,long* offset)
 void writeUnsigned64(void* buffer,const uint64_t data,long offset)
     {
     *((unsigned long *)((char*)buffer + offset)) = data;
+    }
+    
+void writeFloat64(void* buffer,const double data,long offset)
+    {
+    *((double *)((char*)buffer + offset)) = data;
     }
 
 long readInteger(void* buffer,long offset)
@@ -131,9 +101,9 @@ double readFloat(void* buffer,long offset)
     return(*from);
     }
     
-unsigned long readUnsigned(void* buffer,long offset)
+uint64_t readUnsigned64(void* buffer,long offset)
     {
-    unsigned long* from = (unsigned long*)(((char*)buffer) + offset);
+    uint64_t* from = (uint64_t*)(((char*)buffer) + offset);
     return(*from);
     }
     
@@ -167,6 +137,29 @@ uint8_t readByte(void* buffer,long offset)
     return(*((uint8_t *)((char*)buffer + offset)));
     }
     
+_Bool readBooleanWithOffset(void* buffer,long* offset)
+    {
+    _Bool byte = *((_Bool *)((char*)buffer + *offset));
+    *offset += sizeof(_Bool);
+    return(byte);
+    }
+    
+_Bool readBoolean(void* buffer,long offset)
+    {
+    return(*((_Bool *)((char*)buffer + offset)));
+    }
+
+void writeObjectAddress(void* buffer,const ObjectAddress address,long offset)
+    {
+    *((uint64_t*)((char*)buffer + offset)) = address.address;
+    }
+    
+void writeObjectAddressWithOffset(void* buffer,const ObjectAddress address,long* offset)
+    {
+    *((uint64_t *)((char*)buffer + *offset)) = address.address;
+    *offset += sizeof(uint64_t);
+    }
+    
 void readUnicodeScalarWithOffset(void* buffer,void* pointer,long* offset)
     {
     char* from = ((char*)buffer) + *offset;
@@ -178,7 +171,19 @@ void readUnicodeScalarWithOffset(void* buffer,void* pointer,long* offset)
     *offset += 4;
     }
     
-uint64_t readUnsigned64(void* buffer,long offset)
+ObjectAddress readObjectAddress(void *buffer,long offset)
     {
-    return(*((uint64_t *)((char*)buffer + offset)));
+    ObjectAddress address;
+    
+    address.address = *((uint64_t*)(((char*)buffer) + offset));
+    return(address);
+    }
+    
+ObjectAddress readObjectAddressWithOffset(void *buffer,long* offset)
+    {
+    ObjectAddress address;
+    
+    address.address = *((uint64_t*)(((char*)buffer) + *offset));
+    offset += sizeof(uint64_t);
+    return(address);
     }

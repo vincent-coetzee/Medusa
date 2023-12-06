@@ -48,12 +48,11 @@ public struct Medusa
     
     // Page Magic Numbers
     
-    public static let kMedusaPageMagicNumber: MagicNumber            = 0xFED_BAD_BEEF_F00D
-    public static let kMedusaBTreePageMagicNumber: MagicNumber       = 0xFADE_DEED_CAFE_BABE
-    public static let kMedusaPropertiesPageMagicNumber: MagicNumber  = 0xACED_CAFE_D00D_ABED
-    public static let kMedusaObjectPageMagicNumber: MagicNumber      = 0xBEE_BABE_B0D_D00D
-    public static let kMedusaOverlfowPageMagicNumber: MagicNumber    = 0xBAD_C0DE_D0D0_CAD
-    public static let kMedusaRootPageMagicNumber: MagicNumber        = 0xDEAD_C0D_BAD_F00D
+    public static let kPageMagicNumber: MagicNumber            = 0xFED_BAD_BEEF_F00D
+    public static let kBTreePageMagicNumber: MagicNumber       = 0xFADE_DEED_CAFE_BABE
+    public static let kObjectPageMagicNumber: MagicNumber      = 0xBEE_BABE_B0D_D00D
+    public static let kOverlfowPageMagicNumber: MagicNumber    = 0xBAD_C0DE_D0D0_CAD
+    public static let kRootPageMagicNumber: MagicNumber        = 0xDEAD_C0D_BAD_F00D
     
     // Miscellaneous constants
     
@@ -68,16 +67,25 @@ public struct Medusa
     public static let kBytesPerMegabyte = Medusa.kBytesPerKilobyte * Medusa.kBytesPerKilobyte
     public static let kBytesPerGigabyte = Medusa.kBytesPerMegabyte * Medusa.kBytesPerKilobyte
     public static let kBytesPerDiskPage = 16 * Medusa.kBytesPerKilobyte
+    public static let kMaximumPagesPerDatabase = 1024 * 1024 * 1024
+    public static let kMaximumDatabaseSizeInBytes = Medusa.kMaximumPagesPerDatabase * Medusa.kBytesPerDiskPage
+    public static let kPointerOffsetMask: Integer64         = 0b00000000_00000000_00000000_00000000_00000000_00000000_00111111_11111111 // 14 bits
+    public static let kPointerBaseMask: Integer64           = 0b01000000_00000000_00111111_11111111_11111111_11111111_11000000_00000000 // 32 bits
+    public static let kPointerBaseBits: Integer64           = 0b01000000_00000000_00000000_00000000_11111_11111111_11111111_11111111_11
+    public static let kPointerBaseShift: Integer64          = 14
+    public static let kMappedSegmentAddress: Integer64      = 0b01000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000
+    public static let kMappedSegmentSizeInBytes: Integer64  = 0b00000000_00000000_00011111_11111111_11111111_11111111_11111111_11111111
+
     
     public static let kMedusaServiceType = "_medusa._tcp."
     public static let kHostName = Host.current().localizedName!
     public static let kPrimaryServicePort: Int32 = 52000
     public static let kDefaultBufferSize: Int = 4096
     public static let kSocketReadBufferSize = 16 * 1024
-    public static let kPageOffsetBits = 14
-    public static let kPageOffsetMask = 0b11111111111111
-    public static let kPagePageMask = 9_223_372_036_854_767_616
-    public static let kPageBitsMask = 1_125_899_906_842_623
+//    public static let kPageOffsetBits = 14
+//    public static let kPageOffsetMask = 0b11111111111111
+//    public static let kPagePageMask = 9_223_372_036_854_767_616
+//    public static let kPageBitsMask = 1_125_899_906_842_623
     
     public static let kPageMagicNumberOffset                = 0
     public static let kPageChecksumOffset                   = kPageMagicNumberOffset + MemoryLayout<Medusa.Integer64>.size
@@ -90,6 +98,9 @@ public struct Medusa
     public static let kBTreePageIsLeafOffset                     = kBTreePageKeysPerPageOffset + MemoryLayout<Medusa.Integer64>.size
     public static let kBTreePageHeaderSizeInBytes                = kBTreePageIsLeafOffset + MemoryLayout<Medusa.Boolean>.size
     
+    public static let kRootPageLastAllocatedPageOffset           = kPageHeaderSizeInBytes
+    public static let kRootPageFreeListOffset                    = kRootPageLastAllocatedPageOffset + MemoryLayout<Medusa.Integer64>.size
+    
     public static let kBTreePageKeysOffset                       = Medusa.kBTreePageHeaderSizeInBytes
     
     public static let kPageSizeInBytes                           = 16 * 1024
@@ -98,7 +109,6 @@ public struct Medusa
     
     public static let kMaximumStringLength                       = 4_294_967_295
     
-    public static let kBTreePageMagicNumber: MagicNumber    = 0xFADE0000D00DF00D
     
     public enum Endian: Int
         {
@@ -283,35 +293,60 @@ public struct Medusa
             print(error)
             }
         }
-        
-    public private(set) static var kMappedSegmentSizeInBytes:Integer64 = 0
-    public private(set) static var kDataBaseAddress: Integer64 = 0
-    public private(set) static var kIndexBaseAddress: Integer64 = 0
-    public private(set) static var kReplicateBaseAddress: Integer64 = 0
     
     public static func boot()
         {
         let _ = LoggingAgent()
-        Self.initSegmentAddressing()
-        Self.initAgents()
-        let handles = Self.createFilesIfNeeded()
-        Self.mapSegments(fileHandles: handles)
+        self.checkPageSize()
+        var dataFileNeedsInitialization = false
+        let dataFileHandle = self.createDataFileIfNeeded(needsInitialization: &dataFileNeedsInitialization)
+        Self.initMemorySegment(using: dataFileHandle)
+        Self.initAgents(with: dataFileHandle)
+        if dataFileNeedsInitialization
+            {
+            self.initDataFile(using: dataFileHandle)
+            }
         self.finalizeBoot()
         }
         
-    private static func initSegmentAddressing()
+    public static func checkPageSize()
         {
-        LoggingAgent.shared.log("Initializing segment addressing.")
-        Self.kMappedSegmentSizeInBytes = 16 * Medusa.kBytesPerGigabyte * Medusa.kBytesPerDiskPage
-        LoggingAgent.shared.log("Segment length set to \(Self.kMappedSegmentSizeInBytes) bytes.")
-        let baseAddress = Self.kMappedSegmentSizeInBytes
-        LoggingAgent.shared.log("Setting base address to 0x\(String(baseAddress,radix: 16,uppercase: true)).")
-        Self.kDataBaseAddress = Self.align(baseAddress,to: Medusa.kBytesPerDiskPage)
-        LoggingAgent.shared.log("Setting desired data segment address to 0x\(String(Self.kDataBaseAddress,radix: 16,uppercase: true)).")
-        Self.kIndexBaseAddress = Self.align(Self.kDataBaseAddress + Self.kMappedSegmentSizeInBytes,to: Medusa.kBytesPerDiskPage)
-        LoggingAgent.shared.log("Setting desired index segment address to 0x\(String(Self.kIndexBaseAddress,radix: 16,uppercase: true)).")
-        Self.kReplicateBaseAddress = Self.align(Self.kIndexBaseAddress + Self.kMappedSegmentSizeInBytes,to: Medusa.kBytesPerDiskPage)
-        LoggingAgent.shared.log("Setting desired replicate segment address to 0x\(String(Self.kReplicateBaseAddress,radix: 16,uppercase: true)).")
+        let pageSize = Unsigned16(getpagesize())
+        if pageSize != Self.kPageSizeInBytes
+            {
+            LoggingAgent.shared.log("System page size is \(pageSize), Medusa expects a page size of \(Self.kPageSizeInBytes).")
+            LoggingAgent.shared.log("Medusa was designed for a page size of \(Self.kPageSizeInBytes) it can not run with a different page size.")
+            LoggingAgent.shared.log("Medusa will now terminate.")
+            fatalError("Medusa terminating due to page size conflict.")
+            }
+        }
+        
+    private static func initMemorySegment(using fileHandle: FileHandle)
+        {
+        LoggingAgent.shared.log("Initializing data file mapped segment.")
+
+        var hexString = String(self.kMappedSegmentSizeInBytes,radix: 16,uppercase: true)
+        LoggingAgent.shared.log("Mapped data file segment length is 0x\(hexString) ( \(self.kMappedSegmentSizeInBytes) ) bytes.")
+
+        hexString = String(self.kMappedSegmentAddress,radix: 16,uppercase: true)
+        LoggingAgent.shared.log("Mapped data file segment will be mapped at  0x\(hexString) ( \(self.kMappedSegmentAddress) ).")
+        do
+            {
+            try fileHandle.map(to: self.kMappedSegmentAddress, sizeInBytes: self.kMappedSegmentSizeInBytes, offset: 0)
+            LoggingAgent.shared.log("Mapping of data file segment was successful.")
+            }
+        catch let issue as SystemIssue
+            {
+            let message = "Error mapping data file segment \(issue.code) \(issue.message), Medusa can not proceed, it will now terminate."
+            LoggingAgent.shared.log(message)
+            fatalError(message)
+            }
+        catch let error
+            {
+            let message = "Unknown error ( \(error) ) occurred in Medusa.initMemorySegment(using:), Medusa is terminating."
+            LoggingAgent.shared.log(message)
+            fatalError(message)
+            }
         }
         
     public static func align(_ address: Integer64,to someAlignment: Integer64) -> Integer64
@@ -326,7 +361,7 @@ public struct Medusa
         return(value)
         }
         
-    private static func createFilesIfNeeded() -> Array<FileHandle>
+    private static func createDataFileIfNeeded(needsInitialization: inout Bool) -> FileHandle
         {
         if !Self.kMedusaDataDirectoryPath.isDirectory
             {
@@ -334,55 +369,55 @@ public struct Medusa
             do
                 {
                 try FileManager.default.createDirectory(at: Self.kMedusaDataDirectoryPath.url, withIntermediateDirectories: true)
+                needsInitialization = true
                 LoggingAgent.shared.log("Successfully created Data directory \(Self.kMedusaDataDirectoryPath.string).")
                 }
             catch let error
                 {
                 LoggingAgent.shared.log("Creation of directory \(Self.kMedusaDataDirectoryPath.string) failed with \(error).")
-                fatalError("Creation of Date directory failed, Medusa will now terminate.")
+                fatalError("Creation of Data directory failed, Medusa will now terminate.")
                 }
             }
         else
             {
             LoggingAgent.shared.log("Found directory \(Self.kMedusaDataDirectoryPath.string).")
             }
-        var handles = Array<FileHandle>()
-        do
+        if FileManager.default.fileExists(atPath: kMedusaDataFilePath.string)
             {
-            handles.append(try FileHandle(path: kMedusaDataFilePath).open(mode: .write,.create,.truncate))
-            LoggingAgent.shared.log("Successfully created data file \(Self.kMedusaDataFilePath.string).")
-            handles.append(try FileHandle(path: kMedusaIndexFilePath).open(mode: .write,.create,.truncate))
-            LoggingAgent.shared.log("Successfully created index file \(Self.kMedusaIndexFilePath.string).")
-            handles.append(try FileHandle(path: kMedusaReplicateFilePath).open(mode: .write,.create,.truncate))
-            LoggingAgent.shared.log("Successfully created replicate file \(Self.kMedusaReplicateFilePath.string).")
-            LoggingAgent.shared.log("Successfully created all required files.")
-            self.initFileContents()
-            return(handles)
+            LoggingAgent.shared.log("Found data file \(Self.kMedusaDataFilePath.string).")
             }
-        catch let error
+        else
             {
-            LoggingAgent.shared.log("Creation of file failed with \(error).")
-            fatalError("Creation of files failed, Medusa will now terminate.")
+            needsInitialization = true
+            do
+                {
+                let handle = try FileHandle(path: kMedusaDataFilePath).open(mode: .write,.create,.truncate)
+                LoggingAgent.shared.log("Successfully created data file \(Self.kMedusaDataFilePath.string).")
+                return(handle)
+                }
+            catch let error
+                {
+                LoggingAgent.shared.log("Creation of data file failed with \(error).")
+                fatalError("Creation of database failed, Medusa will now terminate.")
+                }
             }
         }
         
-    private static func initFileContents()
+    private static func initDataFile(using handle: FileHandle)
         {
+        LoggingAgent.shared.log("Initializing Medusa data file...")
         }
-        
-    public static func mapSegments(fileHandles: Array<FileHandle>)
-        {
-        LoggingAgent.shared.log("Mapping files to segments.")
-        }
-        
-    public static func initAgents()
+
+    public static func initAgents(with fileHandle: FileHandle)
         {
         LoggingAgent.shared.log("Initializing agents.")
+        let pageServer = PageServer(dataFileHandle: fileHandle)
         }
         
     public static func finalizeBoot()
         {
         LoggingAgent.shared.log("Finalizing Medusa boot sequence.")
+        LoggingAgent.shared.log("Medusa successfully completed boot sequence, Medusa now available.")
         }
     }
 
@@ -402,6 +437,7 @@ public typealias Float64 = Medusa.Float64
 public typealias Float32 = Medusa.Float32
 public typealias Float16 = Medusa.Float16
 public typealias RawBuffer = Medusa.RawBuffer
+public typealias RawPointer = UnsafeMutableRawPointer
 public typealias Address = Medusa.Address
 public typealias Instance = Medusa.Instance
 public typealias Instances = Medusa.Instances

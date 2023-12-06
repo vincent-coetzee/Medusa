@@ -1,0 +1,6 @@
+module MedusaStorage [system] [extern_c] {
+    header "./include/MedusaStorage.h"
+    export *
+    module * { export * }
+}
+

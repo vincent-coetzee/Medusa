@@ -7,32 +7,24 @@
 
 import Foundation
 
-//                                     Address:
-//                                               Sign ( 1 bit )         0
-//                                               Tag ( 3 bits )          101
-//                                               Reserved ( 10 bits)        0000 000000
-//                                     Page offset ( 40 bits )                         PP PPPPPPPP PPPPPPPP PPPPPPPP PPPP
-//                                     Intra page offset ( 14 bits )                                                     PPPP PPPPPPII IIIIIIII
 //
-
-public struct MOPAddress
+// A pointer in Medusa terms is the address of the page that contains an object
+// or'ed with the offset of the object within the page. Remember that because the
+// data file for the database has been mmapped into memory, all these addresses
+// are actually memory addresses not only disk addresses. The data file is mapped into memory
+// at 0x0x4000000000000000 but Medusa page addresses only start at 0x4000000000000000
+// which means there is a one to one correspondence between the address of an object on disk
+// and its address in memory. The page base address can have a value between
+// 16,384 ( 0x4000 ) and 
+//
+public struct MOMPointer
     {
-    public static let kPageIndexMask: Unsigned64    = 0b00000000_00000011_11111111_11111111_11111111_11111111_11111100_00000000
-    public static let kOffsetMask: Unsigned64       = 0b00000000_00000000_00000000_00000000_00000000_00000000_00111111_11111111
-    public static let kAddressTagMask: Unsigned64   = 0b01010000_00000000_00000000_00000000_00000000_00000000_00000000_00000000
-    
-    public static let kPageIndexBits: Unsigned64    = 0b00000000_00000000_00000000_11111111_11111111_11111111_11111111_11111111
-    public static let kOffsetBits: Unsigned64       = 0b00000000_00000000_00000000_00000000_00000000_00000000_00111111_11111111
-    
-    public static let kPageIndexShift: Unsigned64   = 14
-    public static let kOffsetShift: Unsigned64      = 0
-    
-    private let _pageIndex: Unsigned64
+    private let _base: Unsigned64
     private let _offset: Unsigned64
     
-    public var pageIndex: Integer64
+    public var base: Integer64
         {
-        Integer64(self._pageIndex)
+        Integer64(self._base)
         }
 
     public var offset: Integer64
@@ -43,12 +35,12 @@ public struct MOPAddress
     
     public var address: Address
         {
-        Integer64(bitPattern: Unsigned64(self.pageIndex) | Self.kAddressTagMask | Unsigned64(self.offset))
+        Integer64(bitPattern: Unsigned64(self._base) | Unsigned64(self.offset))
         }
 
     public init(address: Address)
         {
-        self._pageIndex = Unsigned64(bitPattern: address) & Self.kPageIndexMask
-        self._offset = Unsigned64(bitPattern: address) & Self.kOffsetMask
+        self._base = Unsigned64(bitPattern: address) & Unsigned64(bitPattern: Medusa.kPointerBaseMask)
+        self._offset = Unsigned64(bitPattern: address) & Unsigned64(bitPattern: Medusa.kPointerOffsetMask)
         }
     }

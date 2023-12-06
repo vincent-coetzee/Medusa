@@ -21,6 +21,7 @@
 		BF1927B22B1A741700643243 /* MOPString.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1927B12B1A741700643243 /* MOPString.swift */; };
 		BF1927B42B1A7F6400643243 /* MOPIPv6Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1927B32B1A7F6400643243 /* MOPIPv6Address.swift */; };
 		BF1927B62B1A7FC200643243 /* MOPBits.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1927B52B1A7FC200643243 /* MOPBits.swift */; };
+		BF2B00EC2B20AFAD00E83152 /* MedusaStorage in Frameworks */ = {isa = PBXBuildFile; productRef = BF2B00EB2B20AFAD00E83152 /* MedusaStorage */; };
 		BF521F3B2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF521F3A2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift */; };
 		BF6473892B13A91D0049B583 /* SmalltalkMonads.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6473882B13A91D0049B583 /* SmalltalkMonads.swift */; };
 		BF6C7E132B0E259A006DB858 /* BTreePageInspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E122B0E259A006DB858 /* BTreePageInspectorWindowController.swift */; };
@@ -56,9 +57,11 @@
 		BFA944492B1078B400526CF1 /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA944482B1078B400526CF1 /* Fragment.swift */; };
 		BFA944542B1111C100526CF1 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA944532B1111C100526CF1 /* File.swift */; };
 		BFA944582B1113EE00526CF1 /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = BFA944572B1113EE00526CF1 /* Path */; };
-		BFAAF0342B0F2A7C00A2FFD1 /* Fletcher.c in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF0332B0F2A7C00A2FFD1 /* Fletcher.c */; };
 		BFAAF03C2B0FDF4300A2FFD1 /* FreeList.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF03B2B0FDF4300A2FFD1 /* FreeList.swift */; };
 		BFAAF03E2B0FE55A00A2FFD1 /* SystemIssue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF03D2B0FE55A00A2FFD1 /* SystemIssue.swift */; };
+		BFAE71E52B1F193700C15E0F /* RootPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAE71E42B1F193700C15E0F /* RootPage.swift */; };
+		BFAE71F02B1FAD8000C15E0F /* MedusaCore in Frameworks */ = {isa = PBXBuildFile; productRef = BFAE71EF2B1FAD8000C15E0F /* MedusaCore */; };
+		BFAE71F22B1FAD8500C15E0F /* MedusaObjectModel in Frameworks */ = {isa = PBXBuildFile; productRef = BFAE71F12B1FAD8500C15E0F /* MedusaObjectModel */; };
 		BFBAF5132B172BC1003ED388 /* FileHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAF5122B172BC1003ED388 /* FileHandle.swift */; };
 		BFD674432B05E6010086932A /* Socket in Frameworks */ = {isa = PBXBuildFile; productRef = BFD674422B05E6010086932A /* Socket */; };
 		BFD674452B05E79F0086932A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BFD674442B05E79F0086932A /* Info.plist */; };
@@ -88,7 +91,7 @@
 		BFFB2E7F2B05363300254090 /* PrimaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E7E2B05363300254090 /* PrimaryViewController.swift */; };
 		BFFB2E812B05363500254090 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BFFB2E802B05363500254090 /* Assets.xcassets */; };
 		BFFB2E942B05364C00254090 /* ExecutionAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E8B2B05364B00254090 /* ExecutionAgent.swift */; };
-		BFFB2E952B05364C00254090 /* PageAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E8C2B05364B00254090 /* PageAgent.swift */; };
+		BFFB2E952B05364C00254090 /* PageServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E8C2B05364B00254090 /* PageServer.swift */; };
 		BFFB2E962B05364C00254090 /* Agent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E8D2B05364B00254090 /* Agent.swift */; };
 		BFFB2E972B05364C00254090 /* StorageAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E8E2B05364B00254090 /* StorageAgent.swift */; };
 		BFFB2E982B05364C00254090 /* AgentState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E8F2B05364B00254090 /* AgentState.swift */; };
@@ -129,6 +132,7 @@
 		BF1927B12B1A741700643243 /* MOPString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPString.swift; sourceTree = "<group>"; };
 		BF1927B32B1A7F6400643243 /* MOPIPv6Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPIPv6Address.swift; sourceTree = "<group>"; };
 		BF1927B52B1A7FC200643243 /* MOPBits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPBits.swift; sourceTree = "<group>"; };
+		BF2B00EA2B20716200E83152 /* MedusaStorage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaStorage; sourceTree = "<group>"; };
 		BF521F3A2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferBrowserPopoverViewController.swift; sourceTree = "<group>"; };
 		BF6473882B13A91D0049B583 /* SmalltalkMonads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmalltalkMonads.swift; sourceTree = "<group>"; };
 		BF6C7E122B0E259A006DB858 /* BTreePageInspectorWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTreePageInspectorWindowController.swift; sourceTree = "<group>"; };
@@ -163,11 +167,11 @@
 		BFA944462B10783800526CF1 /* KeyValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValue.swift; sourceTree = "<group>"; };
 		BFA944482B1078B400526CF1 /* Fragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fragment.swift; sourceTree = "<group>"; };
 		BFA944532B1111C100526CF1 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
-		BFAAF0312B0F29CD00A2FFD1 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
-		BFAAF0322B0F2A1E00A2FFD1 /* Fletcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Fletcher.h; sourceTree = "<group>"; };
-		BFAAF0332B0F2A7C00A2FFD1 /* Fletcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Fletcher.c; sourceTree = "<group>"; };
 		BFAAF03B2B0FDF4300A2FFD1 /* FreeList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeList.swift; sourceTree = "<group>"; };
 		BFAAF03D2B0FE55A00A2FFD1 /* SystemIssue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemIssue.swift; sourceTree = "<group>"; };
+		BFAE71E42B1F193700C15E0F /* RootPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootPage.swift; sourceTree = "<group>"; };
+		BFAE71ED2B1FABA600C15E0F /* MedusaCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaCore; sourceTree = "<group>"; };
+		BFAE71EE2B1FABED00C15E0F /* MedusaObjectModel */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaObjectModel; sourceTree = "<group>"; };
 		BFBAF5122B172BC1003ED388 /* FileHandle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHandle.swift; sourceTree = "<group>"; };
 		BFD674442B05E79F0086932A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BFD674462B05EAE20086932A /* Medusa.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Medusa.swift; sourceTree = "<group>"; };
@@ -200,7 +204,7 @@
 		BFFB2E802B05363500254090 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BFFB2E852B05363500254090 /* Medusa.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Medusa.entitlements; sourceTree = "<group>"; };
 		BFFB2E8B2B05364B00254090 /* ExecutionAgent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExecutionAgent.swift; sourceTree = "<group>"; };
-		BFFB2E8C2B05364B00254090 /* PageAgent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageAgent.swift; sourceTree = "<group>"; };
+		BFFB2E8C2B05364B00254090 /* PageServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageServer.swift; sourceTree = "<group>"; };
 		BFFB2E8D2B05364B00254090 /* Agent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Agent.swift; sourceTree = "<group>"; };
 		BFFB2E8E2B05364B00254090 /* StorageAgent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageAgent.swift; sourceTree = "<group>"; };
 		BFFB2E8F2B05364B00254090 /* AgentState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgentState.swift; sourceTree = "<group>"; };
@@ -226,7 +230,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFAE71F22B1FAD8500C15E0F /* MedusaObjectModel in Frameworks */,
+				BFAE71F02B1FAD8000C15E0F /* MedusaCore in Frameworks */,
 				BFD674432B05E6010086932A /* Socket in Frameworks */,
+				BF2B00EC2B20AFAD00E83152 /* MedusaStorage in Frameworks */,
 				BFA944582B1113EE00526CF1 /* Path in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -347,9 +354,6 @@
 		BFAAF0302B0F29A400A2FFD1 /* Fletcher */ = {
 			isa = PBXGroup;
 			children = (
-				BFAAF0312B0F29CD00A2FFD1 /* module.modulemap */,
-				BFAAF0322B0F2A1E00A2FFD1 /* Fletcher.h */,
-				BFAAF0332B0F2A7C00A2FFD1 /* Fletcher.c */,
 			);
 			path = Fletcher;
 			sourceTree = "<group>";
@@ -399,7 +403,7 @@
 				BFFB2E912B05364B00254090 /* FreePageAgent.swift */,
 				BFFB2E932B05364C00254090 /* LoggingAgent.swift */,
 				BFFB2E8E2B05364B00254090 /* StorageAgent.swift */,
-				BFFB2E8C2B05364B00254090 /* PageAgent.swift */,
+				BFFB2E8C2B05364B00254090 /* PageServer.swift */,
 			);
 			path = Agents;
 			sourceTree = "<group>";
@@ -418,6 +422,7 @@
 			isa = PBXGroup;
 			children = (
 				BF7075F72B16016300E3F6D8 /* BTree.swift */,
+				BFAE71E42B1F193700C15E0F /* RootPage.swift */,
 				BFFB2E902B05364B00254090 /* BTreePage.swift */,
 				BFD6747A2B065ADF0086932A /* Buffer.swift */,
 				BF6C7E1E2B0E4ACC006DB858 /* Bytes.swift */,
@@ -441,6 +446,9 @@
 		BFFB2E702B05363300254090 = {
 			isa = PBXGroup;
 			children = (
+				BF2B00EA2B20716200E83152 /* MedusaStorage */,
+				BFAE71EE2B1FABED00C15E0F /* MedusaObjectModel */,
+				BFAE71ED2B1FABA600C15E0F /* MedusaCore */,
 				BFEEF9302B1D03D900F42C58 /* Files.entitlements */,
 				BFD674802B066A560086932A /* Main.storyboard */,
 				BFD674442B05E79F0086932A /* Info.plist */,
@@ -525,6 +533,9 @@
 			packageProductDependencies = (
 				BFD674422B05E6010086932A /* Socket */,
 				BFA944572B1113EE00526CF1 /* Path */,
+				BFAE71EF2B1FAD8000C15E0F /* MedusaCore */,
+				BFAE71F12B1FAD8500C15E0F /* MedusaObjectModel */,
+				BF2B00EB2B20AFAD00E83152 /* MedusaStorage */,
 			);
 			productName = Medusa;
 			productReference = BFFB2E792B05363300254090 /* Medusa.app */;
@@ -632,6 +643,7 @@
 				BF7FFCD12B079D10001D2F93 /* MOPInstance.swift in Sources */,
 				BF6C7E1D2B0E3543006DB858 /* FieldCellField.swift in Sources */,
 				BFFB2E9C2B05364C00254090 /* LoggingAgent.swift in Sources */,
+				BFAE71E52B1F193700C15E0F /* RootPage.swift in Sources */,
 				BFD674842B0689990086932A /* PermissionsToken.swift in Sources */,
 				BFD6747D2B06689E0086932A /* BufferBrowserViewController.swift in Sources */,
 				BFEEF92F2B1CFABC00F42C58 /* Task+Extensions.swift in Sources */,
@@ -661,7 +673,7 @@
 				BF7FFCD32B079D48001D2F93 /* MOPObject.swift in Sources */,
 				BF7075FA2B1626C100E3F6D8 /* Stack.swift in Sources */,
 				BFAAF03C2B0FDF4300A2FFD1 /* FreeList.swift in Sources */,
-				BFFB2E952B05364C00254090 /* PageAgent.swift in Sources */,
+				BFFB2E952B05364C00254090 /* PageServer.swift in Sources */,
 				BF7FFCDB2B07A04F001D2F93 /* MOPBuffer.swift in Sources */,
 				BF06A4892B1E1FDE0034D7BF /* MOPStringObject.swift in Sources */,
 				BF6C7E1F2B0E4ACC006DB858 /* Bytes.swift in Sources */,
@@ -681,7 +693,6 @@
 				BFD6745A2B05F60C0086932A /* Message.swift in Sources */,
 				BFFB2E972B05364C00254090 /* StorageAgent.swift in Sources */,
 				BF797A342B0A23A90006A238 /* String+Extensions.swift in Sources */,
-				BFAAF0342B0F2A7C00A2FFD1 /* Fletcher.c in Sources */,
 				BF6C7E1B2B0E307E006DB858 /* FieldValueField.swift in Sources */,
 				BF7FFCCF2B079CDA001D2F93 /* MOPReader.swift in Sources */,
 				BFFB2E982B05364C00254090 /* AgentState.swift in Sources */,
@@ -699,7 +710,9 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				"INFOPLIST_KEY_UIMainStoryboardFile[sdk=*]" = Main;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				SWIFT_INCLUDE_PATHS = "${SRCROOT}/Medusa/Fletcher32";
 				SWIFT_VERSION = 5.0;
 			};
@@ -713,7 +726,9 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				"INFOPLIST_KEY_UIMainStoryboardFile[sdk=*]" = Main;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				SWIFT_INCLUDE_PATHS = "${SRCROOT}/Medusa/Fletcher32";
 				SWIFT_VERSION = 5.0;
 			};
@@ -772,11 +787,11 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx14.0;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -829,10 +844,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx14.0;
 				SWIFT_COMPILATION_MODE = wholemodule;
 			};
 			name = Release;
@@ -857,9 +872,11 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.macsemantics.Medusa;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INCLUDE_PATHS = "${SRCROOT}/Medusa/Fletcher";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -887,9 +904,11 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.macsemantics.Medusa;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INCLUDE_PATHS = "${SRCROOT}/Medusa/Fletcher";
 				SWIFT_VERSION = 5.0;
@@ -948,10 +967,22 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		BF2B00EB2B20AFAD00E83152 /* MedusaStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MedusaStorage;
+		};
 		BFA944572B1113EE00526CF1 /* Path */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = BFA944552B11126100526CF1 /* XCRemoteSwiftPackageReference "Path" */;
 			productName = Path;
+		};
+		BFAE71EF2B1FAD8000C15E0F /* MedusaCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MedusaCore;
+		};
+		BFAE71F12B1FAD8500C15E0F /* MedusaObjectModel */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MedusaObjectModel;
 		};
 		BFD674422B05E6010086932A /* Socket */ = {
 			isa = XCSwiftPackageProductDependency;
