@@ -19,17 +19,17 @@ public class MOPBuffer
         self.pointer = Medusa.RawBuffer.allocate(byteCount: self.sizeInBytes, alignment: 1)
         }
     
-    public func nextPut(_ integer: Medusa.Integer64,atByteOffset: inout Int)
+    public func nextPut(_ integer: Integer64,atByteOffset: inout Int)
         {
-        self.pointer.storeBytes(of: integer, toByteOffset: atByteOffset, as: Medusa.Integer64.self)
-        atByteOffset += MemoryLayout<Medusa.Integer64>.size
-        self.byteCounter += MemoryLayout<Medusa.Integer64>.size
+        self.pointer.storeBytes(of: integer, toByteOffset: atByteOffset, as: Integer64.self)
+        atByteOffset += MemoryLayout<Integer64>.size
+        self.byteCounter += MemoryLayout<Integer64>.size
         }
         
     public func nextPut(_ string: Medusa.String,atByteOffset: inout Int)
         {
-        self.pointer.storeBytes(of: string.unicodeScalars.count, toByteOffset: atByteOffset, as: Medusa.Integer64.self)
-        atByteOffset += MemoryLayout<Medusa.Integer64>.size
+        self.pointer.storeBytes(of: string.unicodeScalars.count, toByteOffset: atByteOffset, as: Integer64.self)
+        atByteOffset += MemoryLayout<Integer64>.size
         for scalar in string.unicodeScalars
             {
             self.pointer.storeBytes(of: scalar,toByteOffset: atByteOffset,as: Unicode.Scalar.self)
@@ -45,18 +45,18 @@ public class MOPBuffer
         self.byteCounter += MemoryLayout<Medusa.Byte>.size
         }
         
-    public func nextPut(_ boolean: Medusa.Boolean,atByteOffset:inout Int)
+    public func nextPut(_ boolean: Boolean,atByteOffset:inout Int)
         {
-        self.pointer.storeBytes(of: boolean, toByteOffset: atByteOffset, as: Medusa.Boolean.self)
-        atByteOffset += MemoryLayout<Medusa.Boolean>.size
-        self.byteCounter += MemoryLayout<Medusa.Boolean>.size
+        self.pointer.storeBytes(of: boolean, toByteOffset: atByteOffset, as: Boolean.self)
+        atByteOffset += MemoryLayout<Boolean>.size
+        self.byteCounter += MemoryLayout<Boolean>.size
         }
         
-    public func nextPut(_ float: Medusa.Float64,atByteOffset:inout Int)
+    public func nextPut(_ float: Float64,atByteOffset:inout Int)
         {
-        self.pointer.storeBytes(of: float, toByteOffset: atByteOffset, as: Medusa.Float64.self)
-        atByteOffset += MemoryLayout<Medusa.Float64>.size
-        self.byteCounter += MemoryLayout<Medusa.Float64>.size
+        self.pointer.storeBytes(of: float, toByteOffset: atByteOffset, as: Float64.self)
+        atByteOffset += MemoryLayout<Float64>.size
+        self.byteCounter += MemoryLayout<Float64>.size
         }
         
     public func nextPut(_ identifier: Identifier,atByteOffset:inout Int)

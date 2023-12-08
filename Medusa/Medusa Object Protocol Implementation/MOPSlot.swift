@@ -13,7 +13,7 @@ public class MOPSlot
     public let klass: MOPClass
     public let offset: Int
     
-    public var sizeInBytes: Medusa.Integer64
+    public var sizeInBytes: Integer64
         {
         self.klass.slotSizeInBytes
         }

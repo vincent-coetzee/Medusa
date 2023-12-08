@@ -14,11 +14,18 @@
 #include <string.h>
 #include <memory.h>
 
+//
+// An ObjectAddress is used by Medusa to store and ferry around addresses
+// that point to an object. They are defined here but have extra functionality
+// added in the MedusaObjectModel module.
+//
+
 typedef struct _ObjectAddress
     {
     uint64_t       address;
     }
     ObjectAddress;
+    
 //
 // Functions for reading primitive Medusa datatypes
 //

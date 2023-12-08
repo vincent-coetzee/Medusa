@@ -9,13 +9,13 @@ import Foundation
 
 extension Int
     {
-    public init(bitPattern someFloat: Float64)
-        {
-        self.init(bitPattern: UInt(someFloat.bitPattern))
-        }
-        
-    public init(bitPattern unsigned: Unsigned64)
-        {
-        self.init(bitPattern: UInt(unsigned))
-        }
+//    public init(bitPattern someFloat: Float64)
+//        {
+//        self.init(bitPattern: UInt(someFloat.bitPattern))
+//        }
+//        
+//    public init(bitPattern unsigned: Unsigned64)
+//        {
+//        self.init(bitPattern: UInt(unsigned))
+//        }
     }

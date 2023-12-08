@@ -13,7 +13,7 @@ open class EnumerationClass: Class
     {
     public override func readInstance(from rawPointer: RawPointer,atByteOffset:inout Integer64) -> Instance
         {
-        Enumeration(readFrom: rawPointer,atByteOffset: &atByteOffset)
+        Enumeration(from: rawPointer,atByteOffset: &atByteOffset)
         }
         
     public override func write(_ instance: Instance,into rawPointer: RawPointer,atByteOffset:inout Integer64)

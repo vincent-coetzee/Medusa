@@ -22,7 +22,7 @@ public class MOPWriter: MOPReader
         super.init()
         }
         
-    public func encode(_ integer: Medusa.Integer64)
+    public func encode(_ integer: Integer64)
         {
 
         }

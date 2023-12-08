@@ -2,15 +2,11 @@
 //  File.swift
 //  
 //
-//  Created by Vincent Coetzee on 06/12/2023.
+//  Created by Vincent Coetzee on 08/12/2023.
 //
 
 import Foundation
 
-extension Boolean
+extension Boolean: PrimitiveType
     {
-    public var objectID: ObjectID
-        {
-        ObjectID(self)
-        }
     }

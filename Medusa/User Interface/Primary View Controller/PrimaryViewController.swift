@@ -6,6 +6,8 @@
 //
 
 import Cocoa
+import MedusaCore
+import MedusaNetworking
 
 class PrimaryViewController: NSViewController,NSMenuItemValidation,NSMenuDelegate
     {
@@ -14,12 +16,12 @@ class PrimaryViewController: NSViewController,NSMenuItemValidation,NSMenuDelegat
     override func viewDidLoad()
         {
         super.viewDidLoad()
-        NSApplication.shared.mainMenu!.item(withTitle: "Tools")!.submenu!.item(withTitle: "Browse Repository...")!.target = self
-        NSApplication.shared.mainMenu!.item(withTitle: "Tools")!.submenu!.item(withTitle: "Browse Repository...")!.action = #selector(PrimaryViewController.onBrowseRepositoryClicked)
-        NSApplication.shared.mainMenu!.item(withTitle: "Tools")!.submenu!.item(withTitle: "Browse Repository...")!.isEnabled = true
+//        NSApplication.shared.mainMenu!.item(withTitle: "Tools")!.submenu!.item(withTitle: "Browse Repository...")!.target = self
+//        NSApplication.shared.mainMenu!.item(withTitle: "Tools")!.submenu!.item(withTitle: "Browse Repository...")!.action = #selector(PrimaryViewController.onBrowseRepositoryClicked)
+//        NSApplication.shared.mainMenu!.item(withTitle: "Tools")!.submenu!.item(withTitle: "Browse Repository...")!.isEnabled = true
         self.initializeBonjour()
-        self.browseBuffer(self)
-        self.browseBTreePage(self)
+//        self.browseBuffer(self)
+//        self.browseBTreePage(self)
         }
 
     private func initializeBonjour()
@@ -41,28 +43,28 @@ class PrimaryViewController: NSViewController,NSMenuItemValidation,NSMenuDelegat
         true
         }
         
-    @IBAction func browseBuffer(_ sender: Any?)
-        {
-        let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
-        let windowController = storyboard.instantiateController(withIdentifier: "bufferBrowserWindowController") as! NSWindowController
-        let _ = windowController.contentViewController as! BufferBrowserViewController
-        windowController.showWindow(self)
-        }
-        
-    @IBAction func browseBTreePage(_ sender: Any?)
-        {
-        let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
-        let windowController = storyboard.instantiateController(withIdentifier: "btreePageInspectorWindowController") as! NSWindowController
-        let _ = windowController.contentViewController as! BTreePageInspectorViewController
-        windowController.showWindow(self)
-        }
-        
-    @IBAction func onBrowseRepositoryClicked(_ sender: Any?)
-        {
-        let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
-        let windowController = storyboard.instantiateController(withIdentifier: "repositoryBrowserWindowController") as! NSWindowController
-        let _ = windowController.contentViewController as! RepositoryBrowserViewController
-        windowController.showWindow(self)
-        }
+//    @IBAction func browseBuffer(_ sender: Any?)
+//        {
+//        let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
+//        let windowController = storyboard.instantiateController(withIdentifier: "bufferBrowserWindowController") as! NSWindowController
+//        let _ = windowController.contentViewController as! BufferBrowserViewController
+//        windowController.showWindow(self)
+//        }
+//        
+//    @IBAction func browseBTreePage(_ sender: Any?)
+//        {
+//        let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
+//        let windowController = storyboard.instantiateController(withIdentifier: "btreePageInspectorWindowController") as! NSWindowController
+//        let _ = windowController.contentViewController as! BTreePageInspectorViewController
+//        windowController.showWindow(self)
+//        }
+//        
+//    @IBAction func onBrowseRepositoryClicked(_ sender: Any?)
+//        {
+//        let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
+//        let windowController = storyboard.instantiateController(withIdentifier: "repositoryBrowserWindowController") as! NSWindowController
+//        let _ = windowController.contentViewController as! RepositoryBrowserViewController
+//        windowController.showWindow(self)
+//        }
     }
 

@@ -8,13 +8,11 @@ let package = Package(
     platforms: [.macOS(.v14)],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
-        .library(name: "Fletcher",targets: ["Fletcher"]),
-        .library(name: "MedusaStorage",targets: ["MedusaStorage","Fletcher"]),
+        .library(name: "MedusaStorage",targets: ["MedusaStorage"]),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
-        .target(name: "Fletcher",dependencies: []),
-        .target(name: "MedusaStorage",dependencies: ["Fletcher"])
+        .target(name: "MedusaStorage")
     ]
 )

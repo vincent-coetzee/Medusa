@@ -6,6 +6,8 @@
 //
 
 import Cocoa
+import MedusaCore
+import MedusaAgents
 
 @main
 class AppDelegate: NSObject, NSApplicationDelegate
@@ -13,10 +15,10 @@ class AppDelegate: NSObject, NSApplicationDelegate
     func applicationDidFinishLaunching(_ aNotification: Notification)
         {
         Medusa.boot()
-        LoggingAgent.shared.logToConsole()
-        Medusa.runTests()
-        let module = MOPArgonModule.shared
-        module.initHierarchy()
+//        LoggingAgent.shared.logToConsole()
+//        Medusa.runTests()
+//        let module = MOPArgonModule.shared
+//        module.initHierarchy()
         }
 
     func applicationWillTerminate(_ aNotification: Notification)

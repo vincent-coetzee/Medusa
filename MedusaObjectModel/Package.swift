@@ -14,7 +14,9 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../MedusaCore"),
-        .package(path: "../MedusaStorage")
+        .package(path: "../MedusaStorage"),
+        .package(path: "../MedusaPaging"),
+        .package(path: "../Fletcher")
         ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -23,7 +25,9 @@ let package = Package(
             name: "MedusaObjectModel",
             dependencies: [
                 .product(name: "MedusaCore",package: "MedusaCore"),
-                .product(name: "MedusaStorage",package: "MedusaStorage")
+                .product(name: "MedusaStorage",package: "MedusaStorage"),
+                .product(name: "Fletcher",package: "Fletcher"),
+                .product(name: "MedusaPaging",package: "MedusaPaging")
                 ]),
         .testTarget(
             name: "MedusaObjectModelTests",

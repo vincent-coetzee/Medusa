@@ -8,58 +8,21 @@
 
 /* Begin PBXBuildFile section */
 		BF06A4852B1DBD700034D7BF /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF06A4842B1DBD700034D7BF /* Int+Extensions.swift */; };
-		BF06A4872B1E07F20034D7BF /* MedusaPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF06A4862B1E07F20034D7BF /* MedusaPointer.swift */; };
-		BF06A4892B1E1FDE0034D7BF /* MOPStringObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF06A4882B1E1FDE0034D7BF /* MOPStringObject.swift */; };
-		BF06A48B2B1E51810034D7BF /* MOPSystemDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF06A48A2B1E51810034D7BF /* MOPSystemDictionary.swift */; };
-		BF06A48D2B1E52C90034D7BF /* MOPBTreePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF06A48C2B1E52C90034D7BF /* MOPBTreePage.swift */; };
-		BF06A48F2B1E53ED0034D7BF /* MOPDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF06A48E2B1E53ED0034D7BF /* MOPDictionary.swift */; };
-		BF06A4912B1E54460034D7BF /* MOPIdentityDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF06A4902B1E54460034D7BF /* MOPIdentityDictionary.swift */; };
-		BF06A4932B1E54EE0034D7BF /* MOPKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF06A4922B1E54EE0034D7BF /* MOPKey.swift */; };
-		BF06A4952B1E65BC0034D7BF /* MOPHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF06A4942B1E65BC0034D7BF /* MOPHeader.swift */; };
 		BF06A4972B1E724F0034D7BF /* MOPAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF06A4962B1E724F0034D7BF /* MOPAddress.swift */; };
-		BF1927B02B1A6B4200643243 /* MOPMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1927AF2B1A6B4200643243 /* MOPMessage.swift */; };
-		BF1927B22B1A741700643243 /* MOPString.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1927B12B1A741700643243 /* MOPString.swift */; };
-		BF1927B42B1A7F6400643243 /* MOPIPv6Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1927B32B1A7F6400643243 /* MOPIPv6Address.swift */; };
-		BF1927B62B1A7FC200643243 /* MOPBits.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1927B52B1A7FC200643243 /* MOPBits.swift */; };
 		BF2B00EC2B20AFAD00E83152 /* MedusaStorage in Frameworks */ = {isa = PBXBuildFile; productRef = BF2B00EB2B20AFAD00E83152 /* MedusaStorage */; };
+		BF327E1B2B2211360077FF6B /* MedusaPaging in Frameworks */ = {isa = PBXBuildFile; productRef = BF327E1A2B2211360077FF6B /* MedusaPaging */; };
 		BF521F3B2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF521F3A2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift */; };
 		BF6473892B13A91D0049B583 /* SmalltalkMonads.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6473882B13A91D0049B583 /* SmalltalkMonads.swift */; };
 		BF6C7E132B0E259A006DB858 /* BTreePageInspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E122B0E259A006DB858 /* BTreePageInspectorWindowController.swift */; };
 		BF6C7E162B0E25B8006DB858 /* BTreePageInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E142B0E25B8006DB858 /* BTreePageInspectorViewController.swift */; };
-		BF6C7E192B0E28AF006DB858 /* Field.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E182B0E28AF006DB858 /* Field.swift */; };
 		BF6C7E1B2B0E307E006DB858 /* FieldValueField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E1A2B0E307E006DB858 /* FieldValueField.swift */; };
 		BF6C7E1D2B0E3543006DB858 /* FieldCellField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E1C2B0E3543006DB858 /* FieldCellField.swift */; };
-		BF6C7E1F2B0E4ACC006DB858 /* Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E1E2B0E4ACC006DB858 /* Bytes.swift */; };
 		BF6C7E232B0EB18B006DB858 /* NSFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E222B0EB18B006DB858 /* NSFont+Extensions.swift */; };
-		BF7075F82B16016300E3F6D8 /* BTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7075F72B16016300E3F6D8 /* BTree.swift */; };
-		BF7075FA2B1626C100E3F6D8 /* Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7075F92B1626C100E3F6D8 /* Stack.swift */; };
-		BF7075FC2B162D5A00E3F6D8 /* Identifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7075FB2B162D5A00E3F6D8 /* Identifier.swift */; };
-		BF7075FE2B16300B00E3F6D8 /* MOPModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7075FD2B16300B00E3F6D8 /* MOPModule.swift */; };
-		BF7076022B16594100E3F6D8 /* MOPRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7076012B16594100E3F6D8 /* MOPRoot.swift */; };
-		BF797A342B0A23A90006A238 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF797A332B0A23A90006A238 /* String+Extensions.swift */; };
-		BF7FFCCB2B079CA3001D2F93 /* MOPChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCCA2B079CA3001D2F93 /* MOPChannel.swift */; };
-		BF7FFCCD2B079CB9001D2F93 /* MOPWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCCC2B079CB9001D2F93 /* MOPWriter.swift */; };
-		BF7FFCCF2B079CDA001D2F93 /* MOPReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCCE2B079CDA001D2F93 /* MOPReader.swift */; };
-		BF7FFCD12B079D10001D2F93 /* MOPInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCD02B079D10001D2F93 /* MOPInstance.swift */; };
-		BF7FFCD32B079D48001D2F93 /* MOPObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCD22B079D48001D2F93 /* MOPObject.swift */; };
-		BF7FFCD52B079D67001D2F93 /* MOPPrimitives.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCD42B079D67001D2F93 /* MOPPrimitives.swift */; };
-		BF7FFCD72B079DA1001D2F93 /* MOPClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCD62B079DA1001D2F93 /* MOPClass.swift */; };
-		BF7FFCD92B079DC1001D2F93 /* MOPSlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCD82B079DC1001D2F93 /* MOPSlot.swift */; };
-		BF7FFCDB2B07A04F001D2F93 /* MOPBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCDA2B07A04F001D2F93 /* MOPBuffer.swift */; };
-		BF7FFCDF2B07AA72001D2F93 /* MOPEnumeration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCDE2B07AA72001D2F93 /* MOPEnumeration.swift */; };
-		BF7FFCE32B07AB3D001D2F93 /* MOPEnumerationCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCE22B07AB3D001D2F93 /* MOPEnumerationCase.swift */; };
-		BF7FFCE52B07FEF9001D2F93 /* MOPRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCE42B07FEF9001D2F93 /* MOPRepository.swift */; };
 		BF7FFCE72B08010B001D2F93 /* Optional+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCE62B08010B001D2F93 /* Optional+Extensions.swift */; };
-		BF9071612B11C281007F70EE /* Word.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9071602B11C281007F70EE /* Word.swift */; };
-		BF9071652B11F148007F70EE /* UnsafeMutableRawPointer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9071642B11F148007F70EE /* UnsafeMutableRawPointer+Extensions.swift */; };
-		BF9369432B0BF33700921D6E /* Page.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9369422B0BF33700921D6E /* Page.swift */; };
-		BFA944472B10783800526CF1 /* KeyValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA944462B10783800526CF1 /* KeyValue.swift */; };
-		BFA944492B1078B400526CF1 /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA944482B1078B400526CF1 /* Fragment.swift */; };
+		BF90DF4B2B21F0F400C04D19 /* MedusaNetworking in Frameworks */ = {isa = PBXBuildFile; productRef = BF90DF4A2B21F0F400C04D19 /* MedusaNetworking */; };
 		BFA944542B1111C100526CF1 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA944532B1111C100526CF1 /* File.swift */; };
 		BFA944582B1113EE00526CF1 /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = BFA944572B1113EE00526CF1 /* Path */; };
-		BFAAF03C2B0FDF4300A2FFD1 /* FreeList.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF03B2B0FDF4300A2FFD1 /* FreeList.swift */; };
 		BFAAF03E2B0FE55A00A2FFD1 /* SystemIssue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF03D2B0FE55A00A2FFD1 /* SystemIssue.swift */; };
-		BFAE71E52B1F193700C15E0F /* RootPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAE71E42B1F193700C15E0F /* RootPage.swift */; };
 		BFAE71F02B1FAD8000C15E0F /* MedusaCore in Frameworks */ = {isa = PBXBuildFile; productRef = BFAE71EF2B1FAD8000C15E0F /* MedusaCore */; };
 		BFAE71F22B1FAD8500C15E0F /* MedusaObjectModel in Frameworks */ = {isa = PBXBuildFile; productRef = BFAE71F12B1FAD8500C15E0F /* MedusaObjectModel */; };
 		BFBAF5132B172BC1003ED388 /* FileHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAF5122B172BC1003ED388 /* FileHandle.swift */; };
@@ -67,42 +30,18 @@
 		BFD674452B05E79F0086932A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BFD674442B05E79F0086932A /* Info.plist */; };
 		BFD674472B05EAE20086932A /* Medusa.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD674462B05EAE20086932A /* Medusa.swift */; };
 		BFD6744F2B05EBE60086932A /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD6744E2B05EBE60086932A /* main.swift */; };
-		BFD674542B05F5700086932A /* SocketQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD674532B05F5700086932A /* SocketQueue.swift */; };
-		BFD674562B05F5900086932A /* RequestMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD674552B05F5900086932A /* RequestMessage.swift */; };
-		BFD674582B05F5A80086932A /* ResponseMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD674572B05F5A80086932A /* ResponseMessage.swift */; };
-		BFD6745A2B05F60C0086932A /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD674592B05F60C0086932A /* Message.swift */; };
-		BFD6745E2B05FBEC0086932A /* ConnectMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD6745D2B05FBEC0086932A /* ConnectMessage.swift */; };
-		BFD674602B05FC230086932A /* ConnectConfirmMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD6745F2B05FC230086932A /* ConnectConfirmMessage.swift */; };
-		BFD674622B05FD450086932A /* PingMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD674612B05FD450086932A /* PingMessage.swift */; };
-		BFD674642B05FD6C0086932A /* PongMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD674632B05FD6C0086932A /* PongMessage.swift */; };
-		BFD674672B0607720086932A /* IPV6Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD674662B0607720086932A /* IPV6Address.swift */; };
-		BFD6746D2B0637510086932A /* MessageSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD6746C2B0637510086932A /* MessageSocket.swift */; };
-		BFD6746F2B0638A70086932A /* MessageBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD6746E2B0638A70086932A /* MessageBuffer.swift */; };
 		BFD674762B0659DA0086932A /* BufferBrowserWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD674742B0659DA0086932A /* BufferBrowserWindowController.swift */; };
 		BFD674792B065A9C0086932A /* BufferBrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD674782B065A9C0086932A /* BufferBrowserView.swift */; };
-		BFD6747B2B065ADF0086932A /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD6747A2B065ADF0086932A /* Buffer.swift */; };
 		BFD6747D2B06689E0086932A /* BufferBrowserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD6747C2B06689E0086932A /* BufferBrowserViewController.swift */; };
 		BFD674812B066A560086932A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BFD674802B066A560086932A /* Main.storyboard */; };
-		BFD674842B0689990086932A /* PermissionsToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD674832B0689990086932A /* PermissionsToken.swift */; };
+		BFD6E1C92B238C9A00FC0A0A /* MedusaAgents in Frameworks */ = {isa = PBXBuildFile; productRef = BFD6E1C82B238C9A00FC0A0A /* MedusaAgents */; };
 		BFD734B02B06F15500CD500D /* NSColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD734AF2B06F15500CD500D /* NSColor+Extensions.swift */; };
 		BFEEF9262B1C8CBD00F42C58 /* Path+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEEF9252B1C8CBD00F42C58 /* Path+Extensions.swift */; };
 		BFEEF92F2B1CFABC00F42C58 /* Task+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEEF92E2B1CFABC00F42C58 /* Task+Extensions.swift */; };
 		BFFB2E7D2B05363300254090 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E7C2B05363300254090 /* AppDelegate.swift */; };
 		BFFB2E7F2B05363300254090 /* PrimaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E7E2B05363300254090 /* PrimaryViewController.swift */; };
 		BFFB2E812B05363500254090 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BFFB2E802B05363500254090 /* Assets.xcassets */; };
-		BFFB2E942B05364C00254090 /* ExecutionAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E8B2B05364B00254090 /* ExecutionAgent.swift */; };
-		BFFB2E952B05364C00254090 /* PageServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E8C2B05364B00254090 /* PageServer.swift */; };
-		BFFB2E962B05364C00254090 /* Agent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E8D2B05364B00254090 /* Agent.swift */; };
-		BFFB2E972B05364C00254090 /* StorageAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E8E2B05364B00254090 /* StorageAgent.swift */; };
-		BFFB2E982B05364C00254090 /* AgentState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E8F2B05364B00254090 /* AgentState.swift */; };
-		BFFB2E992B05364C00254090 /* BTreePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E902B05364B00254090 /* BTreePage.swift */; };
-		BFFB2E9A2B05364C00254090 /* FreePageAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E912B05364B00254090 /* FreePageAgent.swift */; };
-		BFFB2E9B2B05364C00254090 /* BaseAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E922B05364C00254090 /* BaseAgent.swift */; };
-		BFFB2E9C2B05364C00254090 /* LoggingAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E932B05364C00254090 /* LoggingAgent.swift */; };
-		BFFE7E7A2B1B5D1100776231 /* MOPMetaclass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFE7E792B1B5D1100776231 /* MOPMetaclass.swift */; };
 		BFFE7E7C2B1B980C00776231 /* RepositoryBrowserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFE7E7B2B1B980C00776231 /* RepositoryBrowserViewController.swift */; };
-		BFFE7E7F2B1B988C00776231 /* WeakReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFE7E7E2B1B988C00776231 /* WeakReference.swift */; };
-		BFFE7E812B1B990D00776231 /* WeakArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFE7E802B1B990D00776231 /* WeakArray.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -133,6 +72,8 @@
 		BF1927B32B1A7F6400643243 /* MOPIPv6Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPIPv6Address.swift; sourceTree = "<group>"; };
 		BF1927B52B1A7FC200643243 /* MOPBits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPBits.swift; sourceTree = "<group>"; };
 		BF2B00EA2B20716200E83152 /* MedusaStorage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaStorage; sourceTree = "<group>"; };
+		BF327E192B2210620077FF6B /* MedusaPaging */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaPaging; sourceTree = "<group>"; };
+		BF327E1C2B2215630077FF6B /* Fletcher */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Fletcher; sourceTree = "<group>"; };
 		BF521F3A2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferBrowserPopoverViewController.swift; sourceTree = "<group>"; };
 		BF6473882B13A91D0049B583 /* SmalltalkMonads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmalltalkMonads.swift; sourceTree = "<group>"; };
 		BF6C7E122B0E259A006DB858 /* BTreePageInspectorWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTreePageInspectorWindowController.swift; sourceTree = "<group>"; };
@@ -148,6 +89,7 @@
 		BF7075FD2B16300B00E3F6D8 /* MOPModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPModule.swift; sourceTree = "<group>"; };
 		BF7076012B16594100E3F6D8 /* MOPRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPRoot.swift; sourceTree = "<group>"; };
 		BF797A332B0A23A90006A238 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
+		BF7DE3262B22416A00035966 /* MedusaAgents */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaAgents; sourceTree = "<group>"; };
 		BF7FFCCA2B079CA3001D2F93 /* MOPChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPChannel.swift; sourceTree = "<group>"; };
 		BF7FFCCC2B079CB9001D2F93 /* MOPWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPWriter.swift; sourceTree = "<group>"; };
 		BF7FFCCE2B079CDA001D2F93 /* MOPReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPReader.swift; sourceTree = "<group>"; };
@@ -163,13 +105,11 @@
 		BF7FFCE62B08010B001D2F93 /* Optional+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Optional+Extensions.swift"; sourceTree = "<group>"; };
 		BF9071602B11C281007F70EE /* Word.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Word.swift; sourceTree = "<group>"; };
 		BF9071642B11F148007F70EE /* UnsafeMutableRawPointer+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UnsafeMutableRawPointer+Extensions.swift"; sourceTree = "<group>"; };
+		BF90DF492B21F0BE00C04D19 /* MedusaNetworking */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaNetworking; sourceTree = "<group>"; };
 		BF9369422B0BF33700921D6E /* Page.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Page.swift; sourceTree = "<group>"; };
-		BFA944462B10783800526CF1 /* KeyValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValue.swift; sourceTree = "<group>"; };
 		BFA944482B1078B400526CF1 /* Fragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fragment.swift; sourceTree = "<group>"; };
 		BFA944532B1111C100526CF1 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
-		BFAAF03B2B0FDF4300A2FFD1 /* FreeList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeList.swift; sourceTree = "<group>"; };
 		BFAAF03D2B0FE55A00A2FFD1 /* SystemIssue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemIssue.swift; sourceTree = "<group>"; };
-		BFAE71E42B1F193700C15E0F /* RootPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootPage.swift; sourceTree = "<group>"; };
 		BFAE71ED2B1FABA600C15E0F /* MedusaCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaCore; sourceTree = "<group>"; };
 		BFAE71EE2B1FABED00C15E0F /* MedusaObjectModel */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaObjectModel; sourceTree = "<group>"; };
 		BFBAF5122B172BC1003ED388 /* FileHandle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHandle.swift; sourceTree = "<group>"; };
@@ -177,17 +117,7 @@
 		BFD674462B05EAE20086932A /* Medusa.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Medusa.swift; sourceTree = "<group>"; };
 		BFD6744C2B05EBE60086932A /* MedusaTester */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MedusaTester; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFD6744E2B05EBE60086932A /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		BFD674532B05F5700086932A /* SocketQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketQueue.swift; sourceTree = "<group>"; };
-		BFD674552B05F5900086932A /* RequestMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestMessage.swift; sourceTree = "<group>"; };
-		BFD674572B05F5A80086932A /* ResponseMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseMessage.swift; sourceTree = "<group>"; };
-		BFD674592B05F60C0086932A /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
-		BFD6745D2B05FBEC0086932A /* ConnectMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectMessage.swift; sourceTree = "<group>"; };
-		BFD6745F2B05FC230086932A /* ConnectConfirmMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectConfirmMessage.swift; sourceTree = "<group>"; };
-		BFD674612B05FD450086932A /* PingMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingMessage.swift; sourceTree = "<group>"; };
-		BFD674632B05FD6C0086932A /* PongMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PongMessage.swift; sourceTree = "<group>"; };
 		BFD674662B0607720086932A /* IPV6Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPV6Address.swift; sourceTree = "<group>"; };
-		BFD6746C2B0637510086932A /* MessageSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSocket.swift; sourceTree = "<group>"; };
-		BFD6746E2B0638A70086932A /* MessageBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageBuffer.swift; sourceTree = "<group>"; };
 		BFD674742B0659DA0086932A /* BufferBrowserWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferBrowserWindowController.swift; sourceTree = "<group>"; };
 		BFD674782B065A9C0086932A /* BufferBrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferBrowserView.swift; sourceTree = "<group>"; };
 		BFD6747A2B065ADF0086932A /* Buffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buffer.swift; sourceTree = "<group>"; };
@@ -203,15 +133,6 @@
 		BFFB2E7E2B05363300254090 /* PrimaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryViewController.swift; sourceTree = "<group>"; };
 		BFFB2E802B05363500254090 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BFFB2E852B05363500254090 /* Medusa.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Medusa.entitlements; sourceTree = "<group>"; };
-		BFFB2E8B2B05364B00254090 /* ExecutionAgent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExecutionAgent.swift; sourceTree = "<group>"; };
-		BFFB2E8C2B05364B00254090 /* PageServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageServer.swift; sourceTree = "<group>"; };
-		BFFB2E8D2B05364B00254090 /* Agent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Agent.swift; sourceTree = "<group>"; };
-		BFFB2E8E2B05364B00254090 /* StorageAgent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageAgent.swift; sourceTree = "<group>"; };
-		BFFB2E8F2B05364B00254090 /* AgentState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgentState.swift; sourceTree = "<group>"; };
-		BFFB2E902B05364B00254090 /* BTreePage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTreePage.swift; sourceTree = "<group>"; };
-		BFFB2E912B05364B00254090 /* FreePageAgent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreePageAgent.swift; sourceTree = "<group>"; };
-		BFFB2E922B05364C00254090 /* BaseAgent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseAgent.swift; sourceTree = "<group>"; };
-		BFFB2E932B05364C00254090 /* LoggingAgent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggingAgent.swift; sourceTree = "<group>"; };
 		BFFE7E792B1B5D1100776231 /* MOPMetaclass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPMetaclass.swift; sourceTree = "<group>"; };
 		BFFE7E7B2B1B980C00776231 /* RepositoryBrowserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryBrowserViewController.swift; sourceTree = "<group>"; };
 		BFFE7E7E2B1B988C00776231 /* WeakReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeakReference.swift; sourceTree = "<group>"; };
@@ -233,6 +154,9 @@
 				BFAE71F22B1FAD8500C15E0F /* MedusaObjectModel in Frameworks */,
 				BFAE71F02B1FAD8000C15E0F /* MedusaCore in Frameworks */,
 				BFD674432B05E6010086932A /* Socket in Frameworks */,
+				BF90DF4B2B21F0F400C04D19 /* MedusaNetworking in Frameworks */,
+				BF327E1B2B2211360077FF6B /* MedusaPaging in Frameworks */,
+				BFD6E1C92B238C9A00FC0A0A /* MedusaAgents in Frameworks */,
 				BF2B00EC2B20AFAD00E83152 /* MedusaStorage in Frameworks */,
 				BFA944582B1113EE00526CF1 /* Path in Frameworks */,
 			);
@@ -351,34 +275,12 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		BFAAF0302B0F29A400A2FFD1 /* Fletcher */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Fletcher;
-			sourceTree = "<group>";
-		};
 		BFD6744D2B05EBE60086932A /* MedusaTester */ = {
 			isa = PBXGroup;
 			children = (
 				BFD6744E2B05EBE60086932A /* main.swift */,
 			);
 			path = MedusaTester;
-			sourceTree = "<group>";
-		};
-		BFD674652B05FD8A0086932A /* Messages */ = {
-			isa = PBXGroup;
-			children = (
-				BFD6745F2B05FC230086932A /* ConnectConfirmMessage.swift */,
-				BFD6745D2B05FBEC0086932A /* ConnectMessage.swift */,
-				BFD674592B05F60C0086932A /* Message.swift */,
-				BFD6746E2B0638A70086932A /* MessageBuffer.swift */,
-				BFD674612B05FD450086932A /* PingMessage.swift */,
-				BFD674632B05FD6C0086932A /* PongMessage.swift */,
-				BFD674552B05F5900086932A /* RequestMessage.swift */,
-				BFD674572B05F5A80086932A /* ResponseMessage.swift */,
-			);
-			path = Messages;
 			sourceTree = "<group>";
 		};
 		BFD674822B06749A0086932A /* User Interface */ = {
@@ -393,27 +295,10 @@
 			path = "User Interface";
 			sourceTree = "<group>";
 		};
-		BFD734AC2B06D75A00CD500D /* Agents */ = {
-			isa = PBXGroup;
-			children = (
-				BFFB2E8F2B05364B00254090 /* AgentState.swift */,
-				BFFB2E8D2B05364B00254090 /* Agent.swift */,
-				BFFB2E922B05364C00254090 /* BaseAgent.swift */,
-				BFFB2E8B2B05364B00254090 /* ExecutionAgent.swift */,
-				BFFB2E912B05364B00254090 /* FreePageAgent.swift */,
-				BFFB2E932B05364C00254090 /* LoggingAgent.swift */,
-				BFFB2E8E2B05364B00254090 /* StorageAgent.swift */,
-				BFFB2E8C2B05364B00254090 /* PageServer.swift */,
-			);
-			path = Agents;
-			sourceTree = "<group>";
-		};
 		BFD734AD2B06D7A400CD500D /* Networking */ = {
 			isa = PBXGroup;
 			children = (
 				BFD674662B0607720086932A /* IPV6Address.swift */,
-				BFD6746C2B0637510086932A /* MessageSocket.swift */,
-				BFD674532B05F5700086932A /* SocketQueue.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -422,15 +307,11 @@
 			isa = PBXGroup;
 			children = (
 				BF7075F72B16016300E3F6D8 /* BTree.swift */,
-				BFAE71E42B1F193700C15E0F /* RootPage.swift */,
-				BFFB2E902B05364B00254090 /* BTreePage.swift */,
 				BFD6747A2B065ADF0086932A /* Buffer.swift */,
 				BF6C7E1E2B0E4ACC006DB858 /* Bytes.swift */,
 				BF6C7E182B0E28AF006DB858 /* Field.swift */,
 				BFA944482B1078B400526CF1 /* Fragment.swift */,
-				BFAAF03B2B0FDF4300A2FFD1 /* FreeList.swift */,
 				BF7075FB2B162D5A00E3F6D8 /* Identifier.swift */,
-				BFA944462B10783800526CF1 /* KeyValue.swift */,
 				BF9369422B0BF33700921D6E /* Page.swift */,
 				BFD674832B0689990086932A /* PermissionsToken.swift */,
 				BF7075F92B1626C100E3F6D8 /* Stack.swift */,
@@ -446,6 +327,10 @@
 		BFFB2E702B05363300254090 = {
 			isa = PBXGroup;
 			children = (
+				BF7DE3262B22416A00035966 /* MedusaAgents */,
+				BF327E1C2B2215630077FF6B /* Fletcher */,
+				BF327E192B2210620077FF6B /* MedusaPaging */,
+				BF90DF492B21F0BE00C04D19 /* MedusaNetworking */,
 				BF2B00EA2B20716200E83152 /* MedusaStorage */,
 				BFAE71EE2B1FABED00C15E0F /* MedusaObjectModel */,
 				BFAE71ED2B1FABA600C15E0F /* MedusaCore */,
@@ -473,14 +358,11 @@
 			children = (
 				BFD674462B05EAE20086932A /* Medusa.swift */,
 				BFA944522B1111AD00526CF1 /* Storage */,
-				BFD734AC2B06D75A00CD500D /* Agents */,
 				BFFB2E7C2B05363300254090 /* AppDelegate.swift */,
 				BFFB2E802B05363500254090 /* Assets.xcassets */,
 				BFA9444D2B110F2B00526CF1 /* Error Handling */,
-				BFAAF0302B0F29A400A2FFD1 /* Fletcher */,
 				BF7FFCC92B079C8A001D2F93 /* Medusa Object Protocol Implementation */,
 				BFFB2E852B05363500254090 /* Medusa.entitlements */,
-				BFD674652B05FD8A0086932A /* Messages */,
 				BFD734AD2B06D7A400CD500D /* Networking */,
 				BFD734AE2B06D7DA00CD500D /* Plumbing */,
 				BFA9444C2B110F0200526CF1 /* System Extensions */,
@@ -536,6 +418,9 @@
 				BFAE71EF2B1FAD8000C15E0F /* MedusaCore */,
 				BFAE71F12B1FAD8500C15E0F /* MedusaObjectModel */,
 				BF2B00EB2B20AFAD00E83152 /* MedusaStorage */,
+				BF90DF4A2B21F0F400C04D19 /* MedusaNetworking */,
+				BF327E1A2B2211360077FF6B /* MedusaPaging */,
+				BFD6E1C82B238C9A00FC0A0A /* MedusaAgents */,
 			);
 			productName = Medusa;
 			productReference = BFFB2E792B05363300254090 /* Medusa.app */;
@@ -549,7 +434,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1510;
 				TargetAttributes = {
 					BFD6744B2B05EBE60086932A = {
 						CreatedOnToolsVersion = 15.0.1;
@@ -609,93 +494,29 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF06A4932B1E54EE0034D7BF /* MOPKey.swift in Sources */,
 				BF06A4972B1E724F0034D7BF /* MOPAddress.swift in Sources */,
 				BF6C7E162B0E25B8006DB858 /* BTreePageInspectorViewController.swift in Sources */,
-				BFFE7E812B1B990D00776231 /* WeakArray.swift in Sources */,
-				BFFB2E9B2B05364C00254090 /* BaseAgent.swift in Sources */,
-				BF06A48B2B1E51810034D7BF /* MOPSystemDictionary.swift in Sources */,
-				BFD674562B05F5900086932A /* RequestMessage.swift in Sources */,
 				BFD734B02B06F15500CD500D /* NSColor+Extensions.swift in Sources */,
-				BF06A4912B1E54460034D7BF /* MOPIdentityDictionary.swift in Sources */,
-				BFFB2E942B05364C00254090 /* ExecutionAgent.swift in Sources */,
-				BF06A4952B1E65BC0034D7BF /* MOPHeader.swift in Sources */,
-				BFD674542B05F5700086932A /* SocketQueue.swift in Sources */,
-				BF06A4872B1E07F20034D7BF /* MedusaPointer.swift in Sources */,
 				BFAAF03E2B0FE55A00A2FFD1 /* SystemIssue.swift in Sources */,
-				BF06A48F2B1E53ED0034D7BF /* MOPDictionary.swift in Sources */,
-				BFFE7E7F2B1B988C00776231 /* WeakReference.swift in Sources */,
-				BFD674622B05FD450086932A /* PingMessage.swift in Sources */,
-				BFD674642B05FD6C0086932A /* PongMessage.swift in Sources */,
-				BFFB2E992B05364C00254090 /* BTreePage.swift in Sources */,
 				BFEEF9262B1C8CBD00F42C58 /* Path+Extensions.swift in Sources */,
-				BFA944492B1078B400526CF1 /* Fragment.swift in Sources */,
-				BF6C7E192B0E28AF006DB858 /* Field.swift in Sources */,
-				BF7FFCE32B07AB3D001D2F93 /* MOPEnumerationCase.swift in Sources */,
-				BF7075FC2B162D5A00E3F6D8 /* Identifier.swift in Sources */,
 				BFA944542B1111C100526CF1 /* File.swift in Sources */,
-				BFFB2E962B05364C00254090 /* Agent.swift in Sources */,
-				BF1927B02B1A6B4200643243 /* MOPMessage.swift in Sources */,
-				BF06A48D2B1E52C90034D7BF /* MOPBTreePage.swift in Sources */,
-				BFA944472B10783800526CF1 /* KeyValue.swift in Sources */,
-				BFD674672B0607720086932A /* IPV6Address.swift in Sources */,
 				BFBAF5132B172BC1003ED388 /* FileHandle.swift in Sources */,
-				BF7FFCD12B079D10001D2F93 /* MOPInstance.swift in Sources */,
 				BF6C7E1D2B0E3543006DB858 /* FieldCellField.swift in Sources */,
-				BFFB2E9C2B05364C00254090 /* LoggingAgent.swift in Sources */,
-				BFAE71E52B1F193700C15E0F /* RootPage.swift in Sources */,
-				BFD674842B0689990086932A /* PermissionsToken.swift in Sources */,
 				BFD6747D2B06689E0086932A /* BufferBrowserViewController.swift in Sources */,
 				BFEEF92F2B1CFABC00F42C58 /* Task+Extensions.swift in Sources */,
 				BF7FFCE72B08010B001D2F93 /* Optional+Extensions.swift in Sources */,
-				BF1927B62B1A7FC200643243 /* MOPBits.swift in Sources */,
-				BFD6745E2B05FBEC0086932A /* ConnectMessage.swift in Sources */,
-				BF1927B22B1A741700643243 /* MOPString.swift in Sources */,
 				BFD674792B065A9C0086932A /* BufferBrowserView.swift in Sources */,
 				BFFB2E7F2B05363300254090 /* PrimaryViewController.swift in Sources */,
-				BFD674602B05FC230086932A /* ConnectConfirmMessage.swift in Sources */,
-				BF9071612B11C281007F70EE /* Word.swift in Sources */,
 				BF6C7E132B0E259A006DB858 /* BTreePageInspectorWindowController.swift in Sources */,
-				BF7FFCD92B079DC1001D2F93 /* MOPSlot.swift in Sources */,
 				BFD674472B05EAE20086932A /* Medusa.swift in Sources */,
-				BF7FFCD52B079D67001D2F93 /* MOPPrimitives.swift in Sources */,
-				BFD674582B05F5A80086932A /* ResponseMessage.swift in Sources */,
-				BFD6747B2B065ADF0086932A /* Buffer.swift in Sources */,
-				BF7FFCDF2B07AA72001D2F93 /* MOPEnumeration.swift in Sources */,
 				BFFE7E7C2B1B980C00776231 /* RepositoryBrowserViewController.swift in Sources */,
-				BFD6746F2B0638A70086932A /* MessageBuffer.swift in Sources */,
-				BF7075FE2B16300B00E3F6D8 /* MOPModule.swift in Sources */,
-				BFFB2E9A2B05364C00254090 /* FreePageAgent.swift in Sources */,
 				BF6C7E232B0EB18B006DB858 /* NSFont+Extensions.swift in Sources */,
-				BF7FFCD72B079DA1001D2F93 /* MOPClass.swift in Sources */,
-				BF7FFCCD2B079CB9001D2F93 /* MOPWriter.swift in Sources */,
-				BFD6746D2B0637510086932A /* MessageSocket.swift in Sources */,
-				BF7FFCD32B079D48001D2F93 /* MOPObject.swift in Sources */,
-				BF7075FA2B1626C100E3F6D8 /* Stack.swift in Sources */,
-				BFAAF03C2B0FDF4300A2FFD1 /* FreeList.swift in Sources */,
-				BFFB2E952B05364C00254090 /* PageServer.swift in Sources */,
-				BF7FFCDB2B07A04F001D2F93 /* MOPBuffer.swift in Sources */,
-				BF06A4892B1E1FDE0034D7BF /* MOPStringObject.swift in Sources */,
-				BF6C7E1F2B0E4ACC006DB858 /* Bytes.swift in Sources */,
 				BFD674762B0659DA0086932A /* BufferBrowserWindowController.swift in Sources */,
-				BFFE7E7A2B1B5D1100776231 /* MOPMetaclass.swift in Sources */,
-				BF7075F82B16016300E3F6D8 /* BTree.swift in Sources */,
-				BF9369432B0BF33700921D6E /* Page.swift in Sources */,
 				BFFB2E7D2B05363300254090 /* AppDelegate.swift in Sources */,
-				BF1927B42B1A7F6400643243 /* MOPIPv6Address.swift in Sources */,
-				BF9071652B11F148007F70EE /* UnsafeMutableRawPointer+Extensions.swift in Sources */,
-				BF7FFCCB2B079CA3001D2F93 /* MOPChannel.swift in Sources */,
-				BF7076022B16594100E3F6D8 /* MOPRoot.swift in Sources */,
 				BF521F3B2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift in Sources */,
 				BF06A4852B1DBD700034D7BF /* Int+Extensions.swift in Sources */,
-				BF7FFCE52B07FEF9001D2F93 /* MOPRepository.swift in Sources */,
 				BF6473892B13A91D0049B583 /* SmalltalkMonads.swift in Sources */,
-				BFD6745A2B05F60C0086932A /* Message.swift in Sources */,
-				BFFB2E972B05364C00254090 /* StorageAgent.swift in Sources */,
-				BF797A342B0A23A90006A238 /* String+Extensions.swift in Sources */,
 				BF6C7E1B2B0E307E006DB858 /* FieldValueField.swift in Sources */,
-				BF7FFCCF2B079CDA001D2F93 /* MOPReader.swift in Sources */,
-				BFFB2E982B05364C00254090 /* AgentState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -706,6 +527,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = DLH9UBQV34;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
@@ -722,6 +544,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = DLH9UBQV34;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
@@ -768,6 +591,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -791,7 +615,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx14.0;
+				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -831,6 +655,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -847,7 +672,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				SDKROOT = macosx14.0;
+				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
 			};
 			name = Release;
@@ -862,6 +687,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = DLH9UBQV34;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -872,7 +698,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.macsemantics.Medusa;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -894,6 +720,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = DLH9UBQV34;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -904,7 +731,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.macsemantics.Medusa;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -971,6 +798,14 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = MedusaStorage;
 		};
+		BF327E1A2B2211360077FF6B /* MedusaPaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MedusaPaging;
+		};
+		BF90DF4A2B21F0F400C04D19 /* MedusaNetworking */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MedusaNetworking;
+		};
 		BFA944572B1113EE00526CF1 /* Path */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = BFA944552B11126100526CF1 /* XCRemoteSwiftPackageReference "Path" */;
@@ -988,6 +823,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BFD674412B05E6010086932A /* XCRemoteSwiftPackageReference "BlueSocket" */;
 			productName = Socket;
+		};
+		BFD6E1C82B238C9A00FC0A0A /* MedusaAgents */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MedusaAgents;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

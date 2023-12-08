@@ -77,7 +77,7 @@ void writeFloat64(void* buffer,const double data,long offset)
     *((double *)((char*)buffer + offset)) = data;
     }
 
-long readInteger(void* buffer,long offset)
+long readInteger64(void* buffer,long offset)
     {
     long* from = (long*)(((char*)buffer) + offset);
     return(*from);
@@ -118,7 +118,7 @@ uint16_t readUnsigned16(void* buffer,long offset)
     uint16_t* from = (uint16_t*)(((char*)buffer) + offset);
     return(*from);
     }
-long readIntegerWithOffset(void* buffer,long* offset)
+long readInteger64WithOffset(void* buffer,long* offset)
     {
     long* from = (long*)(((char*)buffer) + *offset);
     *offset += sizeof(long);

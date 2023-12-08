@@ -58,25 +58,25 @@ public class MOPObject1: MOPRoot,Equatable,MOPKey
         fatalError("Unimplemented because this is an abstract class.")
         }
     
-    public func isIdentical(to: MOPKey) -> Boolean {
-        <#code#>
-    }
-    
-    public func isEqual(to: MOPKey) -> Boolean {
-        <#code#>
-    }
-    
-    public func isLess(than: MOPKey) -> Boolean {
-        <#code#>
-    }
-    
-    public func writeValue(into buffer: RawBuffer, atByteOffset: inout Integer64) {
-        <#code#>
-    }
-    
-    public func writeSlotValue(into buffer: RawBuffer, atByteOffset: inout Integer64) {
-        <#code#>
-    }
+//    public func isIdentical(to: MOPKey) -> Boolean {
+//        <#code#>
+//    }
+//    
+//    public func isEqual(to: MOPKey) -> Boolean {
+//        <#code#>
+//    }
+//    
+//    public func isLess(than: MOPKey) -> Boolean {
+//        <#code#>
+//    }
+//    
+//    public func writeValue(into buffer: RawBuffer, atByteOffset: inout Integer64) {
+//        <#code#>
+//    }
+//    
+//    public func writeSlotValue(into buffer: RawBuffer, atByteOffset: inout Integer64) {
+//        <#code#>
+//    }
     
 
     
@@ -140,9 +140,10 @@ public class MOPPageBasedObject: MOPObject
     
     public init(page: Page,atByteOffset: Integer64)
         {
-        self.page = page
-        self.byteOffset = atByteOffset
-        super.init(
+//        self.page = page
+//        self.byteOffset = atByteOffset
+//        super.init(
+        fatalError()
         }
     }
     
