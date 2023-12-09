@@ -237,12 +237,19 @@ public class Message
     private var bufferSizeInBytes: Integer64
     private var offset = 0
     private var fields = MessageFields()
-    public var sequenceNumber: Integer64 = 0
     public var fieldCount: Integer64 = 0
     public var sizeInBytes = 0
     
     public var sequenceNumber: Integer64
         {
+        get
+            {
+            self.buffer.load(fromByteOffset: MemoryLayout<Integer64>.size, as: Integer64.self)
+            }
+        set
+            {
+            self.buffer.storeBytes(of: newValue, toByteOffset: MemoryLayout<Integer64>.size, as: Integer64.self)
+            }
         }
     
     public static func readMessage(from buffer: RawPointer) -> Message

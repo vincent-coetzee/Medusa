@@ -283,14 +283,15 @@ public class MOPClass: MOPObjectInstance
     // Slot N               8 bytes         N * 8 + 16
     //
     // The size in bytes is merely the sizes totalled EXCEPT
-    // for objects that have bytes in which case the object
+    // for objects that are indexed in which case the object
     // has a ByteBlock at the end of it which consists of
     //
     //  a Block Header which is 8 bytes in size
     //  a Next Block Address which is 8 bytes in size
-    // so BytesBlock is of size 16 whihc has to be added
+    //
+    // so BytesBlock is of size 16 which has to be added
     // to the sum in the previous calculation. This is only
-    // for objects that have the hasBytes flag bit set to 1.
+    // for objects that have the isIndexed flag bit set to 1.
     //
     public override var valueSizeInBytes: Integer64
         {
