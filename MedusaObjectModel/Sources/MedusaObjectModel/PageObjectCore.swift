@@ -10,7 +10,7 @@ import MedusaCore
 import MedusaStorage
 import MedusaPaging
 
-public class PageBasedObjectCore: ObjectCore
+public class PageObjectCore: ObjectCore
     {
     private var page: Page
     private var pageBuffer: RawPointer

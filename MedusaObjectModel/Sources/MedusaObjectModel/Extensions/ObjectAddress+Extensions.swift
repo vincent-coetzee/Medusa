@@ -11,19 +11,61 @@ import MedusaStorage
 import Fletcher
 
 //
+//
+// WHY ObjectAddress IS A C STRUCT
+// ===============================
+//
 // ObjectAddress is declared as a C struct because we pass it back and forth between Swift and C.
 // Structs are easier to handle in C when it comes to encoding and decoding because C does not
 // impose the safety rules that Swift does. We extend this struct here to add convenience behaviour.
 //
+//
+// OBJECT ADDRESSES AND TAGGING
+// ============================
+//
+// An object address is a tagged integer. The top bit of the address is reserved for the sign bit and it is
+// never used by Medusa so that Swift can set is as needed. There is a 4 bit tag at bit 59 which inidcates the type of
+// the value in the remianing bits of the integer. Tags are listed in the MedusaCore.Header file. According to the
+// tag, the value can be an integer64, a float64, a boolean, an enumeration value, a byte, a unicode scalar, an instance of
+// nothing, an atom or a pointer to an object. The tags are very important when it comes to the Garbage Collector because the
+// tag on a slot tells the GC what to do with the slot. If the tag is an object or an enumeration with associated values,
+// the GC will follow the pointer contained in the slot amd recursivey copy all it's slots and so on. If the tag indicates
+// that the value is a scalar of some sort ( i.e. not an object or enumeration pointer ) then it will merely copy the
+// slot value to wherever it's writing to at that point in time. If an object or enumeration value is followed, the GC
+// will leave the header of the object or enumeration instance intact but it will flip the isForwarded bit on and write
+// the new address of the followed and copied object into the old object's class slot. This allows object references to be
+// updated later as and when they are referenced rather than having to go around and change all the references every time it copies an object
+// - apart from the fact it would be hideously complex and time consuming to track all the references to an object unless an extra
+// level of indirection was introduced by means of an object table of some sort. We don't want an object table because we want
+// our object handles to be actual pointers to the objects themselves not some arbitary value that has to look up an address
+// before it can do anything.
+//
+// HOW OBJECT POINTERS/ADDRESSES WORK
+// ==================================
+//
+// In the case of an object or enumeration pointer, the value ( sans sign bit and tag ) in the slot contains an object pointer.
+// In Medusa's case the object pointer consists of a 40 bit page address which is the address in the data file of the page
+// that contains this object and an 8 bit object index which is the index of the object in the page. We want to be able to rewrite
+// object pages when a page needs to be defragmented and the page is short on space, that means we need a way of locating the object in a
+// page that does not change even if the object is rewritted within the page. We achieve this by having a "catalogue" of the objects in
+// an ObjectPage that has a slot for every object stored on the page with the offset of the object from the start of the page. We then use
+// the index of the slot as the object locator within the page. We store the object slot index rather than the offset of the object
+// in the object pointer. When we need to access an object we load the page using the page offset in the pointer/address, then we load the offset of the
+// object within the page by retrieving the offset of the object from the "catalogue" according to the index stored in the address/pointer.
+// This means we can safeky rewrite an object in the page by updating the offset stored in the slot indexed by the index stored in the
+// address/pointer.
+//
+//
+///
 extension ObjectAddress
     {
     private static let kAssociatedValuesFlagShift: Unsigned64   = 58
     private static let kAssociatedValuesFlagMask: Unsigned64    = 0b00000100_00000000_00000000_00000000_00000000_00000000_00000000_00000000
-    private static let kPageAddressMask: Unsigned64             = 0b00000011_11111111_11111111_11111111_11111111_11111111_11000000_00000000
+    private static let kPageAddressMask: Unsigned64             = 0b00000000_00000000_11111111_11111111_11111111_11111111_11111111_00000000
+    private static let kObjectIndexMask: Unsigned64             = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_11111111
     private static let kTagMask: Unsigned64                     = 0b01111000_00000000_00000000_00000000_00000000_00000000_00000000_00000000
     private static let kAddressMask: Unsigned64                 = 0b00000011_11111111_11111111_11111111_11111111_11111111_11111111_11111111
-    private static let kIndexMask: Unsigned64                   = 0b00000000_00000000_00000000_00000000_00000000_00000000_00111111_10000000
-    public static let kIndexShift: Unsigned64                   = 7
+    public static let kObjectIndexShift: Unsigned64             = 0
     private static let kCaseIndexBits: Unsigned64               = 0b11111111
     private static let kCaseIndexShift: Unsigned64              = 50
     private static let kCaseIndexMask: Unsigned64               = 0b00000011_11111100_00000000_00000000_00000000_00000000_00000000_00000000

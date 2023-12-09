@@ -8,6 +8,7 @@
 import Foundation
 import MedusaCore
 import MedusaStorage
+import MedusaPaging
 import Fletcher
 
 open class Class: Object
@@ -82,6 +83,11 @@ open class Class: Object
         (SystemDictionary.shared[Atom("Medusa")] as! SystemDictionary)[Atom("Header")] as! Class
         }
         
+    public static var blockClass: Class
+        {
+        (SystemDictionary.shared[Atom("Medusa")] as! SystemDictionary)[Atom("Block")] as! Class
+        }
+        
     public static func `class`(atPointer: Unsigned64) -> Class
         {
 //        if let someClass = Self.classCache[atPointer]
@@ -104,6 +110,16 @@ open class Class: Object
 //        fatalError()
 //        }
         
+    public func slotAtKey(_ atom: Atom) -> Slot?
+        {
+        self._slots[atom]
+        }
+        
+    public func slotAtName(_ name: String) -> Slot?
+        {
+        self._slots[Atom(name)]
+        }
+        
     public func addSlot(named: String,class: Class,atByteOffset: Integer64)
         {
         let nameAtom = Atom(named)
@@ -111,12 +127,17 @@ open class Class: Object
         self.nextSlotOffset += MemoryLayout<Integer64>.size
         }
         
+    public func decodeInstance(from: RawPointer,atByteOffset: Integer64) -> Instance
+        {
+        fatalError()
+        }
+        
     public func readInstance(from: RawPointer,atByteOffset:inout Integer64) -> Instance
         {
         fatalError()
         }
         
-    public func write(_ instance: Instance,into rawPointer: RawPointer,atByteOffset:inout Integer64)
+    public func encode(_ instance: Instance,into page: Page,atByteOffset:inout Integer64)
         {
 //        if let primitive = instance as? Primitive
 //            {

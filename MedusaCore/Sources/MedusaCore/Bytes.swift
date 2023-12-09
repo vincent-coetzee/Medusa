@@ -6,21 +6,25 @@
 //
 
 import Foundation
-
 //
 //
-// Bytes is collection of bytes that can be manipulated as a single thing.
-// Bytes keeps a collection of bytes which is sizeInBytes + 8 long. The first
-// 8 bytes of the collection of bytes is the size of the Bytes in bytes. Rememeber
-// when you move Bytes around that they always have that first 8 bytes with the
-// sizeInBytes otherwise you'll be unable to figure out why your results ar eoff by 8.
+// NOTE: When a Bytes is "stored" into a buffer of some kind, it writes
+// it's sizeInBytes into the first word of the buffer. This is specifically
+// so that it is possible to find the size of an embedded Bytes before
+// having read the whole thing. However the buffer that Bytes holds does NOT
+// have a sizeInBytes word at the start.
 //
 //
-public class Bytes: Sequence
+public class Bytes: Sequence,AnnotationValueType
     {
     public var sizeInBytes: Integer64
     private var bytes: RawPointer
     
+    public var bytesPointer: RawPointer
+        {
+        self.bytes
+        }
+        
     public var description: String
         {
         fatalError("Not implemented yet.")
@@ -28,38 +32,47 @@ public class Bytes: Sequence
         
     public init(from: RawPointer,sizeInBytes: Integer64)
         {
-        self.bytes = RawPointer.allocate(byteCount: sizeInBytes + MemoryLayout<Integer64>.size, alignment: 1)
+        self.bytes = RawPointer.allocate(byteCount: sizeInBytes, alignment: 1)
         self.bytes.copyMemory(from: from, byteCount: sizeInBytes)
         self.sizeInBytes = sizeInBytes
-        self.bytes.storeBytes(of: sizeInBytes, toByteOffset: 0, as: Integer64.self)
         }
         
     public init(sizeInBytes: Integer64)
         {
         self.sizeInBytes = sizeInBytes
-        self.bytes = RawPointer.allocate(byteCount: sizeInBytes + MemoryLayout<Integer64>.size, alignment: 1)
+        self.bytes = RawPointer.allocate(byteCount: sizeInBytes, alignment: 1)
         self.bytes.initializeMemory(as: Byte.self, to: 0)
-        self.bytes.storeBytes(of: sizeInBytes, toByteOffset: 0, as: Integer64.self)
         }
         
     public init(from buffer: RawPointer,atByteOffset: Integer64,sizeInBytes: Integer64)
         {
-        self.bytes = RawPointer.allocate(byteCount: sizeInBytes + MemoryLayout<Integer64>.size, alignment: 1)
-        self.bytes.copyMemory(from: buffer + atByteOffset + MemoryLayout<Integer64>.size, byteCount: sizeInBytes)
+        self.bytes = RawPointer.allocate(byteCount: sizeInBytes, alignment: 1)
+        self.bytes.copyMemory(from: buffer + atByteOffset, byteCount: sizeInBytes)
         self.sizeInBytes = sizeInBytes
-        self.bytes.storeBytes(of: sizeInBytes, toByteOffset: 0, as: Integer64.self)
         }
         
     public init(from: Bytes)
         {
         self.sizeInBytes = from.sizeInBytes
-        self.bytes = RawPointer.allocate(byteCount: self.sizeInBytes + MemoryLayout<Integer64>.size, alignment: 1)
-        from.copyBytes(into: self.bytes,atByteOffset: 0)
+        self.bytes = RawPointer.allocate(byteCount: self.sizeInBytes, alignment: 1)
+        self.bytes.copyMemory(from: from.bytes, byteCount: self.sizeInBytes)
+        }
+        
+    public init(from: Bytes,atByteOffset: Integer64,sizeInBytes: Integer64)
+        {
+        self.sizeInBytes = sizeInBytes
+        self.bytes = RawPointer.allocate(byteCount: sizeInBytes, alignment: 1)
+        self.bytes.copyMemory(from: from.bytes + atByteOffset, byteCount: sizeInBytes)
         }
         
     public func copyBytes(into buffer: RawPointer,atByteOffset: Integer64)
         {
-        buffer.copyMemory(from: self.bytes + atByteOffset, byteCount: self.sizeInBytes + MemoryLayout<Integer64>.size)
+        buffer.copyMemory(from: self.bytes + atByteOffset, byteCount: self.sizeInBytes)
+        }
+        
+    public func copyBytes(into buffer: RawPointer,atByteOffset: Integer64,sizeInBytes: Integer64)
+        {
+        buffer.copyMemory(from: self.bytes + atByteOffset, byteCount: sizeInBytes)
         }
         
     public func makeIterator() -> BytesIterator
@@ -75,7 +88,7 @@ public class Bytes: Sequence
                 {
                 fatalError("subscript \(index) greater than count \(self.sizeInBytes).")
                 }
-            return(self.bytes.load(fromByteOffset: index + MemoryLayout<Integer64>.size, as: Byte.self))
+            return(self.bytes.load(fromByteOffset: index, as: Byte.self))
             }
         set
             {
@@ -83,7 +96,15 @@ public class Bytes: Sequence
                 {
                 fatalError("subscript \(index) greater than count \(self.sizeInBytes).")
                 }
-            self.bytes.storeBytes(of: newValue, toByteOffset: index + MemoryLayout<Integer64>.size, as: Byte.self)
+            self.bytes.storeBytes(of: newValue, toByteOffset: index, as: Byte.self)
+            }
+        }
+        
+    public func fill(atByteOffset: Integer64,with byte: Byte,count: Integer64)
+        {
+        for index in atByteOffset..<(atByteOffset + count)
+            {
+            self[index] = byte
             }
         }
     }

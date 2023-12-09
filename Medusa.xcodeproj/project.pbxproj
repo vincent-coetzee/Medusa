@@ -7,18 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BF06A4852B1DBD700034D7BF /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF06A4842B1DBD700034D7BF /* Int+Extensions.swift */; };
 		BF06A4972B1E724F0034D7BF /* MOPAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF06A4962B1E724F0034D7BF /* MOPAddress.swift */; };
 		BF2B00EC2B20AFAD00E83152 /* MedusaStorage in Frameworks */ = {isa = PBXBuildFile; productRef = BF2B00EB2B20AFAD00E83152 /* MedusaStorage */; };
 		BF327E1B2B2211360077FF6B /* MedusaPaging in Frameworks */ = {isa = PBXBuildFile; productRef = BF327E1A2B2211360077FF6B /* MedusaPaging */; };
 		BF521F3B2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF521F3A2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift */; };
-		BF6473892B13A91D0049B583 /* SmalltalkMonads.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6473882B13A91D0049B583 /* SmalltalkMonads.swift */; };
 		BF6C7E132B0E259A006DB858 /* BTreePageInspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E122B0E259A006DB858 /* BTreePageInspectorWindowController.swift */; };
 		BF6C7E162B0E25B8006DB858 /* BTreePageInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E142B0E25B8006DB858 /* BTreePageInspectorViewController.swift */; };
 		BF6C7E1B2B0E307E006DB858 /* FieldValueField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E1A2B0E307E006DB858 /* FieldValueField.swift */; };
 		BF6C7E1D2B0E3543006DB858 /* FieldCellField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E1C2B0E3543006DB858 /* FieldCellField.swift */; };
-		BF6C7E232B0EB18B006DB858 /* NSFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E222B0EB18B006DB858 /* NSFont+Extensions.swift */; };
-		BF7FFCE72B08010B001D2F93 /* Optional+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7FFCE62B08010B001D2F93 /* Optional+Extensions.swift */; };
 		BF90DF4B2B21F0F400C04D19 /* MedusaNetworking in Frameworks */ = {isa = PBXBuildFile; productRef = BF90DF4A2B21F0F400C04D19 /* MedusaNetworking */; };
 		BFA944542B1111C100526CF1 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA944532B1111C100526CF1 /* File.swift */; };
 		BFA944582B1113EE00526CF1 /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = BFA944572B1113EE00526CF1 /* Path */; };
@@ -35,7 +31,6 @@
 		BFD6747D2B06689E0086932A /* BufferBrowserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD6747C2B06689E0086932A /* BufferBrowserViewController.swift */; };
 		BFD674812B066A560086932A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BFD674802B066A560086932A /* Main.storyboard */; };
 		BFD6E1C92B238C9A00FC0A0A /* MedusaAgents in Frameworks */ = {isa = PBXBuildFile; productRef = BFD6E1C82B238C9A00FC0A0A /* MedusaAgents */; };
-		BFD734B02B06F15500CD500D /* NSColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD734AF2B06F15500CD500D /* NSColor+Extensions.swift */; };
 		BFEEF9262B1C8CBD00F42C58 /* Path+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEEF9252B1C8CBD00F42C58 /* Path+Extensions.swift */; };
 		BFEEF92F2B1CFABC00F42C58 /* Task+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEEF92E2B1CFABC00F42C58 /* Task+Extensions.swift */; };
 		BFFB2E7D2B05363300254090 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E7C2B05363300254090 /* AppDelegate.swift */; };
@@ -57,11 +52,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		BF06A4842B1DBD700034D7BF /* Int+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
-		BF06A4862B1E07F20034D7BF /* MedusaPointer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedusaPointer.swift; sourceTree = "<group>"; };
 		BF06A4882B1E1FDE0034D7BF /* MOPStringObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPStringObject.swift; sourceTree = "<group>"; };
 		BF06A48A2B1E51810034D7BF /* MOPSystemDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPSystemDictionary.swift; sourceTree = "<group>"; };
-		BF06A48C2B1E52C90034D7BF /* MOPBTreePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPBTreePage.swift; sourceTree = "<group>"; };
 		BF06A48E2B1E53ED0034D7BF /* MOPDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPDictionary.swift; sourceTree = "<group>"; };
 		BF06A4902B1E54460034D7BF /* MOPIdentityDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPIdentityDictionary.swift; sourceTree = "<group>"; };
 		BF06A4922B1E54EE0034D7BF /* MOPKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPKey.swift; sourceTree = "<group>"; };
@@ -75,20 +67,15 @@
 		BF327E192B2210620077FF6B /* MedusaPaging */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaPaging; sourceTree = "<group>"; };
 		BF327E1C2B2215630077FF6B /* Fletcher */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Fletcher; sourceTree = "<group>"; };
 		BF521F3A2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferBrowserPopoverViewController.swift; sourceTree = "<group>"; };
-		BF6473882B13A91D0049B583 /* SmalltalkMonads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmalltalkMonads.swift; sourceTree = "<group>"; };
 		BF6C7E122B0E259A006DB858 /* BTreePageInspectorWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTreePageInspectorWindowController.swift; sourceTree = "<group>"; };
 		BF6C7E142B0E25B8006DB858 /* BTreePageInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTreePageInspectorViewController.swift; sourceTree = "<group>"; };
-		BF6C7E182B0E28AF006DB858 /* Field.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Field.swift; sourceTree = "<group>"; };
 		BF6C7E1A2B0E307E006DB858 /* FieldValueField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldValueField.swift; sourceTree = "<group>"; };
 		BF6C7E1C2B0E3543006DB858 /* FieldCellField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldCellField.swift; sourceTree = "<group>"; };
-		BF6C7E1E2B0E4ACC006DB858 /* Bytes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bytes.swift; sourceTree = "<group>"; };
-		BF6C7E222B0EB18B006DB858 /* NSFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSFont+Extensions.swift"; sourceTree = "<group>"; };
 		BF7075F72B16016300E3F6D8 /* BTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTree.swift; sourceTree = "<group>"; };
 		BF7075F92B1626C100E3F6D8 /* Stack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
 		BF7075FB2B162D5A00E3F6D8 /* Identifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Identifier.swift; sourceTree = "<group>"; };
 		BF7075FD2B16300B00E3F6D8 /* MOPModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPModule.swift; sourceTree = "<group>"; };
 		BF7076012B16594100E3F6D8 /* MOPRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPRoot.swift; sourceTree = "<group>"; };
-		BF797A332B0A23A90006A238 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		BF7DE3262B22416A00035966 /* MedusaAgents */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaAgents; sourceTree = "<group>"; };
 		BF7FFCCA2B079CA3001D2F93 /* MOPChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPChannel.swift; sourceTree = "<group>"; };
 		BF7FFCCC2B079CB9001D2F93 /* MOPWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPWriter.swift; sourceTree = "<group>"; };
@@ -102,12 +89,8 @@
 		BF7FFCDE2B07AA72001D2F93 /* MOPEnumeration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPEnumeration.swift; sourceTree = "<group>"; };
 		BF7FFCE22B07AB3D001D2F93 /* MOPEnumerationCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPEnumerationCase.swift; sourceTree = "<group>"; };
 		BF7FFCE42B07FEF9001D2F93 /* MOPRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPRepository.swift; sourceTree = "<group>"; };
-		BF7FFCE62B08010B001D2F93 /* Optional+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Optional+Extensions.swift"; sourceTree = "<group>"; };
-		BF9071602B11C281007F70EE /* Word.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Word.swift; sourceTree = "<group>"; };
-		BF9071642B11F148007F70EE /* UnsafeMutableRawPointer+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UnsafeMutableRawPointer+Extensions.swift"; sourceTree = "<group>"; };
 		BF90DF492B21F0BE00C04D19 /* MedusaNetworking */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaNetworking; sourceTree = "<group>"; };
 		BF9369422B0BF33700921D6E /* Page.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Page.swift; sourceTree = "<group>"; };
-		BFA944482B1078B400526CF1 /* Fragment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fragment.swift; sourceTree = "<group>"; };
 		BFA944532B1111C100526CF1 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		BFAAF03D2B0FE55A00A2FFD1 /* SystemIssue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemIssue.swift; sourceTree = "<group>"; };
 		BFAE71ED2B1FABA600C15E0F /* MedusaCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaCore; sourceTree = "<group>"; };
@@ -120,11 +103,9 @@
 		BFD674662B0607720086932A /* IPV6Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPV6Address.swift; sourceTree = "<group>"; };
 		BFD674742B0659DA0086932A /* BufferBrowserWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferBrowserWindowController.swift; sourceTree = "<group>"; };
 		BFD674782B065A9C0086932A /* BufferBrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferBrowserView.swift; sourceTree = "<group>"; };
-		BFD6747A2B065ADF0086932A /* Buffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buffer.swift; sourceTree = "<group>"; };
 		BFD6747C2B06689E0086932A /* BufferBrowserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferBrowserViewController.swift; sourceTree = "<group>"; };
 		BFD674802B066A560086932A /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		BFD674832B0689990086932A /* PermissionsToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsToken.swift; sourceTree = "<group>"; };
-		BFD734AF2B06F15500CD500D /* NSColor+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSColor+Extensions.swift"; sourceTree = "<group>"; };
 		BFEEF9252B1C8CBD00F42C58 /* Path+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Path+Extensions.swift"; sourceTree = "<group>"; };
 		BFEEF92E2B1CFABC00F42C58 /* Task+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Task+Extensions.swift"; sourceTree = "<group>"; };
 		BFEEF9302B1D03D900F42C58 /* Files.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Files.entitlements; sourceTree = "<group>"; };
@@ -135,8 +116,6 @@
 		BFFB2E852B05363500254090 /* Medusa.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Medusa.entitlements; sourceTree = "<group>"; };
 		BFFE7E792B1B5D1100776231 /* MOPMetaclass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPMetaclass.swift; sourceTree = "<group>"; };
 		BFFE7E7B2B1B980C00776231 /* RepositoryBrowserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryBrowserViewController.swift; sourceTree = "<group>"; };
-		BFFE7E7E2B1B988C00776231 /* WeakReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeakReference.swift; sourceTree = "<group>"; };
-		BFFE7E802B1B990D00776231 /* WeakArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeakArray.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -201,15 +180,8 @@
 		BFA9444C2B110F0200526CF1 /* System Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				BFD734AF2B06F15500CD500D /* NSColor+Extensions.swift */,
-				BF6C7E222B0EB18B006DB858 /* NSFont+Extensions.swift */,
-				BF7FFCE62B08010B001D2F93 /* Optional+Extensions.swift */,
-				BF6473882B13A91D0049B583 /* SmalltalkMonads.swift */,
-				BF797A332B0A23A90006A238 /* String+Extensions.swift */,
-				BF9071642B11F148007F70EE /* UnsafeMutableRawPointer+Extensions.swift */,
 				BFEEF9252B1C8CBD00F42C58 /* Path+Extensions.swift */,
 				BFEEF92E2B1CFABC00F42C58 /* Task+Extensions.swift */,
-				BF06A4842B1DBD700034D7BF /* Int+Extensions.swift */,
 			);
 			path = "System Extensions";
 			sourceTree = "<group>";
@@ -307,19 +279,10 @@
 			isa = PBXGroup;
 			children = (
 				BF7075F72B16016300E3F6D8 /* BTree.swift */,
-				BFD6747A2B065ADF0086932A /* Buffer.swift */,
-				BF6C7E1E2B0E4ACC006DB858 /* Bytes.swift */,
-				BF6C7E182B0E28AF006DB858 /* Field.swift */,
-				BFA944482B1078B400526CF1 /* Fragment.swift */,
 				BF7075FB2B162D5A00E3F6D8 /* Identifier.swift */,
 				BF9369422B0BF33700921D6E /* Page.swift */,
 				BFD674832B0689990086932A /* PermissionsToken.swift */,
 				BF7075F92B1626C100E3F6D8 /* Stack.swift */,
-				BFFE7E802B1B990D00776231 /* WeakArray.swift */,
-				BFFE7E7E2B1B988C00776231 /* WeakReference.swift */,
-				BF9071602B11C281007F70EE /* Word.swift */,
-				BF06A4862B1E07F20034D7BF /* MedusaPointer.swift */,
-				BF06A48C2B1E52C90034D7BF /* MOPBTreePage.swift */,
 			);
 			path = Plumbing;
 			sourceTree = "<group>";
@@ -496,7 +459,6 @@
 			files = (
 				BF06A4972B1E724F0034D7BF /* MOPAddress.swift in Sources */,
 				BF6C7E162B0E25B8006DB858 /* BTreePageInspectorViewController.swift in Sources */,
-				BFD734B02B06F15500CD500D /* NSColor+Extensions.swift in Sources */,
 				BFAAF03E2B0FE55A00A2FFD1 /* SystemIssue.swift in Sources */,
 				BFEEF9262B1C8CBD00F42C58 /* Path+Extensions.swift in Sources */,
 				BFA944542B1111C100526CF1 /* File.swift in Sources */,
@@ -504,18 +466,14 @@
 				BF6C7E1D2B0E3543006DB858 /* FieldCellField.swift in Sources */,
 				BFD6747D2B06689E0086932A /* BufferBrowserViewController.swift in Sources */,
 				BFEEF92F2B1CFABC00F42C58 /* Task+Extensions.swift in Sources */,
-				BF7FFCE72B08010B001D2F93 /* Optional+Extensions.swift in Sources */,
 				BFD674792B065A9C0086932A /* BufferBrowserView.swift in Sources */,
 				BFFB2E7F2B05363300254090 /* PrimaryViewController.swift in Sources */,
 				BF6C7E132B0E259A006DB858 /* BTreePageInspectorWindowController.swift in Sources */,
 				BFD674472B05EAE20086932A /* Medusa.swift in Sources */,
 				BFFE7E7C2B1B980C00776231 /* RepositoryBrowserViewController.swift in Sources */,
-				BF6C7E232B0EB18B006DB858 /* NSFont+Extensions.swift in Sources */,
 				BFD674762B0659DA0086932A /* BufferBrowserWindowController.swift in Sources */,
 				BFFB2E7D2B05363300254090 /* AppDelegate.swift in Sources */,
 				BF521F3B2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift in Sources */,
-				BF06A4852B1DBD700034D7BF /* Int+Extensions.swift in Sources */,
-				BF6473892B13A91D0049B583 /* SmalltalkMonads.swift in Sources */,
 				BF6C7E1B2B0E307E006DB858 /* FieldValueField.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

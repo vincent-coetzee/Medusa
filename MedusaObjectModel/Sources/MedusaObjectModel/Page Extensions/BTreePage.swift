@@ -9,126 +9,140 @@
 import Foundation
 import MedusaCore
 import MedusaStorage
+import MedusaPaging
 import Fletcher
 
 public class BTreePage: Page
     {
-//    //
-//    // Local constants
-//    //
-//    public static let kBTreePageKeyCountOffset                   = Page.kPageHeaderSizeInBytes
-//    public static let kBTreePageKeysPerPageOffset                = kBTreePageKeyCountOffset + MemoryLayout<Integer64>.size
-//    public static let kBTreePageIsLeafOffset                     = kBTreePageKeysPerPageOffset + MemoryLayout<Integer64>.size
-//    public static let kBTreePageHeaderSizeInBytes                = kBTreePageIsLeafOffset + MemoryLayout<Boolean>.size
-//    
-//    public typealias ChildPointers = Array<Int>
-//    public typealias Keys = Array<Integer64>
-//    
-//    internal var children: ChildPointers!
-//    internal var keyCount: Integer64 = 0
-//    internal var keysPerPage: Integer64
-//    internal var isLeaf: Bool = false
-//    private var childPointersOffset: Int = 0
-//    internal var keys: Keys!
-//    
-//        {
-//        Self.kBTreePageHeaderSizeInBytes + self.keysPerPage * MemoryLayout<Integer64>.size + (self.keysPerPage + 1) * MemoryLayout<Integer64>.size
-//        }
-//        
-//    public override var initialFreeByteCount: Integer64
-//        {
-//        // The page size               less the header size                 less size of the key pointers                            less the size of the child pointers                            less the size of the first free cell
-//        Medusa.kBTreePageSizeInBytes - Medusa.kBTreePageHeaderSizeInBytes - self.keysPerPage * MemoryLayout<Integer64>.size - (self.keysPerPage + 1) * MemoryLayout<Integer64>.size - 2 * MemoryLayout<Integer64>.size
-//        }
-//        
-//    public override var fields: CompositeField
-//        {
-//        let superFields = super.fields
-//        let headerFields = superFields.compositeField(named: "Header Fields")
-//        headerFields?.append(Field(name: "keyCount",value: .integer(self.keyCount),offset: Medusa.kBTreePageKeyCountOffset))
-//        headerFields?.append(Field(name: "keysPerPage",value: .integer(self.keysPerPage),offset: Medusa.kBTreePageKeysPerPageOffset))
-//        headerFields?.append(Field(name: "isLeaf",value: .boolean(self.isLeaf),offset: Medusa.kBTreePageIsLeafOffset))
-//        superFields.append(self.keyFields)
-//        superFields.append(self.childPointerFields)
-//        return(superFields)
-//        }
-//        
-//    public var keyFields: CompositeField
-//        {
-//        let fields = CompositeField(name: "Keys")
-//        var offset = Medusa.kBTreePageHeaderSizeInBytes
-//        for index in 0..<self.keyCount
-//            {
-//            let keyOffset = self.keys[index]
-//            let moreFields = CompositeField(name: "Key \(index)")
-//            moreFields.append(Field(name: "Key Offset",value: .integer(keyOffset),offset: keyOffset))
-//            var innerOffset = readInteger64(self.buffer,Medusa.kBTreePageKeysOffset + index * MemoryLayout<Integer64>.size)
-//            moreFields.append(Field(name: "Key",value: .bytes(self.keyBytes(at: index)),offset: innerOffset))
-//            let keyLength = readInteger64(self.buffer,innerOffset)
-//            innerOffset += keyLength
-//            moreFields.append(Field(name: "Value",value: .bytes(self.valueBytes(at: index)),offset: innerOffset))
-//            offset += MemoryLayout<Integer64>.size
-//            fields.append(moreFields)
-//            }
-//        return(fields)
-//        }
-//        
-//    private var childPointerFields: CompositeField
-//        {
-//        let field = CompositeField(name: "Child Pointers")
-//        var lastOffset = self.childPointersOffset
-//        for index in 0..<self.keyCount + 1
-//            {
-//            field.append(Field(name: "Child Pointer \(index)",value: .address(self.children[index]),offset: lastOffset))
-//            lastOffset += MemoryLayout<Medusa.Address>.size
-//            }
-//        return(field)
-//        }
-//    
-//    public required init(magicNumber: Medusa.MagicNumber,keysPerPage: Integer64)
-//        {
-//        self.children = ChildPointers(repeating: 0,count: keysPerPage + 1)
-//        self.keys = Keys(repeating: 0, count: keysPerPage)
-//        self.keysPerPage = keysPerPage
-//        self.childPointersOffset = Medusa.kBTreePageKeysOffset + keysPerPage * MemoryLayout<Integer64>.size
-//        super.init(magicNumber: magicNumber)
-//        }
-//        
-//    public override init(from buffer: RawPointer)
-//        {
-//        self.keysPerPage = readInteger64(buffer,Self.kBTreePageKeysPerPageOffset)
-//        super.init(from: buffer)
-//        self.readKeysAndChildren()
-//        }
-//        
-//    public override init(from page: Page)
-//        {
-//        self.keysPerPage = readInteger64(page.buffer,Self.kBTreePageKeysPerPageOffset)
-//        super.init(from: page)
-//        self.loadKeysAndChildren()
-//        }
-//        
-//    public override func store() throws
-//        {
-//        try super.store()
-//        self.storeKeysAndChildren()
-//        self.storeChecksum()
-//        }
-//        
-//    internal override func reStore() throws
-//        {
-//        try super.reStore()
-//        try self.rewriteKeysAndChildren()
-//        super.storeChecksum()
-//        self.needsDefragmentation = false
-//        }
-//        
-//    private func key(at index: Int) -> Key
-//        {
-//        var byteOffset = readInteger64(self.buffer,Self.kBTreePageKeysOffset + index * MemoryLayout<Integer64>.size)
-//        return(Key(from: self.buffer, atByteOffset: &byteOffset))
-//        }
-//        
+    //
+    // Local constants
+    //
+    public static let kBTreePageKeyCountOffset                   = Page.kPageHeaderSizeInBytes
+    public static let kBTreePageKeysPerPageOffset                = kBTreePageKeyCountOffset + MemoryLayout<Integer64>.size
+    public static let kBTreePageIsLeafOffset                     = kBTreePageKeysPerPageOffset + MemoryLayout<Integer64>.size
+
+    public static let kBTreePageKeyClassOffset                   = kBTreePageIsLeafOffset + MemoryLayout<Boolean>.size
+    public static let kBTreePageValueClassOffset                 = kBTreePageKeyClassOffset + MemoryLayout<Unsigned64>.size
+    public static let kBTreePageHeaderSizeInBytes                = kBTreePageValueClassOffset + MemoryLayout<Unsigned64>.size
+    public static let kBTreePageSizeInBytes                      = Page.kPageSizeInBytes
+    public static let kBTreePageKeysOffset                       = BTreePage.kBTreePageHeaderSizeInBytes
+    
+    public typealias ChildPointers = Array<Int>
+    public typealias Keys = Array<Integer64>
+    
+    internal var children: ChildPointers!
+    internal var keyCount: Integer64 = 0
+    internal var keysPerPage: Integer64
+    internal var isLeaf: Bool = false
+    private var childPointersOffset: Int = 0
+    internal var keys: Keys!
+    private let keyClass: Class
+    private let valueClass: Class
+    
+    private var headerSizeInBytes: Integer64
+        {
+        Self.kBTreePageHeaderSizeInBytes + self.keysPerPage * MemoryLayout<Integer64>.size + (self.keysPerPage + 1) * MemoryLayout<Integer64>.size
+        }
+        
+    public override var initialFreeByteCount: Integer64
+        {
+        // The page size               less the header size                 less size of the key pointers                            less the size of the child pointers                            less the size of the first free cell
+        Self.kBTreePageSizeInBytes - Self.kBTreePageHeaderSizeInBytes - self.keysPerPage * MemoryLayout<Integer64>.size - (self.keysPerPage + 1) * MemoryLayout<Integer64>.size - 2 * MemoryLayout<Integer64>.size
+        }
+        
+    public override var annotations: AnnotatedBytes.CompositeAnnotation
+        {
+        let superFields = super.annotations
+        let headerFields = superFields.compositeAnnotation(atKey: "Header Fields")
+        let bytes = AnnotatedBytes(from: self.buffer, sizeInBytes: Self.kBTreePageSizeInBytes)
+        headerFields?.append(bytes: bytes,key: "keyCount",kind: .integer64,atByteOffset: Self.kBTreePageKeyCountOffset)
+        headerFields?.append(bytes: bytes,key: "keysPerPage",kind: .integer64,atByteOffset: Self.kBTreePageKeysPerPageOffset)
+        headerFields?.append(bytes: bytes,key: "isLeaf",kind: .boolean,atByteOffset: Self.kBTreePageIsLeafOffset)
+        superFields.append(self.keyAnnotations)
+        superFields.append(self.childPointerAnnotations)
+        return(superFields)
+        }
+        
+    public var keyAnnotations: AnnotatedBytes.CompositeAnnotation
+        {
+        let fields = AnnotatedBytes.CompositeAnnotation(key: "Keys")
+        var offset = Self.kBTreePageHeaderSizeInBytes
+        let bytes = AnnotatedBytes(from: self.buffer,sizeInBytes: Self.kBTreePageSizeInBytes)
+        for index in 0..<self.keyCount
+            {
+            let keyOffset = self.keys[index]
+            let moreFields = AnnotatedBytes.CompositeAnnotation(key: "Key \(index)")
+            moreFields.append(bytes: bytes,key: "Key Offset",kind: .integer64,atByteOffset: keyOffset)
+            var innerOffset = readInteger64(self.buffer,Self.kBTreePageKeysOffset + index * MemoryLayout<Integer64>.size)
+            moreFields.append(bytes: bytes,key: "Key",kind: .bytes,atByteOffset: innerOffset)
+            let keyLength = readInteger64(self.buffer,innerOffset)
+            innerOffset += keyLength
+            moreFields.append(bytes: bytes,key: "Value",kind: .bytes,atByteOffset: innerOffset)
+            offset += MemoryLayout<Integer64>.size
+            fields.append(moreFields)
+            }
+        return(fields)
+        }
+        
+    private var childPointerAnnotations: AnnotatedBytes.CompositeAnnotation
+        {
+        let field = AnnotatedBytes.CompositeAnnotation(key: "Child Pointers")
+        var lastOffset = self.childPointersOffset
+        let bytes = AnnotatedBytes(from: self.buffer,sizeInBytes: Self.kBTreePageSizeInBytes)
+        for index in 0..<self.keyCount + 1
+            {
+            field.append(bytes: bytes,key: "Child Pointer \(index)",kind: .unsigned64,atByteOffset: lastOffset)
+            lastOffset += MemoryLayout<Unsigned64>.size
+            }
+        return(field)
+        }
+    
+    public required init(magicNumber: MagicNumber,keysPerPage: Integer64,keyClass: Class,valueClass: Class)
+        {
+        self.children = ChildPointers(repeating: 0,count: keysPerPage + 1)
+        self.keys = Keys(repeating: 0, count: keysPerPage)
+        self.keysPerPage = keysPerPage
+        self.childPointersOffset = Self.kBTreePageKeysOffset + keysPerPage * MemoryLayout<Integer64>.size
+        self.keyClass = keyClass
+        self.valueClass = valueClass
+        super.init(magicNumber: magicNumber)
+        }
+        
+    public override init(from buffer: RawPointer)
+        {
+        self.keysPerPage = readInteger64(buffer,Self.kBTreePageKeysPerPageOffset)
+        super.init(from: buffer)
+        self.loadKeysAndChildren()
+        }
+        
+    public override init(from page: Page)
+        {
+        self.keysPerPage = readInteger64(page.buffer,Self.kBTreePageKeysPerPageOffset)
+        super.init(from: page)
+        self.loadKeysAndChildren()
+        }
+        
+    public override func store() throws
+        {
+        try super.store()
+        self.storeKeysAndChildren()
+        self.storeChecksum()
+        }
+        
+    internal override func reStore() throws
+        {
+        try super.reStore()
+        try self.rewriteKeysAndChildren()
+        super.storeChecksum()
+        self.needsDefragmentation = false
+        }
+        
+    private func key(at index: Int) -> Instance
+        {
+        var byteOffset = readInteger64(self.buffer,Self.kBTreePageKeysOffset + index * MemoryLayout<Integer64>.size)
+        return(Key(from: self.buffer, atByteOffset: &byteOffset))
+        }
+        
 //        
 //    private func keyBytes(at index: Int) -> Bytes
 //        {

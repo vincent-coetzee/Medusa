@@ -10,7 +10,28 @@ import MedusaCore
 import MedusaStorage
 import MedusaPaging
 
-open class Instance: KeyPart
+public protocol Instance: Equatable,Hashable,Comparable
+    {
+    var objectAddress: ObjectAddress { get set }
+    var sizeInBytes: Integer64 { get }
+    var `class`: Class { get }
+    var elementClass: Class? { get }
+    var isIndexed: Boolean { get }
+    
+    static func makeInstance(from: ObjectAddress) -> any Instance
+    
+    init(from: RawPointer,atByteOffset: Integer64)
+    init(from: Page,atByteOffset: Integer64)
+    
+    func encode(into: Page)
+    func encode(into: RawPointer)
+    func value(ofSlotAtKey: String) -> any Instance
+    func setValue(_ value: any Instance,ofSlotAtKey: String)
+    
+    subscript(_ index: Integer64) -> any Instance { get set }
+    }
+    
+open class InstanceA: KeyPart
     {
     open var objectAddress: ObjectAddress
         {
@@ -89,8 +110,16 @@ open class Instance: KeyPart
         {
         }
         
-    public func store(into: RawPointer,atByteOffset: inout Integer64)
+    //
+    // This encodes the instance into the specified buffer. This means
+    // that 
+    public func encode(into buffer: RawPointer,atByteOffset: Integer64)
         {
+        }
+        
+    public func encode(into page: Page,atByteOffset: inout Integer64)
+        {
+        self.encodeIntoPage(atByteOffset: atByteOffset)
         }
         
     public func hash(into:inout Hasher)

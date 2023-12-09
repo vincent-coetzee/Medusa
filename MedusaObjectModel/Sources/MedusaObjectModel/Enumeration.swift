@@ -20,7 +20,7 @@ import MedusaStorage
 //
 //              Sign Bit ( 1 bit )              S                                                                       63
 //              Tag ( 4 bits )                   TTTT                                                                   62 Tag = 0110
-//              Associated Values Flag (1 bit )      A                                                                  58 Flag = 0
+//              Associated Values Flag (1 bit )      V                                                                  58 Flag = 0
 //              Case Index ( 8 bits = 255 )           CC CCCCCC                                                         50 This is the index of the enumeration case
 //              Enumeration Class Address ( 50 bits )          AA AAAAAAAA AAAAAAAA AAAAAAAA AAAAAAAA AAAAAAAA AAAAAAAA  0 This contains a shifted pointer to the class of the enumeration
 //
@@ -56,7 +56,7 @@ public class Enumeration: Primitive
             {
             if self.associatedValues.isEmpty
                 {
-                let classAddress = (self.class.objectAddress.address & Self.kClassAddressMask) >> ObjectAddress.kIndexShift
+                let classAddress = (self.class.objectAddress.address & Self.kClassAddressMask) >> ObjectAddress.kObjectIndexShift
 //                let tag = Header.kEnumerationMask
                 self._objectAddress = ObjectAddress(enumerationCaseIndex: self.caseIndex,classAddress: classAddress)
                 }

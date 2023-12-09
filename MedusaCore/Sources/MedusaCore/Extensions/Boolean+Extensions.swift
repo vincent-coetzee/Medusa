@@ -7,6 +7,6 @@
 
 import Foundation
 
-extension Float64: PrimitiveType
+extension Boolean: PrimitiveType,AnnotationValueType
     {
     }

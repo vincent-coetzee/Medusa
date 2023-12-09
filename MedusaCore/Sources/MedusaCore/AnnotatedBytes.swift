@@ -19,18 +19,98 @@ public class AnnotatedBytes: Bytes
         case string
         case nothing
         case composite
+        case unsigned64
+        case integer64Value(Integer64)
+        case unsigned64Value(Unsigned64)
+        case booleanValue(Boolean)
+        
+        public var isValue: Boolean
+            {
+            switch(self)
+                {
+                case .integer64Value:
+                    return(true)
+                case .unsigned64Value:
+                    return(true)
+                case .booleanValue:
+                    return(true)
+                default:
+                    return(false)
+                }
+            }
+        }
+        
+    public enum AnnotationValue
+        {
+        case integer64(Integer64)
+        case float64(Float64)
+        case boolean(Boolean)
+        case byte(Byte)
+        case bytes(Bytes)
+        case string(String)
+        case nothing
+        case composite
+        case unsigned64(Unsigned64)
+        
+        public var sizeInBytes: Integer64
+            {
+            switch(self)
+                {
+                case .integer64:
+                    return(MemoryLayout<Integer64>.size)
+                case .float64:
+                    return(MemoryLayout<Float64>.size)
+                case .boolean:
+                    return(MemoryLayout<Boolean>.size)
+                case .byte:
+                    return(MemoryLayout<Byte>.size)
+                case .unsigned64:
+                    return(MemoryLayout<Unsigned64>.size)
+                case .bytes(let bytes):
+                    return(bytes.sizeInBytes)
+                case .string(let string):
+                    return(MemoryLayout<Integer64>.size + string.count * MemoryLayout<UnicodeScalar>.size)
+                default:
+                    return(MemoryLayout<Integer64>.size)
+                }
+            }
+            
+        public var description:String
+            {
+            switch(self)
+                {
+                case .unsigned64(let value):
+                    return("\(value)")
+                case .integer64(let value):
+                    return("\(value)")
+                case .float64(let value):
+                    return("\(value)")
+                case .boolean(let value):
+                    return("\(value)")
+                case .bytes(let value):
+                    return(value.description)
+                case .byte(let value):
+                    return(String(value,radix: 16, uppercase: true))
+                case .string(let value):
+                    return(value)
+                case .nothing:
+                    return("nothing")
+                case .composite:
+                    fatalError("This should not be called on an annotation of kind .composite.")
+                }
+            }
         }
         
     public typealias Annotations = Dictionary<String,Annotation>
             
     public class Section:Equatable
         {
-        var frame: CGRect!
-        let startRow: Int
-        let startColumn: Int
-        let stopRow: Int
-        let stopColumn: Int
-        let annotation: Annotation
+        public var frame: CGRect!
+        public let startRow: Int
+        public let startColumn: Int
+        public let stopRow: Int
+        public let stopColumn: Int
+        public let annotation: Annotation
         
         public static func ==(lhs: Section,rhs: Section) -> Bool
             {
@@ -64,6 +144,12 @@ public class AnnotatedBytes: Bytes
             [self]
             }
             
+        public var isValidElementAnnotation: Bool
+            {
+            false
+            }
+
+            
         public let key: String
         public let kind: AnnotationKind
         
@@ -92,96 +178,157 @@ public class AnnotatedBytes: Bytes
             {
             return(nil)
             }
+            
+        public var stopOffset: Int
+            {
+            0
+            }
+            
+        public var startOffset: Int
+            {
+            0
+            }
+            
+        public var description: String
+            {
+            ""
+            }
+            
+        public var sizeInBytes: Integer64
+            {
+            0
+            }
+            
+        public var value: AnnotationValue
+            {
+            .nothing
+            }
+            
+        public func sections(withRowWidth rowWidth: Int) -> Array<Section>
+            {
+            []
+            }
+            
+        public var isValue: Bool
+            {
+            self.kind.isValue
+            }
         }
         
     public class ElementAnnotation: Annotation
         {
-        public let byteOffset: Integer64
-        
-        public init(key: String,kind: AnnotationKind,byteOffset: Integer64 = -1)
+        public override var isValidElementAnnotation: Bool
             {
+            self.byteOffset != -1
+            }
+            
+        public let byteOffset: Integer64
+        public let bytes: AnnotatedBytes
+        
+        public init(bytes: AnnotatedBytes,key: String,kind: AnnotationKind,byteOffset: Integer64 = -1)
+            {
+            self.bytes = bytes
             self.byteOffset = byteOffset
             super.init(key: key,kind: kind)
             }
             
-        public override func description(in buffer: RawPointer) -> String
+        public override var stopOffset: Int
+            {
+            self.byteOffset + self.value.sizeInBytes
+            }
+            
+        public override var startOffset: Int
+            {
+            self.byteOffset
+            }
+            
+        public override var description: String
+            {
+            self.value.description
+            }
+            
+        public override var sizeInBytes: Integer64
+            {
+            self.value.sizeInBytes
+            }
+        
+        public override var value: AnnotationValue
             {
             if self.byteOffset == -1
                 {
-                return("")
+                fatalError()
                 }
             switch(self.kind)
                 {
                 case .integer64:
-                    let value = buffer.load(fromByteOffset: self.byteOffset, as: Integer64.self)
-                    return("\(value)")
+                    return(.integer64(self.bytes.bytesPointer.load(fromByteOffset: self.byteOffset, as: Integer64.self)))
+                case .integer64Value(let value):
+                    return(.integer64(value))
+                case .booleanValue(let value):
+                    return(.boolean(value))
+                case .unsigned64Value(let value):
+                    return(.unsigned64(value))
+                case .unsigned64:
+                    return(.unsigned64(self.bytes.bytesPointer.load(fromByteOffset: self.byteOffset, as: Unsigned64.self)))
                 case .float64:
-                     let value = buffer.load(fromByteOffset: self.byteOffset, as: Float64.self)
-                    return("\(value)")
+                     return(.float64(self.bytes.bytesPointer.load(fromByteOffset: self.byteOffset, as: Float64.self)))
                 case .boolean:
-                    let value = buffer.load(fromByteOffset: self.byteOffset, as: Boolean.self)
-                    return("\(value)")
+                    return(.boolean(self.bytes.bytesPointer.load(fromByteOffset: self.byteOffset, as: Boolean.self)))
                 case .bytes:
-                    let size = buffer.load(fromByteOffset: self.byteOffset, as: Integer64.self)
-                    let bytes = Bytes(from: buffer,atByteOffset: self.byteOffset,sizeInBytes: size)
-                    var string = ""
-                    for byte in bytes
-                        {
-                        string += String(byte,radix:16,uppercase: true) + " "
-                        }
-                    return(string)
+                    let size = self.bytes.bytesPointer.load(fromByteOffset: self.byteOffset, as: Integer64.self)
+                    let someBytes = Bytes(from: self.bytes.bytesPointer,atByteOffset: self.byteOffset + MemoryLayout<Integer64>.size,sizeInBytes: size)
+                    return(.bytes(someBytes))
                 case .byte:
-                    let value = buffer.load(fromByteOffset: self.byteOffset, as: Byte.self)
-                    return("\(value)")
+                    return(.byte(self.bytes.bytesPointer.load(fromByteOffset: self.byteOffset, as: Byte.self)))
                 case .string:
-                    let count = buffer.load(fromByteOffset: self.byteOffset, as: Integer64.self)
+                    let count = self.bytes.bytesPointer.load(fromByteOffset: self.byteOffset, as: Integer64.self)
                     var string = ""
                     for index in (self.byteOffset + MemoryLayout<Integer64>.size)..<(self.byteOffset + MemoryLayout<Integer64>.size + count)
                         {
-                        string.append(Character(buffer.load(fromByteOffset: index, as: UnicodeScalar.self)))
+                        string.append(Character(self.bytes.bytesPointer.load(fromByteOffset: index, as: UnicodeScalar.self)))
                         }
-                    return(string)
+                    return(.string(string))
                 case .nothing:
-                    return("nothing")
+                    return(.nothing)
                 case .composite:
                     fatalError("This should not be called on an annotation of kind .composite.")
                 }
             }
             
-        public override func sizeInBytes(in buffer: RawPointer) -> Integer64
-            {
-            if self.byteOffset == -1
-                {
-                return(0)
-                }
-            switch(self.kind)
-                {
-                case .integer64:
-                    return(MemoryLayout<Integer64>.size)
-                case .float64:
-                    return(MemoryLayout<Float64>.size)
-                case .boolean:
-                    return(MemoryLayout<Boolean>.size)
-                case .byte:
-                    return(MemoryLayout<Byte>.size)
-                case .bytes:
-                    return(buffer.load(fromByteOffset: self.byteOffset, as: Integer64.self))
-                case .string:
-                    return(buffer.load(fromByteOffset: self.byteOffset, as: Integer64.self))
-                case .nothing:
-                    return(MemoryLayout<Integer64>.size)
-                case .composite:
-                    fatalError("This should not be called on an annotation of kind .composite.")
-                }
-            }
+//        public override func sizeInBytes(in buffer: RawPointer) -> Integer64
+//            {
+//            if self.byteOffset == -1
+//                {
+//                return(0)
+//                }
+//            switch(self.kind)
+//                {
+//                case .integer64:
+//                    return(MemoryLayout<Integer64>.size)
+//                case .float64:
+//                    return(MemoryLayout<Float64>.size)
+//                case .boolean:
+//                    return(MemoryLayout<Boolean>.size)
+//                case .byte:
+//                    return(MemoryLayout<Byte>.size)
+//                case .bytes:
+//                    return(buffer.load(fromByteOffset: self.byteOffset, as: Integer64.self))
+//                case .string:
+//                    return(buffer.load(fromByteOffset: self.byteOffset, as: Integer64.self))
+//                case .nothing:
+//                    return(MemoryLayout<Integer64>.size)
+//                case .composite:
+//                    fatalError("This should not be called on an annotation of kind .composite.")
+//                }
+//            }
             
-        public func sections(in buffer: RawPointer,withRowWidth rowWidth: Int) -> Array<Section>
+        public override func sections(withRowWidth rowWidth: Int) -> Array<Section>
             {
             if self.byteOffset == -1
                 {
                 fatalError("Should not have been called on this object.")
                 }
-            let length = self.sizeInBytes(in: buffer)
+            let length = self.value.sizeInBytes
             var index = self.byteOffset
             let stop = self.byteOffset + length
             var column  = self.byteOffset % rowWidth
@@ -218,9 +365,9 @@ public class AnnotatedBytes: Bytes
             super.init(key: key,kind: .composite)
             }
             
-        public func append(key: String,kind: AnnotationKind,atByteOffset: Integer64 = -1)
+        public func append(bytes: AnnotatedBytes,key: String,kind: AnnotationKind,atByteOffset: Integer64 = -1)
             {
-            self.annotations[key] = ElementAnnotation(key: key, kind: kind, byteOffset: atByteOffset)
+            self.annotations[key] = ElementAnnotation(bytes: bytes,key: key, kind: kind, byteOffset: atByteOffset)
             }
             
         public func append(_ annotation: Annotation)
@@ -262,7 +409,7 @@ public class AnnotatedBytes: Bytes
     
     public func appendAnnotation(key: String,kind: AnnotationKind,atByteOffset: Integer64 = -1)
         {
-        self.annotations.append(key: key,kind: kind,atByteOffset: atByteOffset)
+        self.annotations.append(bytes: self,key: key,kind: kind,atByteOffset: atByteOffset)
         }
         
     public func annotation(atKey: String) -> Annotation?

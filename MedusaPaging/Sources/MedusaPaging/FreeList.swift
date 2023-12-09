@@ -115,17 +115,18 @@ public class FreeList
         self.firstCell.count
         }
         
-    public var fields: CompositeField
+    public var annotations: AnnotatedBytes.CompositeAnnotation
         {
-        let fields = CompositeField(name: "Free Cell Fields")
+        let fields = AnnotatedBytes.CompositeAnnotation(key: "Free Cell Fields")
         var cell:FreeListBlockCell? = self.firstCell
         var count = 0
+        let bytes = AnnotatedBytes(from: self.buffer, sizeInBytes: Page.kPageSizeInBytes)
         while cell.isNotNil
             {
             assert(cell!.byteOffset != 0,"ByteOffset should not be 0 but is.")
-            fields.append(Field(name: "Cell \(count) Next",value: .integer(cell!.nextCell?.byteOffset ?? 0),offset: cell!.byteOffset))
-            fields.append(Field(name: "Cell \(count) Size",value: .integer(cell!.sizeInBytes),offset: cell!.byteOffset + MemoryLayout<Integer64>.size))
-            fields.append(Field(name: "Cell \(count) Allocated",value: .boolean(cell!.isAllocated),offset: cell!.byteOffset + 2 * MemoryLayout<Integer64>.size))
+            fields.append(bytes: bytes,key: "Cell \(count) Next",kind: .integer64,atByteOffset: cell!.byteOffset)
+            fields.append(bytes: bytes,key: "Cell \(count) Size",kind: .integer64,atByteOffset: cell!.byteOffset + MemoryLayout<Integer64>.size)
+            fields.append(bytes: bytes,key: "Cell \(count) Allocated",kind: .boolean,atByteOffset: cell!.byteOffset + 2 * MemoryLayout<Integer64>.size)
             count += 1
             cell = cell?.nextCell
             }

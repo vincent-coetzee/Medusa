@@ -10,7 +10,7 @@ import MedusaStorage
 import MedusaCore
 import Fletcher
 
-public class Page
+open class Page
     {
     //
     // Local constants
@@ -30,30 +30,31 @@ public class Page
     public static let kOverlfowPageMagicNumber: MagicNumber    = 0xBAD_C0DE_D0D0_CAD
     public static let kRootPageMagicNumber: MagicNumber        = 0xDEAD_C0D_BAD_F00D
     
-    public var fields: CompositeField
+    open var annotations: AnnotatedBytes.CompositeAnnotation
         {
-        let fields = CompositeField(name: "Header Fields")
-        let allFields = CompositeField(name: "Fields")
+        let bytes = AnnotatedBytes(from: self.buffer, sizeInBytes: Self.kPageSizeInBytes)
+        let fields = AnnotatedBytes.CompositeAnnotation(key: "Header Fields")
+        let allFields = AnnotatedBytes.CompositeAnnotation(key: "Fields")
         allFields.append(fields)
-        fields.append(Field(name: "magicNumber",value: .magicNumber(self.magicNumber),offset: Self.kPageMagicNumberOffset))
-        fields.append(Field(name: "checksum",value: .checksum(self.checksum),offset: Self.kPageChecksumOffset))
-        fields.append(Field(name: "freeByteCount",value: .offset(self.freeByteCount),offset: Self.kPageFreeByteCountOffset))
-        fields.append(Field(name: "initialFreeCellOffset",value: .integer(self.initialFreeCellOffset)))
-        fields.append(Field(name: "initialFreeByteCount",value: .integer(self.initialFreeByteCount)))
-        fields.append(Field(name: "freeCellCount",value: .offset(self.freeCellCount),offset: Self.kPageFreeCellCountOffset))
-        fields.append(Field(name: "pageAddress",value: .address(self.pageAddress)))
-        fields.append(Field(name: "isDirty",value: .boolean(self.isDirty)))
-        fields.append(Field(name: "needsDefragmentation",value: .boolean(self.needsDefragmentation)))
-        allFields.append(self.freeList.fields)
+        fields.append(bytes: bytes,key: "magicNumber",kind: .unsigned64,atByteOffset: Self.kPageMagicNumberOffset)
+        fields.append(bytes: bytes,key: "checksum",kind: .unsigned64,atByteOffset: Self.kPageChecksumOffset)
+        fields.append(bytes: bytes,key: "freeByteCount",kind: .integer64,atByteOffset: Self.kPageFreeByteCountOffset)
+        fields.append(bytes: bytes,key: "initialFreeCellOffset",kind: .integer64Value(self.initialFreeCellOffset))
+        fields.append(bytes: bytes,key: "initialFreeByteCount",kind: .integer64Value(self.initialFreeByteCount))
+        fields.append(bytes: bytes,key: "freeCellCount",kind: .integer64,atByteOffset: Self.kPageFreeCellCountOffset)
+        fields.append(bytes: bytes,key: "pageAddress",kind: .unsigned64Value(self.pageAddress))
+        fields.append(bytes: bytes,key: "isDirty",kind: .booleanValue(self.isDirty))
+        fields.append(bytes: bytes,key: "needsDefragmentation",kind: .booleanValue(self.needsDefragmentation))
+        allFields.append(self.freeList.annotations)
         return(allFields)
         }
         
-    internal var initialFreeCellOffset: Integer64
+    open var initialFreeCellOffset: Integer64
         {
         Self.kPageHeaderSizeInBytes
         }
         
-    public var initialFreeByteCount: Integer64
+    open var initialFreeByteCount: Integer64
         {
         Self.kPageSizeInBytes - Self.kPageHeaderSizeInBytes
         }

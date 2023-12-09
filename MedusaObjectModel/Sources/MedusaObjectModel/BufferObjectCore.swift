@@ -9,10 +9,11 @@ import Foundation
 import MedusaCore
 import MedusaStorage
 
-open class SlotBasedObjectCore: ObjectCore
+open class BufferObjectCore: ObjectCore
     {
-    private var slotValues = Dictionary<Atom,Instance>()
     private var _class: Class
+    private var buffer: RawPointer
+    private var bufferSizeInBytes: Integer64
     
     open override var hashValue: Integer64
         {
@@ -42,11 +43,13 @@ open class SlotBasedObjectCore: ObjectCore
     public init(ofClass: Class)
         {
         self._class = ofClass
+        self.bufferSizeInBytes = ofClass.sizeInBytes
+        self.buffer = RawPointer.allocate(byteCount: ofClass.sizeInBytes, alignment: 1)
+        self.buffer.initializeMemory(as: Byte.self, to: 0)
         super.init()
-        self.initSlots()
         }
     
-    private func initSlots()
+    private func initBuffer()
         {
 //        for slot in self._class.slots
 //            {
@@ -56,22 +59,30 @@ open class SlotBasedObjectCore: ObjectCore
         
     public override func valueOfSlot(named: String) -> Instance
         {
-        fatalError()
+        guard let slot = self.class.slotAtName(named) else
+            {
+            fatalError("Invalid slot name")
+            }
+        return(slot.class.decodeInstance(from: self.buffer,atByteOffset: slot.byteOffset))
         }
         
-    public override func setValue(_ value: Instance,ofSlotNamed: String)
+    public override func setValue(_ value: Instance,ofSlotNamed slotName: String)
         {
-        fatalError("This should have been overriden in a subclass.")
+        guard let slot = self.class.slotAtName(slotName) else
+            {
+            fatalError("Invalid slot name")
+            }
+        value.encode(into: self.buffer,atByteOffset: slot.byteOffset)
         }
         
     public override func valueOfSlot(_ slot: Slot) -> Instance
         {
-        fatalError("This should have been overriden in a subclass.")
+        return(slot.class.decodeInstance(from: self.buffer,atByteOffset: slot.byteOffset))
         }
         
-    public override func setValue(_ value: Instance,ofSlot: Slot)
+    public override func setValue(_ value: Instance,ofSlot slot: Slot)
         {
-        fatalError("This should have been overriden in a subclass.")
+        value.encode(into: self.buffer,atByteOffset: slot.byteOffset)
         }
         
     public override subscript(_ index: Integer64) -> Instance
