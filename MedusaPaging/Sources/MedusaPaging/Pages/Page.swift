@@ -24,11 +24,14 @@ open class Page
     //
     // Page Magic Numbers
     //
-    public static let kPageMagicNumber: MagicNumber            = 0xFED_BAD_BEEF_F00D
-    public static let kBTreePageMagicNumber: MagicNumber       = 0xFADE_DEED_CAFE_BABE
-    public static let kObjectPageMagicNumber: MagicNumber      = 0xBEE_BABE_B0D_D00D
-    public static let kOverlfowPageMagicNumber: MagicNumber    = 0xBAD_C0DE_D0D0_CAD
-    public static let kRootPageMagicNumber: MagicNumber        = 0xDEAD_C0D_BAD_F00D
+    public static let kPageMagicNumber: MagicNumber                = 0x0FED_0BAD_BEEF_F00D
+    public static let kBTreePageMagicNumber: MagicNumber           = 0xFADE_DEED_CAFE_BABE
+    public static let kObjectPageMagicNumber: MagicNumber          = 0x0BEE_BABE_0B0D_D00D
+    public static let kHashtablePageMagicNumber: MagicNumber       = 0xB0DE_0CAD_BAD_BABE
+    public static let kHashtableBucketPageMagicNumber: MagicNumber = 0xB00B_D00D_CAFE_BEEF
+    public static let kBlockPageMagicNumber: MagicNumber           = 0x0BAD_BADE_CAFE_D00B
+    public static let kOverlfowPageMagicNumber: MagicNumber        = 0x0BAD_C0DE_D0D0_0CAD
+    public static let kRootPageMagicNumber: MagicNumber            = 0xDEAD_0C0D_0BAD_F00D
     
     open var annotations: AnnotatedBytes.CompositeAnnotation
         {
@@ -42,7 +45,7 @@ open class Page
         fields.append(bytes: bytes,key: "initialFreeCellOffset",kind: .integer64Value(self.initialFreeCellOffset))
         fields.append(bytes: bytes,key: "initialFreeByteCount",kind: .integer64Value(self.initialFreeByteCount))
         fields.append(bytes: bytes,key: "freeCellCount",kind: .integer64,atByteOffset: Self.kPageFreeCellCountOffset)
-        fields.append(bytes: bytes,key: "pageAddress",kind: .unsigned64Value(self.pageAddress))
+        fields.append(bytes: bytes,key: "pageOffset",kind: .integer64Value(self.pageOffset))
         fields.append(bytes: bytes,key: "isDirty",kind: .booleanValue(self.isDirty))
         fields.append(bytes: bytes,key: "needsDefragmentation",kind: .booleanValue(self.needsDefragmentation))
         allFields.append(self.freeList.annotations)
@@ -66,7 +69,7 @@ open class Page
     internal var checksum: Checksum = 0
     internal var freeList: FreeList!
     internal var freeCellCount: Integer64 = 0
-    internal var pageAddress: Address = 0
+    open var pageOffset: Integer64 = 0
     internal var isDirty = false
     internal var needsDefragmentation = false
     
@@ -77,7 +80,7 @@ open class Page
         self.bufferSizeInBytes = Self.kPageSizeInBytes
         self.magicNumber = magicNumber
         self.freeCellCount = 0
-        self.pageAddress = 0
+        self.pageOffset = 0
         self.needsDefragmentation = false
         self.isDirty = false
         self.initFreeCellList()
@@ -87,16 +90,17 @@ open class Page
     public init(from buffer: RawPointer)
         {
         self.buffer = buffer
-        self.pageAddress = 0
+        self.pageOffset = 0
         self.loadHeader()
         self.freeList = FreeList(buffer: self.buffer, atByteOffset: self.initialFreeCellOffset)
         }
         
-    public init(from page: Page)
+    public init(copyOf page: Page)
         {
-        self.pageAddress = page.pageAddress
-        self.buffer = page.buffer
-        self.pageAddress = 0
+        self.pageOffset = page.pageOffset
+        self.buffer = RawPointer.allocate(byteCount: page.bufferSizeInBytes, alignment: 1)
+        self.buffer.copyMemory(from: page.buffer, byteCount: page.bufferSizeInBytes)
+        self.bufferSizeInBytes = page.bufferSizeInBytes
         self.loadHeader()
         self.freeList = FreeList(buffer: self.buffer, atByteOffset: self.initialFreeCellOffset)
         }

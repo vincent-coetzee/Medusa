@@ -149,16 +149,16 @@ _Bool readBoolean(void* buffer,long offset)
     return(*((_Bool *)((char*)buffer + offset)));
     }
 
-void writeObjectAddress(void* buffer,const ObjectAddress address,long offset)
-    {
-    *((uint64_t*)((char*)buffer + offset)) = address.address;
-    }
-    
-void writeObjectAddressWithOffset(void* buffer,const ObjectAddress address,long* offset)
-    {
-    *((uint64_t *)((char*)buffer + *offset)) = address.address;
-    *offset += sizeof(uint64_t);
-    }
+//void writeObjectAddress(void* buffer,const ObjectAddress address,long offset)
+//    {
+//    *((uint64_t*)((char*)buffer + offset)) = address.address;
+//    }
+//    
+//void writeObjectAddressWithOffset(void* buffer,const ObjectAddress address,long* offset)
+//    {
+//    *((uint64_t *)((char*)buffer + *offset)) = address.address;
+//    *offset += sizeof(uint64_t);
+//    }
     
 void readUnicodeScalarWithOffset(void* buffer,void* pointer,long* offset)
     {
@@ -171,19 +171,19 @@ void readUnicodeScalarWithOffset(void* buffer,void* pointer,long* offset)
     *offset += 4;
     }
     
-ObjectAddress readObjectAddress(void *buffer,long offset)
-    {
-    ObjectAddress address;
-    
-    address.address = *((uint64_t*)(((char*)buffer) + offset));
-    return(address);
-    }
-    
-ObjectAddress readObjectAddressWithOffset(void *buffer,long* offset)
-    {
-    ObjectAddress address;
-    
-    address.address = *((uint64_t*)(((char*)buffer) + *offset));
-    offset += sizeof(uint64_t);
-    return(address);
-    }
+//ObjectAddress readObjectAddress(void *buffer,long offset)
+//    {
+//    ObjectAddress address;
+//    
+//    address.address = *((uint64_t*)(((char*)buffer) + offset));
+//    return(address);
+//    }
+//    
+//ObjectAddress readObjectAddressWithOffset(void *buffer,long* offset)
+//    {
+//    ObjectAddress address;
+//    
+//    address.address = *((uint64_t*)(((char*)buffer) + *offset));
+//    offset += sizeof(uint64_t);
+//    return(address);
+//    }

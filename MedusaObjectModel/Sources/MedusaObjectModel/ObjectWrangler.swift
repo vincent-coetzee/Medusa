@@ -28,8 +28,9 @@ public class ObjectWrangler
         self.pageServer = pageServer
         }
         
-    public func instanciateObject(ofClass: Class) -> Instance
+    public func instanciateObject(ofClass: Class) -> any Instance
         {
+        let sizeInBytes = ofClass.sizeInBytes
         }
     }
     

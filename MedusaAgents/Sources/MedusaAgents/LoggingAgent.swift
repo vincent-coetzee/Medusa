@@ -7,8 +7,9 @@
 
 import Foundation
 import Path
+import MedusaCore
 
-public class LoggingAgent
+public class LoggingAgent: Logger
     {
     public private(set) static var shared: LoggingAgent!
     
@@ -72,7 +73,15 @@ public class LoggingAgent
 //            self.isLoggingToConsole = true
 //            }
 //        }
-//        
+//
+    public func logToConsole()
+        {
+        }
+        
+    public func logToFile()
+        {
+        }
+        
     public func log(_ message: String)
         {
 //        let cleanMessage = message.replacingOccurrences(of: ":", with: " ").replacingOccurrences(of: "[", with: "-").replacingOccurrences(of: "]", with: "-")

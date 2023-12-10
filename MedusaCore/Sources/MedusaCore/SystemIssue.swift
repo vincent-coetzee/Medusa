@@ -7,10 +7,6 @@
 
 import Foundation
 
-
-    
-
-    
 public struct SystemIssue: Error
     {
     private let _message: String?

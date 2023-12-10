@@ -14,55 +14,61 @@ import MedusaPaging
 
 open class Object: Instance
     {
-    private var _class: Class
+    public var objectAddress: ObjectAddress
+    public private(set) var objectHandle: ObjectHandle
+    public private(set) var `class`: Class
+    public var page: Page
+    public var objectIndex: Integer64
     
-    public override var `class`: Class
+    public var isIndexed: Boolean
         {
-        self._class
+        self.class.isInstanceIndexed
         }
         
-    private var core: ObjectCore
-    
-    public init(ofClass: Class)
+    public var sizeInBytes: Integer64
         {
-        self._class = ofClass
-        self.core = SlotBasedObjectCore(ofClass: ofClass)
-//        super.init(from: <#T##RawPointer#>, atByteOffset: &<#T##Integer64#>
-        fatalError()
+        self.class.instanceSizeInBytes
         }
         
-    public init(from page: Page,atByteOffset: Integer64)
+    public init(ofClass: Class,page: Page,objectIndex: Integer64,objectHandle: ObjectHandle)
         {
-        self.core = PageBasedObjectCore(from: page,atByteOffset: atByteOffset)
-        self._class = self.core.class
-        fatalError()
+        self.page = page
+        self.objectIndex = objectIndex
+        self.objectAddress = ObjectAddress(pageOffset: page.pageOffset,objectIndex: objectIndex)
+        self.class = ofClass
+        self.objectHandle = objectHandle
         }
         
-    public required init(from: RawPointer,atByteOffset: inout Integer64)
+    public static func ==(lhs: Object,rhs: Object) -> Bool
         {
-        fatalError()
+        false
         }
         
-    open func store(in: RawPointer,atByteOffset: Integer64)
+    public static func <(lhs: Object,rhs: Object) -> Bool
         {
+        false
         }
         
-    open func store(in: RawPointer,atByteOffset:inout  Integer64)
+    public func hash(into hasher:inout Hasher)
         {
+        for slot in self.class.instanceSlots
+            {
+            hasher.combine(self.value(ofSlot: slot))
+            }
         }
         
-    public func valueOfSlot(named: String) -> Instance
+    public func value(ofSlot: Slot) -> any Instance
         {
-        self.core.valueOfSlot(named: named)
+        Nothing.kNothing
         }
         
-    public func setValue(_ value: Instance,ofSlotNamed name: String)
+    public func value(ofSlotAtKey: String) -> any Instance
         {
-        self.core.setValue(value,ofSlotNamed: name)
+        Nothing.kNothing
         }
         
-    public func write(into buffer: RawPointer,atByteOffset: inout Integer64)
+    public func setValue(_ value: any Instance,ofSlotAtKey: String)
         {
-        fatalError("Unimplemented")
         }
     }
+

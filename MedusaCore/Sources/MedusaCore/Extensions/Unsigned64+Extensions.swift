@@ -25,4 +25,9 @@ extension Unsigned64
             }
         return(String(string.reversed()))
         }
+        
+    public init(bitPattern: Integer64)
+        {
+        self = Unsigned64(bitPattern: Int64(bitPattern))
+        }
     }

@@ -10,23 +10,26 @@ import MedusaCore
 import MedusaStorage
 import MedusaPaging
 
-public protocol Instance: Equatable,Hashable,Comparable
+extension Instance
     {
-    var objectAddress: ObjectAddress { get set }
-    var sizeInBytes: Integer64 { get }
-    var `class`: Class { get }
-    var elementClass: Class? { get }
-    var isIndexed: Boolean { get }
+    public var `class`: Class
+        {
+        self._class as! Class
+        }
+    }
     
-    static func makeInstance(from: ObjectAddress) -> any Instance
+public protocol IndexedInstance: Instance
+    {
+    var count: Integer64 { get }
+    var elementClass: Class { get }
     
-    init(from: RawPointer,atByteOffset: Integer64)
-    init(from: Page,atByteOffset: Integer64)
+    func append(_ instance: any Instance)
+    func index(of instance: any Instance) -> Integer64?
+    func insert(_ instance: any Instance,at: Integer64)
+    func remove(at index: Integer64)
+    func first() -> any Instance
+    func last() -> any Instance
     
-    func encode(into: Page)
-    func encode(into: RawPointer)
-    func value(ofSlotAtKey: String) -> any Instance
-    func setValue(_ value: any Instance,ofSlotAtKey: String)
     
     subscript(_ index: Integer64) -> any Instance { get set }
     }
@@ -128,4 +131,4 @@ open class InstanceA: KeyPart
         }
     }
 
-public typealias Instances = Array<Instance>
+public typealias Instances = Array<any Instance>

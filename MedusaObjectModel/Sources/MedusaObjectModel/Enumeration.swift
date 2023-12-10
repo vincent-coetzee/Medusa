@@ -34,7 +34,7 @@ import MedusaStorage
 //
 //
 
-public class Enumeration: Primitive
+public class Enumeration: Instance
     {
     private static let kAssociatedValuesFlagOffset: Unsigned64  = 58
     private static let kClassAddressMask: Unsigned64            = 0b11_11111111_11111111_11111111_11111111_11111111_11111111_11111111

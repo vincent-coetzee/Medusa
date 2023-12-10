@@ -7,11 +7,10 @@
 
 import Foundation
 import Path
-import MedusaCore
 
 public class FileIdentifier
     {
-    public static let empty = try! FileIdentifier(path: Path("/")!)
+    public static let empty = FileIdentifier(path: Path("/")!)
     
     public struct Mode: OptionSet
         {
@@ -83,9 +82,11 @@ public class FileIdentifier
     public private(set) var fileDescriptor: Int32!
     public let path: Path
     public private(set) var mappedAddress: Integer64?
+    private let logger: Logger
     
-    public init(path: Path)
+    public init(path: Path,logger: Logger)
         {
+        self.logger = logger
         self.path = path
         }
         
@@ -99,20 +100,46 @@ public class FileIdentifier
             {
             let string = String(cString: strerror(errno))
             let message = "Opening file at \(string) in mode \(mode) failed with error(\(errno)) \(string)"
-            LoggingAgent.shared.log(message)
+            self.logger.log(message)
             throw(SystemIssue(code: .fileOpenFailed,agentKind: .pageServer,message: message))
             }
-        LoggingAgent.shared.log("File at \(string) in mode \(mode) successfully opened for \(mode).")
+        self.logger.log("File at \(string) in mode \(mode) successfully opened for \(mode).")
         return(self)
+        }
+        
+    public func seek(to offset: Integer64) throws
+        {
+        self.logger.log("About to seek to offset \(offset) in file \(self.path.string).")
+        if lseek(self.fileDescriptor,Int64(offset),SEEK_SET) != Int64(offset)
+            {
+            let error = String(cString: strerror(errno))
+            self.logger.log("Seek to offset \(offset) in file \(self.path.string) failed with error(\(errno),\(error)).")
+            throw(SystemIssue(code: .seekFailed, agentKind: .pageServer, message: "Unable to seek to offset \(offset) in file \(self.path.string) with error(\(errno),\(error))."))
+            }
+        self.logger.log("lseek to offset \(offset) in file \(self.path.string) successful.")
+        }
+        
+    public func readBuffer(at offset: Integer64,sizeInBytes: Integer64) throws -> RawPointer
+        {
+        try self.seek(to: offset)
+        let buffer = RawPointer.allocate(byteCount: sizeInBytes, alignment: 1)
+        self.logger.log("Reading \(sizeInBytes) from file \(self.path.string).")
+        if read(self.fileDescriptor,buffer,sizeInBytes) != sizeInBytes
+            {
+            let error = String(cString: strerror(errno))
+            buffer.deallocate()
+            throw(SystemIssue(code: .readBufferFailed,agentKind: .pageServer,message: "Reading \(sizeInBytes) from \(self.path.string) failed with error(\(errno),\(error))."))
+            }
+        return(buffer)
         }
         
     public func map(to address: Integer64,sizeInBytes: Integer64,offset: Integer64) throws
         {
         let stringAddress = String(address,radix: 16,uppercase: true)
-        LoggingAgent.shared.log("Preparing to map segment at \(stringAddress) to file\(path.string).")
+        self.logger.log("Preparing to map segment at \(stringAddress) to file\(path.string).")
         if self.fileDescriptor < 1
             {
-            LoggingAgent.shared.log("Invalid file descriptor (\(String(describing:self.fileDescriptor))) in FileHandle.map(to:sizeInBytes:offset).")
+            self.logger.log("Invalid file descriptor (\(String(describing:self.fileDescriptor))) in FileHandle.map(to:sizeInBytes:offset).")
             throw(SystemIssue(code: .invalidFileDescriptor,agentKind: .pageServer))
             }
         var actualAddress = UnsafeMutableRawPointer(bitPattern: address)
@@ -121,19 +148,19 @@ public class FileIdentifier
             {
             let string = String(cString: strerror(errno))
             let message = "Mapping of segment at \(stringAddress) failed with error(\(errno)) \(string)"
-            LoggingAgent.shared.log(message)
+            self.logger.log(message)
             throw(SystemIssue(code: .segmentMappingFailed,agentKind: .pageServer,message: message))
             }
-        LoggingAgent.shared.log("Advising macOS of mmap usage: MADV_RANDOM,MADV_WILLNEED.")
+        self.logger.log("Advising macOS of mmap usage: MADV_RANDOM,MADV_WILLNEED.")
         actualAddress = UnsafeMutableRawPointer(bitPattern: address)
         if madvise(actualAddress,sizeInBytes,MADV_RANDOM | MADV_WILLNEED) == -1
             {
             let string = String(cString: strerror(errno))
             let message = "Advising OS of segment at \(stringAddress) failed with error(\(errno)) \(string)"
-            LoggingAgent.shared.log(message)
+            self.logger.log(message)
             throw(SystemIssue(code: .segmentAdviseFailed,agentKind: .pageServer,message: message))
             }
-        LoggingAgent.shared.log("File \(self.path.string) sucessfully mapped into segment at \(stringAddress).")
+        self.logger.log("File \(self.path.string) sucessfully mapped into segment at \(stringAddress).")
         self.mappedAddress = address
         }
     }

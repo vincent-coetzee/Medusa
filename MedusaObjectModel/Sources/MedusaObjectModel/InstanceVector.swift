@@ -2,17 +2,14 @@
 //  File 2.swift
 //  
 //
-//  Created by Vincent Coetzee on 07/12/2023.
+//  Created by Vincent Coetzee on 10/12/2023.
 //
 
 import Foundation
 import MedusaCore
-import MedusaStorage
 
-open class MOMCollection: Object,IndexedInstance
+public class InstanceVector
     {
-    public private(set) var elementClass: Class
-    
     public var count: Integer64
         {
         self.slots.count
@@ -20,9 +17,8 @@ open class MOMCollection: Object,IndexedInstance
         
     private var slots: Array<any Instance>
 
-    public init(ofClass: Class,page: Page,objectIndex: Integer64)
+    public init()
         {
-        super.init(ofClass: ofClass)
         self.slots = Array<any Instance>()
         }
         
@@ -69,10 +65,5 @@ open class MOMCollection: Object,IndexedInstance
     public func append(_ instance: any Instance)
         {
         self.slots.append(instance)
-        }
-        
-    public func index(of instance: Instance) -> MedusaCore.Integer64?
-        {
-        for slot in self.
         }
     }

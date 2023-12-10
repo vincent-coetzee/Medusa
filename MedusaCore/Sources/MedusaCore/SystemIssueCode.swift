@@ -31,6 +31,9 @@ public enum SystemIssueCode: String
     case invalidIntraPageAddress                                    = "The specified address is not valid for an intra page address."
     case invalidDeallocationAddress                                 = "The specified address is invalid in this allocator."
     
+    case readBufferFailed                                           = "Unable to read the specified number of bytes from the specified file."
+    
     case segmentMappingFailed                                       = "Memory mapping of segment ( mmap ) failed."
     case segmentAdviseFailed                                        = "Giving OS advise about segment usage failed."
+    case seekFailed                                                 = "Seeking the specified offet in the file failed."
     }

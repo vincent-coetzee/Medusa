@@ -11,6 +11,15 @@ import MedusaCore
 
 public class RootPage: Page
     {
+    public init()
+        {
+        super.init(magicNumber: Page.kRootPageMagicNumber)
+        }
+        
+    public override init(from: RawPointer)
+        {
+        super.init(from: from)
+        }
 //    public static let atomTable = IdentityDictionary(initializeCount:
 //    
 //

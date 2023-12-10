@@ -28,11 +28,7 @@ extension Medusa
         var dataFileNeedsInitialization = false
         let dataFileHandle = self.openOrCreateDataFile(needsInitialization: &dataFileNeedsInitialization)
         Self.initMemorySegment(using: dataFileHandle)
-        Self.initAgents(with: dataFileHandle)
-        if dataFileNeedsInitialization
-            {
-            self.initDataFile(using: dataFileHandle)
-            }
+        Self.initAgents(with: dataFileHandle,dataFileNeedsInitialization:  dataFileNeedsInitialization)
         self.finalizeBoot()
         }
         
@@ -97,7 +93,7 @@ extension Medusa
             {
             LoggingAgent.shared.log("Found directory \(Self.kMedusaDataDirectoryPath.string).")
             }
-        let handle = FileIdentifier(path: kMedusaDataFilePath)
+        let handle = FileIdentifier(path: kMedusaDataFilePath,logger: LoggingAgent.shared)
         if handle.fileExists
             {
             LoggingAgent.shared.log("Found data file \(Self.kMedusaDataFilePath.string).")
@@ -136,9 +132,10 @@ extension Medusa
         LoggingAgent.shared.log("Initializing Medusa data file...")
         }
 
-    public static func initAgents(with fileHandle: FileIdentifier)
+    public static func initAgents(with fileHandle: FileIdentifier,dataFileNeedsInitialization: Boolean)
         {
         LoggingAgent.shared.log("Initializing agents.")
+        PageServer.initialize(with: fileHandle,logger: LoggingAgent.shared,dataFileNeedsInitialization: dataFileNeedsInitialization)
 //        let pageServer = PageServer(dataFileHandle: fileHandle)
         }
         
