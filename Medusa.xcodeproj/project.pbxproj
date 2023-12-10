@@ -30,7 +30,6 @@
 		BFD6747D2B06689E0086932A /* BufferBrowserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD6747C2B06689E0086932A /* BufferBrowserViewController.swift */; };
 		BFD674812B066A560086932A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BFD674802B066A560086932A /* Main.storyboard */; };
 		BFD6E1C92B238C9A00FC0A0A /* MedusaAgents in Frameworks */ = {isa = PBXBuildFile; productRef = BFD6E1C82B238C9A00FC0A0A /* MedusaAgents */; };
-		BFE6B3532B25D1950077ADF0 /* MedusaNetworking in Frameworks */ = {isa = PBXBuildFile; productRef = BFE6B3522B25D1950077ADF0 /* MedusaNetworking */; };
 		BFEEF9262B1C8CBD00F42C58 /* Path+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEEF9252B1C8CBD00F42C58 /* Path+Extensions.swift */; };
 		BFEEF92F2B1CFABC00F42C58 /* Task+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEEF92E2B1CFABC00F42C58 /* Task+Extensions.swift */; };
 		BFFB2E7D2B05363300254090 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E7C2B05363300254090 /* AppDelegate.swift */; };
@@ -94,7 +93,7 @@
 		BFAAF03D2B0FE55A00A2FFD1 /* SystemIssue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemIssue.swift; sourceTree = "<group>"; };
 		BFAE71ED2B1FABA600C15E0F /* MedusaCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaCore; sourceTree = "<group>"; };
 		BFAE71EE2B1FABED00C15E0F /* MedusaObjectModel */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaObjectModel; sourceTree = "<group>"; };
-		BFB51D2B2B25D22A00785708 /* MedusaNetworking */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = MedusaNetworking; path = ../../../Desktop/MedusaNetworking; sourceTree = "<group>"; };
+		BFAEA7142B264F6400B9A75F /* MedusaNetworking */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaNetworking; sourceTree = "<group>"; };
 		BFBAF5122B172BC1003ED388 /* FileHandle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHandle.swift; sourceTree = "<group>"; };
 		BFD674442B05E79F0086932A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BFD674462B05EAE20086932A /* Medusa.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Medusa.swift; sourceTree = "<group>"; };
@@ -137,7 +136,6 @@
 				BFD6E1C92B238C9A00FC0A0A /* MedusaAgents in Frameworks */,
 				BF2B00EC2B20AFAD00E83152 /* MedusaStorage in Frameworks */,
 				BFA944582B1113EE00526CF1 /* Path in Frameworks */,
-				BFE6B3532B25D1950077ADF0 /* MedusaNetworking in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,8 +291,8 @@
 				BF327E1C2B2215630077FF6B /* Fletcher */,
 				BF7DE3262B22416A00035966 /* MedusaAgents */,
 				BFAE71ED2B1FABA600C15E0F /* MedusaCore */,
-				BFB51D2B2B25D22A00785708 /* MedusaNetworking */,
 				BFAE71EE2B1FABED00C15E0F /* MedusaObjectModel */,
+				BFAEA7142B264F6400B9A75F /* MedusaNetworking */,
 				BF327E192B2210620077FF6B /* MedusaPaging */,
 				BF2B00EA2B20716200E83152 /* MedusaStorage */,
 				BFEEF9302B1D03D900F42C58 /* Files.entitlements */,
@@ -383,7 +381,6 @@
 				BF2B00EB2B20AFAD00E83152 /* MedusaStorage */,
 				BF327E1A2B2211360077FF6B /* MedusaPaging */,
 				BFD6E1C82B238C9A00FC0A0A /* MedusaAgents */,
-				BFE6B3522B25D1950077ADF0 /* MedusaNetworking */,
 			);
 			productName = Medusa;
 			productReference = BFFB2E792B05363300254090 /* Medusa.app */;
@@ -781,10 +778,6 @@
 		BFD6E1C82B238C9A00FC0A0A /* MedusaAgents */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MedusaAgents;
-		};
-		BFE6B3522B25D1950077ADF0 /* MedusaNetworking */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MedusaNetworking;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
