@@ -11,9 +11,17 @@ import MedusaStorage
 import MedusaPaging
 
 public struct Nothing: Instance
-    {
+{
+    public var objectHandle: MedusaCore.ObjectHandle
+        {
+        fatalError()
+        }
+    
+    public func write(into: MedusaCore.RawPointer, atByteOffset: inout MedusaCore.Integer64) {
+        fatalError()
+    }
+    
     public static let kNothing = Self()
-    public let objectHandle = ObjectHandle(0)
     public let objectAddress = ObjectAddress.kNothing
     public let sizeInBytes: Integer64 = MemoryLayout<Integer64>.size
     public let `class` = Class.nothingClass
@@ -65,4 +73,24 @@ public struct Nothing: Instance
         {
         hasher.combine(0)
         }
+        
+    public var description: String
+        {
+                fatalError()
+                }
+
+    public var _class: Any
+        {
+        fatalError()
+        }
+    
+    
+    public func isEqual(to: Any) -> Bool {
+        fatalError()
+    }
+    
+    public func isLess(than: Any) -> Bool {
+        fatalError()
+    }
+        
     }

@@ -10,8 +10,6 @@ import Path
 
 public class FileIdentifier
     {
-    public static let empty = FileIdentifier(path: Path("/")!)
-    
     public struct Mode: OptionSet
         {
         public static let read = Mode(rawValue: 1 << 1)
@@ -133,6 +131,17 @@ public class FileIdentifier
         return(buffer)
         }
         
+    public func writeBuffer(_ buffer: RawPointer,at offset: Integer64,sizeInBytes: Integer64) throws
+        {
+        try self.seek(to: offset)
+        self.logger.log("Writing \(sizeInBytes) bytes to file \(self.path.string).")
+        if write(self.fileDescriptor,buffer,sizeInBytes) != sizeInBytes
+            {
+            let error = String(cString: strerror(errno))
+            throw(SystemIssue(code: .writeBufferFailed,agentKind: .pageServer,message: "Writing \(sizeInBytes) bytes to \(self.path.string) failed with error(\(errno),\(error))."))
+            }
+        }
+        
     public func map(to address: Integer64,sizeInBytes: Integer64,offset: Integer64) throws
         {
         let stringAddress = String(address,radix: 16,uppercase: true)
@@ -162,5 +171,43 @@ public class FileIdentifier
             }
         self.logger.log("File \(self.path.string) sucessfully mapped into segment at \(stringAddress).")
         self.mappedAddress = address
+        }
+        
+    public func readInteger64(at offset: Integer64) throws -> Integer64
+        {
+        try self.seek(to: offset)
+        var value: Integer64 = 0
+        self.logger.log("Reading Integer64 from file \(self.path.string).")
+        if read(self.fileDescriptor,&value,MemoryLayout<Integer64>.size) != MemoryLayout<Integer64>.size
+            {
+            let error = String(cString: strerror(errno))
+            throw(SystemIssue(code: .readBufferFailed,agentKind: .pageServer,message: "Reading Integer64 from \(self.path.string) failed with error(\(errno),\(error))."))
+            }
+        return(value)
+        }
+        
+    public func readUnsigned64(at offset: Integer64) throws -> Unsigned64
+        {
+        try self.seek(to: offset)
+        var value: Unsigned64 = 0
+        self.logger.log("Reading Unsigned64 from file \(self.path.string).")
+        if read(self.fileDescriptor,&value,MemoryLayout<Unsigned64>.size) != MemoryLayout<Unsigned64>.size
+            {
+            let error = String(cString: strerror(errno))
+            throw(SystemIssue(code: .readBufferFailed,agentKind: .pageServer,message: "Reading Unsigned64 from \(self.path.string) failed with error(\(errno),\(error))."))
+            }
+        return(value)
+        }
+        
+    public func writeInteger64(_ integer: Integer64,at offset: Integer64) throws
+        {
+        try self.seek(to: offset)
+        var value: Integer64 = integer
+        self.logger.log("Write Integer64 to file \(self.path.string).")
+        if write(self.fileDescriptor,&value,MemoryLayout<Integer64>.size) != MemoryLayout<Integer64>.size
+            {
+            let error = String(cString: strerror(errno))
+            throw(SystemIssue(code: .writeBufferFailed,agentKind: .pageServer,message: "Writing Integer64 to \(self.path.string) failed with error(\(errno),\(error))."))
+            }
         }
     }

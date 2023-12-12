@@ -7,7 +7,10 @@
 
 import Foundation
 import MedusaCore
+import MedusaObjectModel
+import MedusaStorage
 import MedusaPaging
+import MedusaNetworking
 import Path
 
 extension Medusa
@@ -135,7 +138,13 @@ extension Medusa
     public static func initAgents(with fileHandle: FileIdentifier,dataFileNeedsInitialization: Boolean)
         {
         LoggingAgent.shared.log("Initializing agents.")
-        PageServer.initialize(with: fileHandle,logger: LoggingAgent.shared,dataFileNeedsInitialization: dataFileNeedsInitialization)
+        do
+            {
+            try PageServer.initialize(with: fileHandle,logger: LoggingAgent.shared,dataFileNeedsInitialization: dataFileNeedsInitialization)
+            }
+        catch
+            {
+            }
 //        let pageServer = PageServer(dataFileHandle: fileHandle)
         }
         

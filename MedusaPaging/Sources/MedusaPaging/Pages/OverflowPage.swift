@@ -6,7 +6,12 @@
 //
 
 import Foundation
+import MedusaCore
 
 public class OverflowPage: Page
     {
+    open override var kind: Page.Kind
+        {
+        Page.Kind.overflowPage
+        }
     }

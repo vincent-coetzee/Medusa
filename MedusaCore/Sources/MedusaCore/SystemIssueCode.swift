@@ -32,8 +32,11 @@ public enum SystemIssueCode: String
     case invalidDeallocationAddress                                 = "The specified address is invalid in this allocator."
     
     case readBufferFailed                                           = "Unable to read the specified number of bytes from the specified file."
+    case readPageDetailsFailed                                      = "Reading the page details from the specied file at the specified offset failed."
     
     case segmentMappingFailed                                       = "Memory mapping of segment ( mmap ) failed."
     case segmentAdviseFailed                                        = "Giving OS advise about segment usage failed."
     case seekFailed                                                 = "Seeking the specified offet in the file failed."
+    
+    case writeBufferFailed                                          = "Writing specified buffer to specified file failed."
     }

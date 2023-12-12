@@ -10,11 +10,9 @@ import MedusaCore
 import MedusaStorage
 import MedusaPaging
 
-extension BTreePage
+public extension BTreeNodePage
     {
-
-        
-    public var keyClass: Class
+    var keyClass: Class
         {
         get
             {
@@ -22,11 +20,11 @@ extension BTreePage
             }
         set
             {
-            self._keyClass = newValue
+            self._keyClass = newValue as! KeyType
             }
         }
         
-    public var valueClass: Class
+    var valueClass: Class
         {
         get
             {
@@ -34,7 +32,7 @@ extension BTreePage
             }
         set
             {
-            self._valueClass = newValue
+            self._valueClass = newValue as! ValueType
             }
         }
     }

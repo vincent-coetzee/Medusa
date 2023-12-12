@@ -95,7 +95,7 @@ int16_t readInteger16(void* buffer,long offset)
     return(*from);
     }
     
-double readFloat(void* buffer,long offset)
+double readFloat64(void* buffer,long offset)
     {
     double* from = (double*)(((char*)buffer) + offset);
     return(*from);

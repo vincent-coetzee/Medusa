@@ -58,6 +58,12 @@ open class Class: Object
     //
     // Convenience accessors for the Medusa classes
     //
+    
+    public static var objectClass: Class
+        {
+        (SystemDictionary.shared[Atom("Medusa")] as! SystemDictionary)[Atom("Object")] as! Class
+        }
+        
     public static var arrayClass: Class
         {
         (SystemDictionary.shared[Atom("Medusa")] as! SystemDictionary)[Atom("Array")] as! Class
@@ -159,6 +165,21 @@ open class Class: Object
         (SystemDictionary.shared[Atom("Medusa")] as! SystemDictionary)[Atom("Metaclass")] as! Class
         }
         
+    public static var dictionaryClass: Class
+        {
+        (SystemDictionary.shared[Atom("Medusa")] as! SystemDictionary)[Atom("Dictionary")] as! Class
+        }
+        
+    public static var identityDictionaryClass: Class
+        {
+        (SystemDictionary.shared[Atom("Medusa")] as! SystemDictionary)[Atom("IdentityDictionary")] as! Class
+        }
+        
+    public static var systemDictionaryClass: Class
+        {
+        (SystemDictionary.shared[Atom("Medusa")] as! SystemDictionary)[Atom("SystemDictionary")] as! Class
+        }
+        
     private static let kObjectHeaderSlotName              = "__headerSlot"
     private static let kObjectClassSlotName               = "__classSlot"
     private static let kObjectHandleSlotName              = "__handleSlot"
@@ -168,7 +189,7 @@ open class Class: Object
     
     public static let kInitialBlockSlotCount             =  64
         
-    public init(name: String,superclasses: Array<Class>,isInstanceIndexed: Boolean = false)
+    public init(name: String,superclasses: Array<Class> = [],isInstanceIndexed: Boolean = false)
         {
         self.superclasses = superclasses
         self.name = name

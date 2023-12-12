@@ -31,17 +31,13 @@ public class ObjectWrangler
     public func instanciateObject(ofClass: Class) -> any Instance
         {
         let sizeInBytes = ofClass.sizeInBytes
+        fatalError()
         }
-    }
-    
-public class MOMEncoder
-    {
-    }
-    
-public class MOMPageBasedEncoder: MOMEncoder
-    {
-    }
-    
-public class MOMBufferBasedEncoder: MOMEncoder
-    {
+        
+    public func allocateObject(_ object: Object) throws -> ObjectAddress
+        {
+        let sizeInBytes = object.sizeInBytes
+        let offset = self.pageServer.findObjectPage(withFreeSizeInBytes: sizeInBytes)
+        fatalError()
+        }
     }

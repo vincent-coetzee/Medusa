@@ -11,14 +11,39 @@ import MedusaCore
 
 public class RootPage: Page
     {
-    public init()
+    public static let kRootPageSizeInBytes                      = Page.kPageSizeInBytes
+    public static let kRootPageFirstEmptyPageCellOffset         = Page.kPageHeaderSizeInBytes
+    
+    open override var kind: Page.Kind
         {
-        super.init(magicNumber: Page.kRootPageMagicNumber)
+        Page.Kind.rootPage
+        }
+        
+    public var firstEmptyPageCellOffset = 0
+    
+    public override init()
+        {
+        super.init()
+        self.magicNumber = Page.kRootPageMagicNumber
         }
         
     public override init(from: RawPointer)
         {
         super.init(from: from)
+        self.firstEmptyPageCellOffset = self.buffer.load(fromByteOffset: Self.kRootPageFirstEmptyPageCellOffset, as: Integer64.self)
+
+        }
+        
+    public override func loadHeader()
+        {
+        super.loadHeader()
+        self.firstEmptyPageCellOffset = self.buffer.load(fromByteOffset: Self.kRootPageFirstEmptyPageCellOffset, as: Integer64.self)
+        }
+
+    public override func store() throws
+        {
+        try super.store()
+        self.buffer.storeBytes(of: self.firstEmptyPageCellOffset, toByteOffset: Self.kRootPageFirstEmptyPageCellOffset, as: Integer64.self)
         }
 //    public static let atomTable = IdentityDictionary(initializeCount:
 //    

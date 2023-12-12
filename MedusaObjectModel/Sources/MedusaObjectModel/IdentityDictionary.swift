@@ -11,7 +11,7 @@ import MedusaStorage
 
 open class IdentityDictionary: MOMDictionary
     {
-    public subscript(_ atom: Atom) -> Instance
+    public subscript(_ atom: Atom) -> any Instance
         {
         get
             {

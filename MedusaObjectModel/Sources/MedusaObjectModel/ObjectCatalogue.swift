@@ -27,5 +27,6 @@ public class ObjectCatalogue
         
     public func makeNewObjectHandle() -> ObjectHandle
         {
+        fatalError()
         }
     }

@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import MedusaCore
 
 public struct KeyValue
     {
-    public let key: Instance
-    public let value: Instance
+    public let key: any Instance
+    public let value: any Instance
     }

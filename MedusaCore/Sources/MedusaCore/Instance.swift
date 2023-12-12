@@ -36,3 +36,5 @@ public protocol Instance: Equatable,Hashable,Comparable
     func isEqual(to: Any) -> Bool
     func isLess(than: Any) -> Bool
     }
+
+public typealias Instances = Array<any Instance>

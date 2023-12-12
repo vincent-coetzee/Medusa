@@ -29,3 +29,11 @@ extension String: AnnotationValueType
         self.standardHash
         }
     }
+
+extension Integer64
+    {
+    public static var maximum: Integer64
+        {
+        0
+        }
+    }

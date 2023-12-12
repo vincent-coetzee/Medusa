@@ -13,9 +13,39 @@ import MedusaStorage
 import MedusaPaging
 
 open class Object: Instance
-    {
+{
+    public var objectHandle: MedusaCore.ObjectHandle
+    
+    public var description: String
+        {
+        fatalError()
+        }
+    public var _class: Any
+        {
+        fatalError()
+        }
+    
+    public func write(into: MedusaCore.RawPointer, atByteOffset: MedusaCore.Integer64) {
+        fatalError()
+    }
+    
+    public func write(into: MedusaCore.RawPointer, atByteOffset: inout MedusaCore.Integer64) {
+                fatalError()    
+    }
+    
+    public func pack(into: MedusaCore.RawPointer, atByteOffset: MedusaCore.Integer64) {
+                fatalError()    
+    }
+    
+    public func isEqual(to: Any) -> Bool {
+                fatalError()    
+    }
+    
+    public func isLess(than: Any) -> Bool {
+                fatalError()    
+    }
+    
     public var objectAddress: ObjectAddress
-    public private(set) var objectHandle: ObjectHandle
     public private(set) var `class`: Class
     public var page: Page
     public var objectIndex: Integer64
@@ -28,6 +58,11 @@ open class Object: Instance
     public var sizeInBytes: Integer64
         {
         self.class.instanceSizeInBytes
+        }
+        
+    public init(ofClass: Class)
+        {
+        fatalError()
         }
         
     public init(ofClass: Class,page: Page,objectIndex: Integer64,objectHandle: ObjectHandle)

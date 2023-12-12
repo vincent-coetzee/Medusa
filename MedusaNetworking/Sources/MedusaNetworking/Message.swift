@@ -131,15 +131,17 @@ public class Message
                     message.offset += MemoryLayout<Byte>.size
                     self = .byte(value)
                 case(Self.kObject):
-                    let object = Object(from: message.buffer,atByteOffset: &message.offset)
-                    self = .object(object)
+//                    let object = Object(from: message.buffer,atByteOffset: &message.offset)
+//                    self = .object(object)
+                    fatalError()
                 case(Self.kEnumeration):
                     let object = Enumeration(from: message.buffer,atByteOffset: &message.offset)
                     self = .enumeration(object)
                 case(Self.kObjectAddress):
                     let value = message.buffer.load(fromByteOffset: message.offset, as: Unsigned64.self)
                     message.offset += MemoryLayout<Unsigned64>.size
-                    self = .objectAddress(ObjectAddress(address: value))
+//                    self = .objectAddress(ObjectAddress(address: value))
+                    fatalError()
                 case(Self.kBytes):
                     let count = message.buffer.load(fromByteOffset: message.offset, as: Integer64.self)
                     message.offset += MemoryLayout<Integer64>.size
@@ -199,7 +201,7 @@ public class Message
                 case .object(let object):
                     message.buffer.storeBytes(of: self.rawValue, toByteOffset: message.offset, as: Byte.self)
                     message.offset += MemoryLayout<Byte>.size
-                    object.write(into: message.buffer,atByteOffset: &message.offset)
+//                    object.write(into: message.buffer,atByteOffset: &message.offset)
                 case .enumeration(let enumeration):
                     message.buffer.storeBytes(of: self.rawValue, toByteOffset: message.offset, as: Byte.self)
                     message.offset += MemoryLayout<Byte>.size

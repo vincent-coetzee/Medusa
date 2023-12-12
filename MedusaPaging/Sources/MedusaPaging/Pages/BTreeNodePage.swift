@@ -11,7 +11,7 @@ import MedusaCore
 import MedusaStorage
 import Fletcher
 
-open class BTreePage: Page
+open class BTreeNodePage: Page
     {
     //
     // Local constants
@@ -24,7 +24,7 @@ open class BTreePage: Page
     public static let kBTreePageValueClassOffset                 = kBTreePageKeyClassOffset + MemoryLayout<Unsigned64>.size
     public static let kBTreePageHeaderSizeInBytes                = kBTreePageValueClassOffset + MemoryLayout<Unsigned64>.size
     public static let kBTreePageSizeInBytes                      = Page.kPageSizeInBytes
-    public static let kBTreePageKeysOffset                       = BTreePage.kBTreePageHeaderSizeInBytes
+    public static let kBTreePageKeysOffset                       = BTreeNodePage.kBTreePageHeaderSizeInBytes
     
     public typealias ChildPointers = Array<Int>
     public typealias Keys = Array<Integer64>
@@ -35,9 +35,14 @@ open class BTreePage: Page
     private  var isLeaf: Bool = false
     private var childPointersOffset: Int = 0
     private var keys: Keys!
-    private var keyClass: any KeyType
-    private var valueClass: any ValueType
+    open var _keyClass: any KeyType
+    open var _valueClass: any ValueType
     
+    open override var kind: Page.Kind
+        {
+        Page.Kind.btreeNodePage
+        }
+        
     private var headerSizeInBytes: Integer64
         {
         Self.kBTreePageHeaderSizeInBytes + self.keysPerPage * MemoryLayout<Integer64>.size + (self.keysPerPage + 1) * MemoryLayout<Integer64>.size
@@ -96,27 +101,30 @@ open class BTreePage: Page
         return(field)
         }
         
-    public convenience init(magicNumber: MagicNumber,keysPerPage: Integer64,keyClass: any KeyType,valueClass: any ValueType)
+    public convenience init(keysPerPage: Integer64,keyClass: any KeyType,valueClass: any ValueType)
         {
+        self.init()
+        self.magicNumber = Page.kBTreeNodePageMagicNumber
         self.children = ChildPointers(repeating: 0,count: keysPerPage + 1)
         self.keys = Keys(repeating: 0, count: keysPerPage)
         self.keysPerPage = keysPerPage
         self.childPointersOffset = Self.kBTreePageKeysOffset + keysPerPage * MemoryLayout<Integer64>.size
-        self.keyClass = keyClass
-        self.valueClass = valueClass
-        self.init(magicNumber: magicNumber)
+        self._keyClass = keyClass
+        self._valueClass = valueClass
+        self.keysPerPage = keysPerPage
         }
         
-    public override init(magicNumber: MagicNumber)
+    public override init()
         {
-        super.init(magicNumber: magicNumber)
+        fatalError()
         }
         
     public override init(from buffer: RawPointer)
         {
-        self.keysPerPage = readInteger64(buffer,Self.kBTreePageKeysPerPageOffset)
-        super.init(from: buffer)
-        self.loadKeysAndChildren()
+        fatalError()
+//        self.keysPerPage = readInteger64(buffer,Self.kBTreePageKeysPerPageOffset)
+//        super.init(from: buffer)
+//        self.loadKeysAndChildren()
         }
         
     public override func store() throws
@@ -128,23 +136,23 @@ open class BTreePage: Page
         
     internal override func restore() throws
         {
-        try super.reStore()
-        try self.rewriteKeysAndChildren()
+        try super.restore()
+        try self.restoreKeysAndChildren()
         super.storeChecksum()
         self.needsDefragmentation = false
         }
         
     private func key(at index: Int) -> any Instance
         {
-        var byteOffset = readInteger64(self.buffer,Self.kBTreePageKeysOffset + index * MemoryLayout<Integer64>.size)
-        return(self.keyClass.makeKey(from: self.buffer, atByteOffset: byteOffset))
+        let byteOffset = readInteger64(self.buffer,Self.kBTreePageKeysOffset + index * MemoryLayout<Integer64>.size)
+        return(self._keyClass.makeKey(from: self.buffer, atByteOffset: byteOffset))
         }
         
         
     private func keyBytes(at index: Int) -> Bytes
         {
         let byteOffset = readInteger64(self.buffer,Self.kBTreePageKeysOffset + index * MemoryLayout<Integer64>.size)
-        return(Bytes(from: self.buffer, atByteOffset: byteOffset))
+        return(Bytes(from: self.buffer, atByteOffset: byteOffset, sizeInBytes: 0))
         }
         
     private func keyOffset(at index: Int) -> Int
@@ -157,7 +165,7 @@ open class BTreePage: Page
         var byteOffset = readInteger64(self.buffer,Self.kBTreePageKeysOffset + index * MemoryLayout<Integer64>.size)
         let keySizeInBytes = readInteger64(self.buffer,byteOffset)
         byteOffset += keySizeInBytes
-        return(self.valueClass.makeValue(from: self.buffer,atByteOffset: byteOffset))
+        return(self._valueClass.makeValue(from: self.buffer,atByteOffset: byteOffset))
         }
         
     private func valueBytes(at index: Int) -> Bytes
@@ -171,9 +179,11 @@ open class BTreePage: Page
     internal override func storeHeader()
         {
         super.storeHeader()
-        writeInteger64(self.buffer,Int(self.keyCount),Self.kBTreePageKeyCountOffset)
-        writeInteger64(self.buffer,Int(self.keysPerPage),Self.kBTreePageKeysPerPageOffset)
-        writeInteger64(self.buffer,Int(self.isLeaf ? 1 : 0),Self.kBTreePageIsLeafOffset)
+        writeInteger64(self.buffer,Integer64(self.keyCount),Self.kBTreePageKeyCountOffset)
+        writeInteger64(self.buffer,Integer64(self.keysPerPage),Self.kBTreePageKeysPerPageOffset)
+        writeInteger64(self.buffer,Integer64(self.isLeaf ? 1 : 0),Self.kBTreePageIsLeafOffset)
+        writeUnsigned64(self.buffer,self._keyClass.objectAddress.address,Self.kBTreePageKeyClassOffset)
+        writeUnsigned64(self.buffer,self._valueClass.objectAddress.address,Self.kBTreePageValueClassOffset)
         }
         
     internal override func loadHeader()
@@ -182,6 +192,7 @@ open class BTreePage: Page
         self.keyCount = readInteger64(self.buffer,Self.kBTreePageKeyCountOffset)
         self.keysPerPage = readInteger64(self.buffer,Self.kBTreePageKeysPerPageOffset)
         self.isLeaf = readInteger64(self.buffer,Self.kBTreePageIsLeafOffset) == 1
+//        self.keyClass = readInteger64(self.buffer,Self.kBTreePageKeysPerPageOffset)
         }
 
     private func loadKeysAndChildren()
@@ -266,12 +277,12 @@ open class BTreePage: Page
         return(upper)
         }
 
-    public func insert(pageServer: PageServer,key: any Instance,value: any Instance,medianKeyValue:inout KeyValue) throws -> BTreePage?
+    public func insert(pageServer: PageServer,key: any Instance,value: any Instance,medianKeyValue:inout KeyValue) throws -> BTreeNodePage?
         {
         let savedOffset = try self.insert(key: key,value: value)
         let position = self.findIndex(key: key)
         let positionKey = self.key(at: position)
-        if position < self.keyCount && positionKey == key
+        if position < self.keyCount && positionKey.isEqual(to: key)
             {
             return(nil)
             }
@@ -283,18 +294,18 @@ open class BTreePage: Page
             }
         else
             {
-            let page2 = try await pageServer.fetchPage(at: self.children[position]) as! BTreePage
-            var middle: KeyValue<Key,Value>!
-            let nextPage = try page2.insert(key: key, value: value, medianKeyValue: &middle)
+            let page2 = try pageServer.loadPage(at: self.children[position]) as! BTreeNodePage
+            var middle = KeyValue()
+            let nextPage = try page2.insert(pageServer: pageServer, key: key, value: value, medianKeyValue: &middle)
             if let nextPage
                 {
-                try nextPage.write()
+                try nextPage.store()
                 self.keys.shiftUp(from: position + 1,by: 1)
                 self.children.shiftUp(from: position + 2,by: 1)
                 self.keys[position] = try self.insert(key: middle.key,value: middle.value)
-                self.children[position] = nextPage.pageAddress
+                self.children[position] = nextPage.pageOffset
                 self.keyCount += 1
-                try self.write()
+                try self.store()
                 self.isDirty = true
                 }
             }
@@ -305,7 +316,7 @@ open class BTreePage: Page
             {
             let middle = self.keyCount / 2
             medianKeyValue = KeyValue(key: self.key(at: middle),value: self.value(at: middle))
-            let newPage = try PageServer.shared.allocateBTreePage(keysPerPage: self.keysPerPage)
+            let newPage = pageServer.allocateBTreePage(keysPerPage: self.keysPerPage,keyClass: self._keyClass,valueClass: self._valueClass)
             newPage.keyCount = self.keyCount - middle - 1
             newPage.isLeaf = self.isLeaf
             for index in 0..<newPage.keyCount
@@ -349,33 +360,33 @@ open class BTreePage: Page
 //            }
 //        self.children[self.keysPerPage + 1] = old.children[self.keysPerPage + 1]
 //        }
-//    }
-//
-//extension Array
-//    {
-//    public mutating func shiftUp(from start: Int,by: Int)
-//        {
-//        for index in stride(from: self.count - by - 1,to: start,by: -1)
-//            {
-//            self[index + by] = self[index]
-//            }
-//        }
-//        
-//    public mutating func shiftDown(from start: Int,by: Int)
-//        {
-//        for index in stride(from: start,to: self.count - by - 1,by: 1)
-//            {
-//            self[index] = self[index + by]
-//            }
-//        }
-//        
-//    public mutating func move(from start: Int,length: Int,to other:inout Array<Element>,at otherStart: Int)
-//        {
-//        var delta = otherStart
-//        for index in start..<start + length - 1
-//            {
-//            other[delta] = self[index]
-//            delta += 1
-//            }
-//        }
+    }
+
+extension Array
+    {
+    public mutating func shiftUp(from start: Int,by: Int)
+        {
+        for index in stride(from: self.count - by - 1,to: start,by: -1)
+            {
+            self[index + by] = self[index]
+            }
+        }
+        
+    public mutating func shiftDown(from start: Int,by: Int)
+        {
+        for index in stride(from: start,to: self.count - by - 1,by: 1)
+            {
+            self[index] = self[index + by]
+            }
+        }
+        
+    public mutating func move(from start: Int,length: Int,to other:inout Array<Element>,at otherStart: Int)
+        {
+        var delta = otherStart
+        for index in start..<start + length - 1
+            {
+            other[delta] = self[index]
+            delta += 1
+            }
+        }
     }

@@ -48,24 +48,26 @@ public class Enumeration: Instance
     public var associatedValues: Instances
     public var instanceAddress: ObjectAddress!
     
-    public override var objectAddress: ObjectAddress
+    public var objectAddress: MedusaCore.ObjectAddress
         {
         get
             {
-        if self._objectAddress.isNil
-            {
-            if self.associatedValues.isEmpty
-                {
-                let classAddress = (self.class.objectAddress.address & Self.kClassAddressMask) >> ObjectAddress.kObjectIndexShift
-//                let tag = Header.kEnumerationMask
-                self._objectAddress = ObjectAddress(enumerationCaseIndex: self.caseIndex,classAddress: classAddress)
-                }
-            else
-                {
-                self._objectAddress = ObjectAddress(enumerationInstanceAddress: instanceAddress)
-                }
-            }
-        return(self._objectAddress!)
+//        if self._objectAddress.isNil
+//            {
+//            fatalError()
+////            if self.associatedValues.isEmpty
+////                {
+//////                let classAddress = (self.class.objectAddress.address & Self.kClassAddressMask) >> ObjectAddress.kObjectIndexShift
+//////                let tag = Header.kEnumerationMask
+////                self._objectAddress = ObjectAddress(enumerationCaseIndex: self.caseIndex,classAddress: 0)
+////                }
+////            else
+////                {
+////                self._objectAddress = ObjectAddress(enumerationInstanceAddress: instanceAddress)
+////                }
+//            }
+//        return(self._objectAddress!)
+        fatalError()
         }
         set
             {
@@ -82,4 +84,68 @@ public class Enumeration: Instance
         {
         fatalError("Unimplemented")
         }
+        
+    public var description: String
+        {
+                fatalError()
+                }
+    
+    public var objectHandle: MedusaCore.ObjectHandle
+        {
+        fatalError()
+        }
+    
+    public var sizeInBytes: MedusaCore.Integer64
+        {
+        fatalError()
+        }
+    
+    public var _class: Any
+        {
+        fatalError()
+        }
+    
+    public var isIndexed: MedusaCore.Boolean
+        {
+        fatalError()
+        }
+    
+    public func write(into: MedusaCore.RawPointer, atByteOffset: MedusaCore.Integer64) {
+        fatalError()
+    }
+    
+    public func pack(into: MedusaCore.RawPointer, atByteOffset: MedusaCore.Integer64) {
+        fatalError()
+    }
+    
+    public func value(ofSlotAtKey: String) -> any Instance {
+        fatalError()
+    }
+    
+    public func setValue(_ value: any Instance, ofSlotAtKey: String) {
+        fatalError()
+    }
+    
+    public func isEqual(to: Any) -> Bool {
+        fatalError()
+    }
+    
+    public func isLess(than: Any) -> Bool {
+        fatalError()
+    }
+    
+    public static func <(lhs: Enumeration,rhs: Enumeration) -> Bool
+        {
+        fatalError()
+        }
+        
+    public static func ==(lhs: Enumeration,rhs: Enumeration) -> Bool
+        {
+        fatalError()
+        }
+        
+    public func hash(into: inout Hasher)
+        {
+        }
+        
     }

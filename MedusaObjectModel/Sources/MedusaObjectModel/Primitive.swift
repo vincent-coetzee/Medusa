@@ -10,7 +10,9 @@ import MedusaCore
 import MedusaStorage
 
 public enum Primitive: Instance
-    {
+{
+
+    
     case nothing
     case integer64(Integer64)
     case unsigned64(Unsigned64)
@@ -22,7 +24,7 @@ public enum Primitive: Instance
         
     public var objectAddress: ObjectAddress
         {
-        ObjectAddress(self)
+        ObjectAddress(0)
         }
         
     public var `class`: Class
@@ -75,4 +77,63 @@ public enum Primitive: Instance
         {
         false
         }
+        
+    public var description: String
+        {
+                fatalError()
+                }
+    
+    public var objectHandle: MedusaCore.ObjectHandle
+        {
+        fatalError()
+        }
+    
+    
+    public var _class: Any
+        {
+        fatalError()
+        }
+
+    
+    public func write(into: MedusaCore.RawPointer, atByteOffset: MedusaCore.Integer64) {
+        fatalError()
+    }
+    
+    public func pack(into: MedusaCore.RawPointer, atByteOffset: MedusaCore.Integer64) {
+        fatalError()
+    }
+    
+    public func value(ofSlotAtKey: String) -> any Instance {
+        fatalError()
+    }
+    
+    public func setValue(_ value: any Instance, ofSlotAtKey: String) {
+        fatalError()
+    }
+    
+    public func isEqual(to: Any) -> Bool {
+        fatalError()
+    }
+    
+    public func isLess(than: Any) -> Bool {
+        fatalError()
+    }
+    
+    public static func <(lhs: Primitive,rhs: Primitive) -> Bool
+        {
+        fatalError()
+        }
+        
+    public static func ==(lhs: Primitive,rhs: Primitive) -> Bool
+        {
+        fatalError()
+        }
+        
+    public func hash(into: inout Hasher)
+        {
+        }
+        
+    public func write(into: MedusaCore.RawPointer, atByteOffset: inout MedusaCore.Integer64) {
+        fatalError()
+    }
     }

@@ -8,10 +8,13 @@
 import Foundation
 import MedusaCore
 import MedusaStorage
+import MedusaPaging
 
 open class MOMCollection: Object,IndexedInstance
     {
     public private(set) var elementClass: Class
+    public private(set) var elementSizeInSlots: Integer64
+    public private(set) var initialBlockPage: BlockPage
     
     public var count: Integer64
         {
@@ -20,10 +23,22 @@ open class MOMCollection: Object,IndexedInstance
         
     private var slots: Array<any Instance>
 
+    public override init(ofClass: Class)
+        {
+        self.elementClass = .objectClass
+        self.elementSizeInSlots = 0
+        self.initialBlockPage = BlockPage()
+        self.slots = Array<any Instance>()
+        super.init(ofClass: ofClass)
+        }
+        
     public init(ofClass: Class,page: Page,objectIndex: Integer64)
         {
-        super.init(ofClass: ofClass)
+        self.elementClass = .objectClass
+        self.elementSizeInSlots = 0
+        self.initialBlockPage = BlockPage()
         self.slots = Array<any Instance>()
+        super.init(ofClass: ofClass)
         }
         
     public subscript(_ index: Integer64) -> any Instance
@@ -71,8 +86,9 @@ open class MOMCollection: Object,IndexedInstance
         self.slots.append(instance)
         }
         
-    public func index(of instance: Instance) -> MedusaCore.Integer64?
+    public func index(of instance: any Instance) -> Integer64?
         {
-        for slot in self.
+//        for slot in self.
+        fatalError()
         }
     }

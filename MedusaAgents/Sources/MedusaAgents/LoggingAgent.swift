@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Path
 import MedusaCore
 
 public class LoggingAgent: Logger
