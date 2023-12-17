@@ -9,6 +9,11 @@ import Foundation
 
 public struct SystemIssue: Error
     {
+    public var description: String
+        {
+        "In \(self.agentKind) error \(self.code) \(self.message)"
+        }
+        
     private let _message: String?
     public let code: SystemIssueCode
     public var agentKind: AgentKind

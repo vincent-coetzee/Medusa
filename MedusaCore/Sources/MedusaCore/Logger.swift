@@ -12,4 +12,5 @@ public protocol Logger
     func logToConsole()
     func logToFile()
     func log(_ message: String)
+    func log(_ issue: SystemIssue)
     }

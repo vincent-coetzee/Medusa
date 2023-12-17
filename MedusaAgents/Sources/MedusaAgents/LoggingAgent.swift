@@ -81,6 +81,10 @@ public class LoggingAgent: Logger
         {
         }
         
+    public func log(_ systemIssue: SystemIssue)
+        {
+        }
+        
     public func log(_ message: String)
         {
 //        let cleanMessage = message.replacingOccurrences(of: ":", with: " ").replacingOccurrences(of: "[", with: "-").replacingOccurrences(of: "]", with: "-")

@@ -7,8 +7,6 @@
 
 import Foundation
 import MedusaCore
-
-
     
 public class PageServer
     {
@@ -17,15 +15,29 @@ public class PageServer
     public private(set) static var shared:PageServer!
     
     private let dataFile: FileIdentifier
-    private var rootPage: RootPage!
+    public var rootPage: RootPage!
     private let logger: Logger
-    private var nextAvailableOffset: Integer64 = 0
+    
+    private var nextAvailableOffset: Integer64
+        {
+        get
+            {
+            self.rootPage.endPageOffset
+            }
+        set
+            {
+            self.rootPage.endPageOffset = newValue
+            }
+        }
+    
+    public  var cachedSystemDictionary: Any?
+    public  var cachedSystemModule: Any?
     private var accessLock = NSRecursiveLock()
-    private var emptyPageList = EmptyPageList()
-    private let residentPages = Array<Page>()
-    private let objectPages: PageList
-    private let blockPages: PageList
-    private let overflowPages: PageList
+    private var freePages: PageList<Page>!
+    private var pageCache = Dictionary<Integer64,Page>()
+    private var objectPages: PageList<ObjectPage>!
+    private var blockPages: PageList<BlockPage>!
+    private var overflowPages: PageList<OverflowPage>!
     
     public static func initialize(with file: FileIdentifier,logger: Logger,dataFileNeedsInitialization: Boolean) throws
         {
@@ -44,30 +56,29 @@ public class PageServer
         self.rootPage = RootPage()
         self.logger = logger
         self.nextAvailableOffset = RootPage.kRootPageSizeInBytes
-        self.residentObjectPages = PageList()
-        self.residentBlockPages = PageList()
-        self.residentOverflowPages = PageList()
         }
         
     private func loadSystemData()
         {
-//        do
-//            {
+        do
+            {
             self.loadRootPage()
-            self.emptyPageList = self.loadEmptyPageList(startingAt: self.rootPage.firstEmptyPageCellOffset)
-//            self.load
+            self.freePages = try PageList<Page>(startingAtOffset: self.rootPage.firstEmptyPageOffset).loadStubList(from: self.dataFile)
+            self.objectPages = try PageList<ObjectPage>(startingAtOffset: self.rootPage.firstObjectPageOffset).loadStubList(from: self.dataFile)
+            self.blockPages = try PageList<BlockPage>(startingAtOffset: self.rootPage.firstBlockPageOffset).loadStubList(from: self.dataFile)
+            self.overflowPages = try PageList<OverflowPage>(startingAtOffset: self.rootPage.firstOverflowPageOffset).loadStubList(from: self.dataFile)
             self.touchColdPages()
-//            }
-//        catch let error as SystemIssue
-//            {
-//            self.logger.log("Error(\(error.code)) \(error.message) laoding system data. Medusa will now terminate.")
-//            fatalError("Error(\(error.code)) \(error.message) laoding system data. Medusa will now terminate.")
-//            }
-//        catch let error
-//            {
-//            self.logger.log("Unknown error \(error) laoding system data. Medusa will now terminate.")
-//            fatalError("Unknown error \(error) laoding system data. Medusa will now terminate.")
-//            }
+            }
+        catch let error as SystemIssue
+            {
+            self.logger.log("Error(\(error.code)) \(error.message) laoding system data. Medusa will now terminate.")
+            fatalError("Error(\(error.code)) \(error.message) laoding system data. Medusa will now terminate.")
+            }
+        catch let error
+            {
+            self.logger.log("Unknown error \(error) laoding system data. Medusa will now terminate.")
+            fatalError("Unknown error \(error) laoding system data. Medusa will now terminate.")
+            }
         }
         
     private func initSystemPages()
@@ -75,7 +86,7 @@ public class PageServer
         do
             {
             self.rootPage = RootPage()
-            try self.dataFile.writeBuffer(rootPage.buffer,at: 0,sizeInBytes: RootPage.kRootPageSizeInBytes)
+            try self.dataFile.write(rootPage.buffer,atOffset: 0,sizeInBytes: RootPage.kRootPageSizeInBytes)
             }
         catch let error as SystemIssue
             {
@@ -94,8 +105,8 @@ public class PageServer
         self.logger.log("About to read root page of size \(RootPage.kRootPageSizeInBytes) from offset \(Self.kRootPageOffset).")
         do
             {
-            let buffer = try self.dataFile.readBuffer(at: Self.kRootPageOffset,sizeInBytes: RootPage.kRootPageSizeInBytes)
-            self.rootPage = RootPage(from: buffer)
+            let buffer = try self.dataFile.readBuffer(atOffset: Self.kRootPageOffset,sizeInBytes: RootPage.kRootPageSizeInBytes)
+            self.rootPage = RootPage(buffer: buffer,sizeInBytes: RootPage.kRootPageSizeInBytes)
             }
         catch let error as SystemIssue
             {
@@ -119,91 +130,85 @@ public class PageServer
         {
         }
         
-    private func loadPageList(startingAt offset: Integer64) throws -> PageList
+    public func objectPointer(forAddress address: ObjectAddress) -> RawPointer
         {
-        let pageList = PageList()
-        var nextOffset = offset
-        while nextOffset != 0
-            {
-            let pageEntry = try self.loadPageEntry(at: nextOffset)
-            pageList.append(pageEntry)
-            nextOffset = pageEntry.pageReference.nextPageOffset
-            }
-        return(pageList)
+        let page = self.loadObjectPage(at: address.pageOffset)
+        let offset = page.objectOffset(at: address.objectIndex)
+        return(page.buffer + offset)
         }
         
-    public func findObjectPage(withFreeSpaceInBytes size: Integer64) -> ObjectPage
+    public func loadObjectPage(at offset: Integer64) -> ObjectPage
         {
-        try self.objectPages.findPageWithSpace(sizeInBytes: size)
+        fatalError()
         }
         
-    private func loadPageEntry(at offset: Integer64) throws -> PageList.PageEntry
+    public func loadPage<T>(at offset: Integer64,as type: T.Type) -> T where T:PageProtocol
         {
-        if let kind = Page.Kind(magicNumber: try self.dataFile.readUnsigned64(at: offset))
-            {
-            let nextOffset = try self.dataFile.readInteger64(at: offset + MemoryLayout<Unsigned64>.size)
-            let previousOffset = try self.dataFile.readInteger64(at: offset + MemoryLayout<Integer64>.size)
-            let pageEntry = PageList.PageEntry(pageReference: PageList.PageReference(pageKind: kind,previousPageOffset: previousOffset,nextPageOffset: nextOffset))
-            return(pageEntry)
-            }
-        throw(SystemIssue(code: .readPageDetailsFailed, agentKind: .pageServer))
+        fatalError()
         }
-        
-    public func loadPage(at offset: Integer64) throws -> Page
+    
+    public func allocateObjectPage() -> ObjectPage
         {
         self.accessLock.lock()
         defer
             {
             self.accessLock.unlock()
             }
-        let buffer = try self.dataFile.readBuffer(at: offset, sizeInBytes: RootPage.kRootPageSizeInBytes)
-        let magicNumber = buffer.load(fromByteOffset: 0, as: Unsigned64.self)
-        if magicNumber == Page.kRootPageMagicNumber
+        return(ObjectPage())
+        }
+        
+    public func findObjectPage(withFreeSpaceInBytes size: Integer64) -> ObjectPage?
+        {
+        self.accessLock.lock()
+        defer
             {
-            return(RootPage(from: buffer))
+            self.accessLock.unlock()
             }
-        else if magicNumber == Page.kObjectPageMagicNumber
+        if let page = self.objectPages.findFirstPageWithSpace(sizeInBytes: size)
             {
-            let page = ObjectPage(from: buffer)
-            self.residentObjectPages.append(page)
-            return(page)
-            }
-        else if magicNumber == Page.kOverflowPageMagicNumber
-            {
-            let page = OverflowPage(from: buffer)
-            self.residentOverflowPages.append(page)
-            return(page)
-            }
-        else if magicNumber == Page.kBTreeNodePageMagicNumber
-            {
-            return(BTreeNodePage(from: buffer))
-            }
-        else if magicNumber == Page.kHashtableRootPageMagicNumber
-            {
-            return(HashtableRootPage(from: buffer))
-            }
-//        else if magicNumber == Page.kHashtableBucketPageMagicNumber
-//            {
-//            return(HashtableBucketPage(from: buffer))
-//            }
-        else if magicNumber == Page.kBlockPageMagicNumber
-            {
-            let page = BlockPage(from: buffer)
-            self.residentBlockPages.append(page)
+            if page.isStubbed
+                {
+                do
+                    {
+                    try page.loadContents(from: self.dataFile)
+                    return(page)
+                    }
+                catch let issue as SystemIssue
+                    {
+                    logger.log("Error \(issue.code) while loading contents of stubbed page at \(page.pageOffset) \(issue.message).")
+                    }
+                catch let error
+                    {
+                    logger.log("Error \(error) while loading contents of stubbed page at \(page.pageOffset).")
+                    }
+                return(nil)
+                }
             return(page)
             }
         else
             {
-            fatalError("Invalid page type erad in PageServer.")
+            let newPage = ObjectPage()
+            newPage.pageOffset = self.nextAvailableOffset
+            self.pageCache[newPage.pageOffset] = newPage
+            self.nextAvailableOffset += Page.kPageSizeInBytes
+            do
+                {
+                try self.dataFile.write(newPage.buffer,atOffset: newPage.pageOffset,sizeInBytes: Page.kPageSizeInBytes)
+                }
+            catch let issue as SystemIssue
+                {
+                logger.log("Error \(issue.code) while writing contents of new page at \(newPage.pageOffset) \(issue.message).")
+                }
+            catch let error
+                {
+                logger.log("Error \(error) while writing contents of new page at \(newPage.pageOffset).")
+                }
             }
-        }
-        
-    public func allocateBTreePage(keysPerPage: Integer64,keyClass: any KeyType,valueClass: any ValueType) -> BTreeNodePage
-        {
         fatalError()
         }
         
-    public func findObjectPageWithFreeSpace(sizeInBytes: Integer64)
+    public func allocateBTreeNodePage(keysPerPage: Integer64,keyClass: Any,valueClass: Any) -> BTreeNodePage
         {
+        fatalError()
         }
     }

@@ -35,9 +35,31 @@ import MedusaStorage
 //
 
 public class Enumeration: Instance
-    {
+{
+    public var objectHash: MedusaCore.Integer64 = 0
+    
+    public var _class: Any = 0
+    
+    public var hasBytes: MedusaCore.Boolean = false
+    
+    public func write(into page: Any, atIndex: MedusaCore.Integer64) throws {
+        fatalError()
+    }
+    
+    public func writeKey(into pointer: MedusaCore.RawPointer, atByteOffset: inout MedusaCore.Integer64) throws {
+        fatalError()
+    }
+    
+    public func writeValue(into pointer: MedusaCore.RawPointer, atByteOffset: inout MedusaCore.Integer64) throws {
+        fatalError()
+    }
+    
+    public func pack(into buffer: MedusaCore.RawPointer, atByteOffset: inout MedusaCore.Integer64) throws {
+        fatalError()
+    }
+    
     private static let kAssociatedValuesFlagOffset: Unsigned64  = 58
-    private static let kClassAddressMask: Unsigned64            = 0b11_11111111_11111111_11111111_11111111_11111111_11111111_11111111
+    private static let kClassAddressMask: Unsigned64            = 0b00000000_00000011_11111111_11111111_11111111_11111111_11111111_11111111
     private static let kCaseIndexMask: Unsigned64               = 0b00000011_11111100_00000000_00000000_00000000_00000000_00000000_00000000
     private static let kAssociatedValuesFlagMask: Unsigned64    = 0b00000100_00000000_00000000_00000000_00000000_00000000_00000000_00000000
     private static let kCaseIndexShift: Unsigned64              = 50
@@ -52,27 +74,27 @@ public class Enumeration: Instance
         {
         get
             {
-//        if self._objectAddress.isNil
-//            {
-//            fatalError()
-////            if self.associatedValues.isEmpty
-////                {
-//////                let classAddress = (self.class.objectAddress.address & Self.kClassAddressMask) >> ObjectAddress.kObjectIndexShift
-//////                let tag = Header.kEnumerationMask
-////                self._objectAddress = ObjectAddress(enumerationCaseIndex: self.caseIndex,classAddress: 0)
-////                }
-////            else
-////                {
-////                self._objectAddress = ObjectAddress(enumerationInstanceAddress: instanceAddress)
-////                }
-//            }
-//        return(self._objectAddress!)
-        fatalError()
-        }
+            if self._objectAddress.isNil
+                {
+                }
+            return(self._objectAddress!)
+            }
         set
             {
             fatalError()
             }
+        }
+        
+    public var isNothing: Bool
+        {
+        false
+        }
+        
+    public init(enumerationClass: Class,caseIndex: Integer64,associatedValues: (any Instance)...)
+        {
+        self._objectAddress = nil
+        self.caseIndex = caseIndex
+        self.associatedValues = associatedValues
         }
         
     public required init(from buffer: RawPointer,atByteOffset:inout Integer64)
@@ -96,11 +118,6 @@ public class Enumeration: Instance
         }
     
     public var sizeInBytes: MedusaCore.Integer64
-        {
-        fatalError()
-        }
-    
-    public var _class: Any
         {
         fatalError()
         }

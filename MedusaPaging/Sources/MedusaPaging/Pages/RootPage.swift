@@ -11,121 +11,140 @@ import MedusaCore
 
 public class RootPage: Page
     {
-    public static let kRootPageSizeInBytes                      = Page.kPageSizeInBytes
-    public static let kRootPageFirstEmptyPageCellOffset         = Page.kPageHeaderSizeInBytes
+    public static let kRootPageSizeInBytes                            = Page.kPageSizeInBytes
+    public static let kRootPageFirstEmptyPageOffsetOffset             = Page.kPageHeaderSizeInBytes
+    public static let kRootPageFirstObjectPageOffsetOffset            = RootPage.kRootPageFirstEmptyPageOffsetOffset + MemoryLayout<Integer64>.size
+    public static let kRootPageFirstBlockPageOffsetOffset             = RootPage.kRootPageFirstObjectPageOffsetOffset + MemoryLayout<Integer64>.size
+    public static let kRootPageFirstOverflowPageOffsetOffset          = RootPage.kRootPageFirstBlockPageOffsetOffset + MemoryLayout<Integer64>.size
+    public static let kRootPageSystemDictionaryAddressOffset          = RootPage.kRootPageFirstOverflowPageOffsetOffset + MemoryLayout<Integer64>.size
+    public static let kRootPageSystemModuleAddressOffset              = RootPage.kRootPageSystemDictionaryAddressOffset + MemoryLayout<Integer64>.size
+    public static let kRootPageEndPageOffsetOffset                    = RootPage.kRootPageSystemModuleAddressOffset + MemoryLayout<Integer64>.size
+    
+    public static let kRootPageHeaderSizeInBytes                      = RootPage.kRootPageEndPageOffsetOffset + MemoryLayout<Integer64>.size
     
     open override var kind: Page.Kind
         {
         Page.Kind.rootPage
         }
         
-    public var firstEmptyPageCellOffset = 0
+    public var endPageOffset: Integer64
+        {
+        get
+            {
+            self.buffer.load(fromByteOffset: Self.kRootPageFirstEmptyPageOffsetOffset, as: Integer64.self)
+            }
+        set
+            {
+            self.buffer.storeBytes(of: newValue, toByteOffset: Self.kRootPageFirstEmptyPageOffsetOffset, as: Integer64.self)
+            self.isDirty = true
+            }
+        }
+        
+    public var firstEmptyPageOffset: Integer64
+        {
+        get
+            {
+            self.buffer.load(fromByteOffset: Self.kRootPageFirstEmptyPageOffsetOffset, as: Integer64.self)
+            }
+        set
+            {
+            self.buffer.storeBytes(of: newValue, toByteOffset: Self.kRootPageFirstEmptyPageOffsetOffset, as: Integer64.self)
+            self.isDirty = true
+            }
+        }
+        
+    public var firstObjectPageOffset: Integer64
+        {
+        get
+            {
+            self.buffer.load(fromByteOffset: Self.kRootPageFirstObjectPageOffsetOffset, as: Integer64.self)
+            }
+        set
+            {
+            self.buffer.storeBytes(of: newValue, toByteOffset: Self.kRootPageFirstObjectPageOffsetOffset, as: Integer64.self)
+            self.isDirty = true
+            }
+        }
+        
+    public var firstBlockPageOffset: Integer64
+        {
+        get
+            {
+            self.buffer.load(fromByteOffset: Self.kRootPageFirstBlockPageOffsetOffset, as: Integer64.self)
+            }
+        set
+            {
+            self.buffer.storeBytes(of: newValue, toByteOffset: Self.kRootPageFirstBlockPageOffsetOffset, as: Integer64.self)
+            self.isDirty = true
+            }
+        }
+        
+    public var firstOverflowPageOffset: Integer64
+        {
+        get
+            {
+            self.buffer.load(fromByteOffset: Self.kRootPageFirstOverflowPageOffsetOffset, as: Integer64.self)
+            }
+        set
+            {
+            self.buffer.storeBytes(of: newValue, toByteOffset: Self.kRootPageFirstOverflowPageOffsetOffset, as: Integer64.self)
+            self.isDirty = true
+            }
+        }
+        
+    public var systemDictionaryAddress: ObjectAddress
+        {
+        get
+            {
+            ObjectAddress(bitPattern: self.buffer.load(fromByteOffset: Self.kRootPageSystemDictionaryAddressOffset, as: Unsigned64.self))
+            }
+        set
+            {
+            self.buffer.storeBytes(of: newValue.address, toByteOffset: Self.kRootPageSystemDictionaryAddressOffset, as: Unsigned64.self)
+            self.isDirty = true
+            }
+        }
+        
+    public var systemModuleAddress: ObjectAddress
+        {
+        get
+            {
+            ObjectAddress(bitPattern: self.buffer.load(fromByteOffset: Self.kRootPageSystemModuleAddressOffset, as: Unsigned64.self))
+            }
+        set
+            {
+            self.buffer.storeBytes(of: newValue.address, toByteOffset: Self.kRootPageSystemModuleAddressOffset, as: Unsigned64.self)
+            self.isDirty = true
+            }
+        }
+        
     
-    public override init()
+    public required init()
         {
         super.init()
         self.magicNumber = Page.kRootPageMagicNumber
         }
         
-    public override init(from: RawPointer)
+    public required init(buffer: RawPointer,sizeInBytes: Integer64)
         {
-        super.init(from: from)
-        self.firstEmptyPageCellOffset = self.buffer.load(fromByteOffset: Self.kRootPageFirstEmptyPageCellOffset, as: Integer64.self)
-
+        super.init(buffer: buffer,sizeInBytes: sizeInBytes)
         }
-        
+    
+    public required init(stubBuffer: RawPointer, pageOffset offset: Integer64, sizeInBytes: Integer64) {
+        fatalError("init(stubBuffer:pageOffset:sizeInBytes:) has not been implemented")
+    }
+    
+    public required init(emptyPageAtOffset: Integer64) {
+        fatalError("init(emptyPageAtOffset:) has not been implemented")
+    }
+    
     public override func loadHeader()
         {
         super.loadHeader()
-        self.firstEmptyPageCellOffset = self.buffer.load(fromByteOffset: Self.kRootPageFirstEmptyPageCellOffset, as: Integer64.self)
         }
-
-    public override func store() throws
+    
+    public override func storeHeader()
         {
-        try super.store()
-        self.buffer.storeBytes(of: self.firstEmptyPageCellOffset, toByteOffset: Self.kRootPageFirstEmptyPageCellOffset, as: Integer64.self)
+        super.storeHeader()
         }
-//    public static let atomTable = IdentityDictionary(initializeCount:
-//    
-//
-//
-//    
-//public class RootPage: Page
-//    {
-//    private static let kFirstFreePageAddressOffset      = Page.kHeaderSizeInBytes
-//    private static let kLastFreePageAddressOffset       = RootPage.kFirstFreePageAddressOffset + MemoryLayout<Address>.size
-//    private static let kLastAllocatedPageAddressOffset  = RootPage.kLastFreePageAddressOffset + MemoryLayout<Address>.size
-//    
-//    private var lastAllocatedPageOffset: Integer64 = 0
-//    private var freePageList: FreePageList
-//    private var accessLock = NSLock()
-//    
-//    
-//    public override init(from: RawPointer)
-//        {
-//        super.init(from: from)
-//        self.readHeader()
-//        }
-//        
-//    internal override func readHeader()
-//        {
-//        super.readHeader()
-//        self.freePageList = FreePageList(firstPageAddress: readInteger(self.buffer,Self.kFirstFreePageAddressOffset),lastFreePageAddress: readInteger(self.buffer,Self.kLastFreePageAddressOffset))
-//        self.lastAllocatedPageOffset = readInteger(self.buffer,Self.kLastAllocatedPageAddressOffset)
-//        }
-//        
-//    public override func writeHeader()
-//        {
-//        self.accessLock.withLock
-//            {
-//            super.writeHeader()
-//            writeInteger(self.buffer,self.freePageList.firstCellAddress,Self.kFirstFreePageAddressOffset)
-//            writeInteger(self.buffer,self.lastAllocatedPageOffset,Self.kLastAllocatedPageAddressOffset)
-//            writeInteger(self.buffer,self.freePageList.lastCellAddress,Self.kLastFreePageAddressOffset)
-//            }
-//        }
-//        
-//    public func appendFreePage(_ page: Page)
-//        {
-//        self.accessLock.withLock
-//            {
-//            self.freePageList.appendFreePage(at: page.buffer)
-//            }
-//        }
-//    }
-//    
-//public protocol SimpleType
-//    {
-//    }
-//
-//public class MOPPageProperty
-//    {
-//    private weak var page: Page?
-//    private let byteOffset: Integer64
-//    public let name: String
-//    private let propertyType: SimpleType.Type
-//    
-//    public init<T>(page: Page,name: String,value: T? = nil,atByteOffset: Integer64) where T:SimpleType
-//        {
-//        self.name = name
-//        self.byteOffset = atByteOffset
-//        self.page = page
-//        self.propertyType = T.self
-//        }
-//        
-//    public func setValue<T>(_ value: T) where T:SimpleType
-//        {
-//        if self.propertyType  == Integer64.self
-//            {
-//            
-//            }
-//        self.page!.buffer.storeBytes(of: value, toByteOffset: self.byteOffset, as: T.self)
-//        }
-//        
-//    public func value<T>(as: T.Type) -> T? where T:SimpleType
-//        {
-//        self.page!.buffer.load(fromByteOffset: self.byteOffset, as: T.self)
-//        }
-//    }
-
     }

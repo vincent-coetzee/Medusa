@@ -6,18 +6,44 @@
 //
 
 import Foundation
-import Path
 import MedusaCore
 import MedusaStorage
 
 open class Atom: Instance
 {
-    public var description: String
-        {
-                fatalError()
-                }
+    public var _class: Any = 0
     
-    public var objectAddress: MedusaCore.ObjectAddress
+    public var objectAddress: MedusaCore.ObjectAddress = .kNothing
+    
+    public var objectHash: MedusaCore.Integer64 = 0
+    
+    public var hasBytes: MedusaCore.Boolean = false
+    
+    public func write(into page: Any, atIndex: MedusaCore.Integer64) throws {
+        fatalError()
+    }
+    
+    public func writeKey(into pointer: MedusaCore.RawPointer, atByteOffset: inout MedusaCore.Integer64) throws {
+        fatalError()
+    }
+    
+    public func writeValue(into pointer: MedusaCore.RawPointer, atByteOffset: inout MedusaCore.Integer64) throws {
+        fatalError()
+    }
+    
+    public func pack(into buffer: MedusaCore.RawPointer, atByteOffset: inout MedusaCore.Integer64) throws {
+        fatalError()
+    }
+    
+    public private(set) var rawValue: Integer64 = 0
+    private var bitPattern: Unsigned64 = 0
+    
+    public var isNothing: MedusaCore.Boolean
+        {
+        false
+        }
+        
+    public var description: String
         {
                 fatalError()
                 }
@@ -29,17 +55,12 @@ open class Atom: Instance
     
     public var sizeInBytes: MedusaCore.Integer64
         {
-        fatalError()
-        }
-    
-    public var _class: Any
-        {
-        fatalError()
+        MemoryLayout<Integer64>.size
         }
     
     public var isIndexed: MedusaCore.Boolean
         {
-        fatalError()
+        false
         }
     
     public func write(into: MedusaCore.RawPointer, atByteOffset: MedusaCore.Integer64) {
@@ -95,7 +116,17 @@ open class Atom: Instance
         fatalError()
         }
         
+    public init(rawValue: Integer64)
+        {
+        self.rawValue = rawValue
+        }
+        
     public func hash(into: inout Hasher)
         {
+        }
+        
+    public init(bitPattern: Unsigned64)
+        {
+        self.bitPattern = bitPattern
         }
     }

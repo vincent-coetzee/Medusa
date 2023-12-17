@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Path
 
 public class FileIdentifier
     {
@@ -74,15 +73,15 @@ public class FileIdentifier
         
     public var fileExists: Bool
         {
-        FileManager.default.fileExists(atPath: self.path.string)
+        FileManager.default.fileExists(atPath: self.path)
         }
         
     public private(set) var fileDescriptor: Int32!
-    public let path: Path
+    public let path: String
     public private(set) var mappedAddress: Integer64?
     private let logger: Logger
     
-    public init(path: Path,logger: Logger)
+    public init(path: String,logger: Logger)
         {
         self.logger = logger
         self.path = path
@@ -92,7 +91,7 @@ public class FileIdentifier
     public func open(mode: Mode...) throws -> Self
         {
         let modeValue = mode.reduce(0) { $0 | $1.modeValue }
-        let string = self.path.string
+        let string = self.path
         self.fileDescriptor = Darwin.open(string,modeValue)
         if self.fileDescriptor == -1
             {
@@ -105,47 +104,47 @@ public class FileIdentifier
         return(self)
         }
         
-    public func seek(to offset: Integer64) throws
+    public func seek(toOffset offset: Integer64) throws
         {
-        self.logger.log("About to seek to offset \(offset) in file \(self.path.string).")
+        self.logger.log("About to seek to offset \(offset) in file \(self.path).")
         if lseek(self.fileDescriptor,Int64(offset),SEEK_SET) != Int64(offset)
             {
             let error = String(cString: strerror(errno))
-            self.logger.log("Seek to offset \(offset) in file \(self.path.string) failed with error(\(errno),\(error)).")
-            throw(SystemIssue(code: .seekFailed, agentKind: .pageServer, message: "Unable to seek to offset \(offset) in file \(self.path.string) with error(\(errno),\(error))."))
+            self.logger.log("Seek to offset \(offset) in file \(self.path) failed with error(\(errno),\(error)).")
+            throw(SystemIssue(code: .seekFailed, agentKind: .pageServer, message: "Unable to seek to offset \(offset) in file \(self.path) with error(\(errno),\(error))."))
             }
-        self.logger.log("lseek to offset \(offset) in file \(self.path.string) successful.")
+        self.logger.log("lseek to offset \(offset) in file \(self.path) successful.")
         }
         
-    public func readBuffer(at offset: Integer64,sizeInBytes: Integer64) throws -> RawPointer
+    public func readBuffer(atOffset offset: Integer64,sizeInBytes: Integer64) throws -> RawPointer
         {
-        try self.seek(to: offset)
+        try self.seek(toOffset: offset)
         let buffer = RawPointer.allocate(byteCount: sizeInBytes, alignment: 1)
-        self.logger.log("Reading \(sizeInBytes) from file \(self.path.string).")
+        self.logger.log("Reading \(sizeInBytes) from file \(self.path).")
         if read(self.fileDescriptor,buffer,sizeInBytes) != sizeInBytes
             {
             let error = String(cString: strerror(errno))
             buffer.deallocate()
-            throw(SystemIssue(code: .readBufferFailed,agentKind: .pageServer,message: "Reading \(sizeInBytes) from \(self.path.string) failed with error(\(errno),\(error))."))
+            throw(SystemIssue(code: .readBufferFailed,agentKind: .pageServer,message: "Reading \(sizeInBytes) from \(self.path) failed with error(\(errno),\(error))."))
             }
         return(buffer)
         }
         
-    public func writeBuffer(_ buffer: RawPointer,at offset: Integer64,sizeInBytes: Integer64) throws
+    public func write(_ buffer: RawPointer,atOffset offset: Integer64,sizeInBytes: Integer64) throws
         {
-        try self.seek(to: offset)
-        self.logger.log("Writing \(sizeInBytes) bytes to file \(self.path.string).")
-        if write(self.fileDescriptor,buffer,sizeInBytes) != sizeInBytes
+        try self.seek(toOffset: offset)
+        self.logger.log("Writing \(sizeInBytes) bytes to file \(self.path).")
+        if Darwin.write(self.fileDescriptor,buffer,sizeInBytes) != sizeInBytes
             {
             let error = String(cString: strerror(errno))
-            throw(SystemIssue(code: .writeBufferFailed,agentKind: .pageServer,message: "Writing \(sizeInBytes) bytes to \(self.path.string) failed with error(\(errno),\(error))."))
+            throw(SystemIssue(code: .writeBufferFailed,agentKind: .pageServer,message: "Writing \(sizeInBytes) bytes to \(self.path) failed with error(\(errno),\(error))."))
             }
         }
         
     public func map(to address: Integer64,sizeInBytes: Integer64,offset: Integer64) throws
         {
         let stringAddress = String(address,radix: 16,uppercase: true)
-        self.logger.log("Preparing to map segment at \(stringAddress) to file\(path.string).")
+        self.logger.log("Preparing to map segment at \(stringAddress) to file\(path).")
         if self.fileDescriptor < 1
             {
             self.logger.log("Invalid file descriptor (\(String(describing:self.fileDescriptor))) in FileHandle.map(to:sizeInBytes:offset).")
@@ -169,45 +168,56 @@ public class FileIdentifier
             self.logger.log(message)
             throw(SystemIssue(code: .segmentAdviseFailed,agentKind: .pageServer,message: message))
             }
-        self.logger.log("File \(self.path.string) sucessfully mapped into segment at \(stringAddress).")
+        self.logger.log("File \(self.path) sucessfully mapped into segment at \(stringAddress).")
         self.mappedAddress = address
         }
         
-    public func readInteger64(at offset: Integer64) throws -> Integer64
+    public func readInteger64(atOffset offset: Integer64) throws -> Integer64
         {
-        try self.seek(to: offset)
+        try self.seek(toOffset: offset)
         var value: Integer64 = 0
-        self.logger.log("Reading Integer64 from file \(self.path.string).")
+        self.logger.log("Reading Integer64 from file \(self.path).")
         if read(self.fileDescriptor,&value,MemoryLayout<Integer64>.size) != MemoryLayout<Integer64>.size
             {
             let error = String(cString: strerror(errno))
-            throw(SystemIssue(code: .readBufferFailed,agentKind: .pageServer,message: "Reading Integer64 from \(self.path.string) failed with error(\(errno),\(error))."))
+            throw(SystemIssue(code: .readBufferFailed,agentKind: .pageServer,message: "Reading Integer64 from \(self.path) failed with error(\(errno),\(error))."))
             }
         return(value)
         }
         
-    public func readUnsigned64(at offset: Integer64) throws -> Unsigned64
+    public func readUnsigned64(atOffset offset: Integer64) throws -> Unsigned64
         {
-        try self.seek(to: offset)
+        try self.seek(toOffset: offset)
         var value: Unsigned64 = 0
-        self.logger.log("Reading Unsigned64 from file \(self.path.string).")
+        self.logger.log("Reading Unsigned64 from file \(self.path).")
         if read(self.fileDescriptor,&value,MemoryLayout<Unsigned64>.size) != MemoryLayout<Unsigned64>.size
             {
             let error = String(cString: strerror(errno))
-            throw(SystemIssue(code: .readBufferFailed,agentKind: .pageServer,message: "Reading Unsigned64 from \(self.path.string) failed with error(\(errno),\(error))."))
+            throw(SystemIssue(code: .readBufferFailed,agentKind: .pageServer,message: "Reading Unsigned64 from \(self.path) failed with error(\(errno),\(error))."))
             }
         return(value)
         }
         
-    public func writeInteger64(_ integer: Integer64,at offset: Integer64) throws
+    public func write(_ integer: Integer64,atOffset offset: Integer64) throws
         {
-        try self.seek(to: offset)
+        try self.seek(toOffset: offset)
         var value: Integer64 = integer
-        self.logger.log("Write Integer64 to file \(self.path.string).")
-        if write(self.fileDescriptor,&value,MemoryLayout<Integer64>.size) != MemoryLayout<Integer64>.size
+        self.logger.log("Write Integer64 to file \(self.path).")
+        if Darwin.write(self.fileDescriptor,&value,MemoryLayout<Integer64>.size) != MemoryLayout<Integer64>.size
             {
             let error = String(cString: strerror(errno))
-            throw(SystemIssue(code: .writeBufferFailed,agentKind: .pageServer,message: "Writing Integer64 to \(self.path.string) failed with error(\(errno),\(error))."))
+            throw(SystemIssue(code: .writeBufferFailed,agentKind: .pageServer,message: "Writing Integer64 to \(self.path) failed with error(\(errno),\(error))."))
+            }
+        }
+        
+    public func write(_ integer: Integer64) throws
+        {
+        var value: Integer64 = integer
+        self.logger.log("Write Integer64 to file \(self.path).")
+        if Darwin.write(self.fileDescriptor,&value,MemoryLayout<Integer64>.size) != MemoryLayout<Integer64>.size
+            {
+            let error = String(cString: strerror(errno))
+            throw(SystemIssue(code: .writeBufferFailed,agentKind: .pageServer,message: "Writing Integer64 to \(self.path) failed with error(\(errno),\(error))."))
             }
         }
     }

@@ -30,7 +30,7 @@ import Foundation
 //
 public struct ObjectHandle: Equatable
     {
-    private var handle: Unsigned64
+    public private(set) var handle: Unsigned64
     
     public static func ==(lhs: ObjectHandle,rhs: ObjectHandle) -> Bool
         {
@@ -42,9 +42,19 @@ public struct ObjectHandle: Equatable
         lhs.handle == rhs.handle
         }
         
-    public init(_ handle: Integer64)
+    public init(bitPattern: Integer64)
         {
-        self.handle = Unsigned64(bitPattern: handle)
+        self.handle = Unsigned64(bitPattern: bitPattern)
+        }
+        
+    public init(bitPattern: Unsigned64)
+        {
+        self.handle = bitPattern
+        }
+        
+    public init()
+        {
+        self.handle = 0
         }
     }
 

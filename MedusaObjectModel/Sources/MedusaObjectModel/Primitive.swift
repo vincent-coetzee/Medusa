@@ -10,8 +10,59 @@ import MedusaCore
 import MedusaStorage
 
 public enum Primitive: Instance
-{
-
+    {
+    public var objectAddress: MedusaCore.ObjectAddress
+        {
+        get
+            {
+            ObjectAddress(0)
+            }
+        set
+            {
+            }
+        }
+        
+    public var objectHash: MedusaCore.Integer64
+        {
+        fatalError()
+        }
+    
+    public var _class: Any
+        {
+        get
+            {
+            0
+            }
+        set
+            {
+            }
+        }
+    
+    public var hasBytes: MedusaCore.Boolean
+        {
+        false
+        }
+    
+    public var isNothing: MedusaCore.Boolean
+        {
+        false
+        }
+    
+    public func write(into page: Any, atIndex: MedusaCore.Integer64) throws {
+        
+    }
+    
+    public func writeKey(into pointer: MedusaCore.RawPointer, atByteOffset: inout MedusaCore.Integer64) throws {
+        
+    }
+    
+    public func writeValue(into pointer: MedusaCore.RawPointer, atByteOffset: inout MedusaCore.Integer64) throws {
+        
+    }
+    
+    public func pack(into buffer: MedusaCore.RawPointer, atByteOffset: inout MedusaCore.Integer64) throws {
+        
+    }
     
     case nothing
     case integer64(Integer64)
@@ -21,11 +72,6 @@ public enum Primitive: Instance
     case boolean(Boolean)
     case byte(Byte)
     case unicodeScalar(UnicodeScalar)
-        
-    public var objectAddress: ObjectAddress
-        {
-        ObjectAddress(0)
-        }
         
     public var `class`: Class
         {
@@ -84,12 +130,6 @@ public enum Primitive: Instance
                 }
     
     public var objectHandle: MedusaCore.ObjectHandle
-        {
-        fatalError()
-        }
-    
-    
-    public var _class: Any
         {
         fatalError()
         }

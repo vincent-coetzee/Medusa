@@ -56,40 +56,8 @@ public class Header
     public static let kFlipCountOffset: Unsigned64      = 8
     public static let kForwardedOffset: Unsigned64      = 7
     public static let kMarkedOffset: Unsigned64         = 6
+
     
-    public static let kInteger64Mask: Unsigned64                = Tag.integer64.rawValue << 59
-    public static let kFloat64Mask: Unsigned64                  = Tag.float64.rawValue << 59
-    public static let kAtomMask: Unsigned64                     = Tag.atom.rawValue << 59
-    public static let kHeaderMask: Unsigned64                   = Tag.header.rawValue << 59
-    public static let kObjectMask: Unsigned64                   = Tag.object.rawValue << 59
-    public static let kAddressMask: Unsigned64                  = Tag.address.rawValue << 59
-    public static let kEnumerationMask: Unsigned64              = Tag.enumeration.rawValue << 59
-    public static let kAssociatedEnumerationMask: Unsigned64    = Tag.associatedEnumeration.rawValue << 59
-    public static let kBooleanMask: Unsigned64                  = Tag.boolean.rawValue << 59
-    public static let kByteMask: Unsigned64                     = Tag.byte.rawValue << 59
-    public static let kUnicodeScalarMask: Unsigned64            = Tag.unicodeScalar.rawValue << 59
-    public static let kNothingMask: Unsigned64                  = Tag.nothing.rawValue << 59
-    
-    public enum Tag: Unsigned64
-        {
-        case integer64              = 0b0000
-        case float64                = 0b0001
-        case atom                   = 0b0010
-        case header                 = 0b0011
-        case object                 = 0b0100
-        case address                = 0b0101
-        case enumeration            = 0b0110
-        case associatedEnumeration  = 0b0111
-        case boolean                = 0b1000
-        case byte                   = 0b1001
-        case unicodeScalar          = 0b1010
-        case reserved1              = 0b1011
-        case reserved2              = 0b1100
-        case reserved3              = 0b1101
-        case reserved4              = 0b1110
-        case nothing                = 0b1111
-        }
-        
     public var sign: Integer64
         {
         get
@@ -99,18 +67,6 @@ public class Header
         set
             {
             self.word = (self.word & ~Self.kSignBits) | (Unsigned64(newValue) & Self.kSignBits) << Self.kSignOffset
-            }
-        }
-        
-    public var tag: Tag
-        {
-        get
-            {
-            Tag(rawValue: self.word & Self.kTagBits >> Self.kTagOffset)!
-            }
-        set
-            {
-            self.word = (self.word & ~Self.kTagBits) | newValue.rawValue << Self.kTagOffset
             }
         }
         
@@ -187,7 +143,7 @@ public class Header
         }
         
         
-    private var word: Unsigned64
+    public var word: Unsigned64
         {
         get
             {

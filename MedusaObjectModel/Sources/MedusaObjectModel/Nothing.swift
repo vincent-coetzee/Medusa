@@ -12,6 +12,32 @@ import MedusaPaging
 
 public struct Nothing: Instance
 {
+    public var objectAddress: MedusaCore.ObjectAddress = ObjectAddress.kNothing
+    
+    public var objectHash: MedusaCore.Integer64 = 0
+    
+    public var _class: Any
+    
+    public var hasBytes: MedusaCore.Boolean = false
+    
+    public var isNothing: MedusaCore.Boolean = true
+    
+    public func write(into page: Any, atIndex: MedusaCore.Integer64) throws {
+        
+    }
+    
+    public func writeKey(into pointer: MedusaCore.RawPointer, atByteOffset: inout MedusaCore.Integer64) throws {
+        
+    }
+    
+    public func writeValue(into pointer: MedusaCore.RawPointer, atByteOffset: inout MedusaCore.Integer64) throws {
+        
+    }
+    
+    public func pack(into buffer: MedusaCore.RawPointer, atByteOffset: inout MedusaCore.Integer64) throws {
+        
+    }
+    
     public var objectHandle: MedusaCore.ObjectHandle
         {
         fatalError()
@@ -22,21 +48,23 @@ public struct Nothing: Instance
     }
     
     public static let kNothing = Self()
-    public let objectAddress = ObjectAddress.kNothing
     public let sizeInBytes: Integer64 = MemoryLayout<Integer64>.size
     public let `class` = Class.nothingClass
     public let isIndexed = false
     
     public init()
         {
+        fatalError()
         }
         
     public init(from: Page, atByteOffset: MedusaCore.Integer64)
         {
+        fatalError()
         }
         
     public init(from: RawPointer, atByteOffset: MedusaCore.Integer64)
         {
+        fatalError()
         }
     
     public static func == (lhs: Nothing, rhs: Nothing) -> Boolean
@@ -78,12 +106,6 @@ public struct Nothing: Instance
         {
                 fatalError()
                 }
-
-    public var _class: Any
-        {
-        fatalError()
-        }
-    
     
     public func isEqual(to: Any) -> Bool {
         fatalError()

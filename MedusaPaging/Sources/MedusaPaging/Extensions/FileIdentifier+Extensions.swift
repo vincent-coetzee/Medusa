@@ -6,3 +6,8 @@
 //
 
 import Foundation
+import MedusaCore
+
+public extension FileIdentifier
+    {
+    }

@@ -10,11 +10,16 @@ import MedusaStorage
 import MedusaCore
 import Fletcher
 
-public protocol PageProtocol
+public protocol PageProtocol: AnyObject,Equatable
     {
     var pageOffset: Integer64 { get set }
     var nextPageOffset: Integer64 { get set }
     var freeByteCount: Integer64 { get set }
+    var nextPage: (any PageProtocol)? { get set }
+    var previousPage: (any PageProtocol)? { get set }
+    var isStubbed: Bool { get }
+    var magicNumber: Unsigned64 { get set }
+    init(emptyPageAtOffset: Integer64)
     }
     
 open class Page: PageProtocol
@@ -56,6 +61,33 @@ open class Page: PageProtocol
                     return(Page.kHashtableBucketPageMagicNumber)
                 case .freePage:
                     return(0)
+                }
+            }
+            
+        public var pageClass: Page.Type
+            {
+            switch(self)
+                {
+                case .page:
+                    return(Page.self)
+                case .objectPage:
+                    return(ObjectPage.self)
+                case .btreeNodePage:
+                    return(BTreeNodePage.self)
+                case .btreeRootPage:
+                    return(BTreeRootPage.self)
+                case .blockPage:
+                    return(BlockPage.self)
+                case .rootPage:
+                    return(RootPage.self)
+                case .overflowPage:
+                    return(OverflowPage.self)
+                case .hashtableRootPage:
+                    return(HashtableRootPage.self)
+                case .hashtableBucketPage:
+                    return(HashtableBucketPage.self)
+                case .freePage:
+                    return(Page.self)
                 }
             }
             
@@ -107,13 +139,15 @@ open class Page: PageProtocol
     // Local constants
     //
     public static let kPageMagicNumberOffset                   = 0
-    public static let kPageNextPageOffsetOffset                = kPageMagicNumberOffset + MemoryLayout<Integer64>.size
+    public static let kPagePageOffsetOffset                    = kPageMagicNumberOffset + MemoryLayout<Integer64>.size
+    public static let kPageNextPageOffsetOffset                = kPagePageOffsetOffset + MemoryLayout<Integer64>.size
     public static let kPagePreviousPageOffsetOffset            = kPageNextPageOffsetOffset + MemoryLayout<Integer64>.size
-    public static let kPageChecksumOffset                      = kPagePreviousPageOffsetOffset + MemoryLayout<Integer64>.size
-    public static let kPageFreeByteCountOffset                 = kPageChecksumOffset + MemoryLayout<Integer64>.size
-    public static let kPageFreeCellCountOffset                 = kPageFreeByteCountOffset + MemoryLayout<Integer64>.size
-    public static let kPageHeaderSizeInBytes                   = kPageNextPageOffsetOffset + MemoryLayout<Integer64>.size
+    public static let kPageFreeByteCountOffset                 = kPagePreviousPageOffsetOffset + MemoryLayout<Integer64>.size
+    public static let kPageChecksumOffset                      = kPageFreeByteCountOffset + MemoryLayout<Integer64>.size
+    public static let kPageFreeCellCountOffset                 = kPageChecksumOffset + MemoryLayout<Integer64>.size
+    public static let kPageHeaderSizeInBytes                   = kPageFreeCellCountOffset + MemoryLayout<Integer64>.size
     
+    public static let kPageStubSizeInBytes                     = kPageHeaderSizeInBytes
     public static let kPageSizeInBytes                         = 16 * 1024
     //
     // Page Magic Numbers
@@ -169,55 +203,201 @@ open class Page: PageProtocol
         }
         
     internal var isLockedInMemory: Boolean = false
-    internal var bufferSizeInBytes: Integer64 = 0
-    public   var buffer: RawPointer = RawPointer(bitPattern: 1)!
-    internal var magicNumber: MagicNumber = 0xDEADB00BCAFED00D
+    internal var bufferSizeInBytes: Integer64
+    public   var buffer: RawPointer
     private  let accessLock = NSRecursiveLock()
 
-    internal var checksum: Checksum = 0
+    open var checksum: Unsigned64
+        {
+        get
+            {
+            self.buffer.load(fromByteOffset: Page.kPageChecksumOffset,as: Unsigned64.self)
+            }
+        set
+            {
+            self.buffer.storeBytes(of: newValue, toByteOffset: Page.kPageChecksumOffset, as: Unsigned64.self)
+            self.isDirty = true
+            }
+        }
     
-    public   var freeByteCount: Integer64 = 0
+    open var magicNumber: Unsigned64
+        {
+        get
+            {
+            self.buffer.load(fromByteOffset: Page.kPageMagicNumberOffset,as: Unsigned64.self)
+            }
+        set
+            {
+            self.buffer.storeBytes(of: newValue, toByteOffset: Page.kPageMagicNumberOffset, as: Unsigned64.self)
+            self.isDirty = true
+            }
+        }
+        
+    open var freeByteCount: Integer64
+        {
+        get
+            {
+            self.buffer.load(fromByteOffset: Page.kPageFreeByteCountOffset,as: Integer64.self)
+            }
+        set
+            {
+            self.buffer.storeBytes(of: newValue, toByteOffset: Page.kPageFreeByteCountOffset, as: Integer64.self)
+            self.isDirty = true
+            }
+        }
+        
     internal var freeList: FreeBlockList!
-    internal var freeCellCount: Integer64 = 0
     
-    open     var pageOffset: Integer64 = 0
-    open     var nextPageOffset = 0
-    open     var previousPageOffset = 0
+    open var pageOffset: Integer64
+        {
+        get
+            {
+            self.buffer.load(fromByteOffset: Page.kPagePageOffsetOffset,as: Integer64.self)
+            }
+        set
+            {
+            self.buffer.storeBytes(of: newValue, toByteOffset: Page.kPagePageOffsetOffset, as: Integer64.self)
+            self.isDirty = true
+            }
+        }
+        
+    open var nextPageOffset: Integer64
+        {
+        get
+            {
+            self.buffer.load(fromByteOffset: Page.kPageNextPageOffsetOffset,as: Integer64.self)
+            }
+        set
+            {
+            self.buffer.storeBytes(of: newValue, toByteOffset: Page.kPageNextPageOffsetOffset, as: Integer64.self)
+            self.isDirty = true
+            }
+        }
+        
+    open var previousPageOffset: Integer64
+        {
+        get
+            {
+            self.buffer.load(fromByteOffset: Page.kPagePreviousPageOffsetOffset,as: Integer64.self)
+            }
+        set
+            {
+            self.buffer.storeBytes(of: newValue, toByteOffset: Page.kPagePreviousPageOffsetOffset, as: Integer64.self)
+            self.isDirty = true
+            }
+        }
+        
+    open var nextPage: (any PageProtocol)?
+        {
+        didSet
+            {
+            self.nextPageOffset = self.nextPage?.pageOffset ?? 0
+            }
+        }
+        
+    open var previousPage: (any PageProtocol)?
+        {
+        didSet
+            {
+            self.previousPageOffset = self.previousPage?.pageOffset ?? 0
+            }
+        }
     
-    internal var isDirty = false
+    open var isDirty = false
     internal var needsDefragmentation = false
     internal var lastAccessTimestamp = Medusa.timeInMicroseconds
+    public private(set) var isStubbed = false
     
-    public init()
+    public required init(stubBuffer: RawPointer,pageOffset offset: Integer64,sizeInBytes: Integer64)
         {
+        self.buffer = stubBuffer
+        self.bufferSizeInBytes = sizeInBytes
+        self.pageOffset = offset
+        self.isStubbed = true
+        self.checksum = 0
+        self.lastAccessTimestamp = Medusa.timeInMicroseconds
+        self.initFreeCellList()
         self.magicNumber = Page.kPageMagicNumber
+        }
+        
+    public required init(emptyPageAtOffset: Integer64)
+        {
         self.buffer = RawPointer.allocate(byteCount: Self.kPageSizeInBytes, alignment: 1)
         self.buffer.initializeMemory(as: Byte.self, repeating: 0, count: Self.kPageSizeInBytes)
         self.bufferSizeInBytes = Self.kPageSizeInBytes
-        self.freeCellCount = 0
-        self.pageOffset = 0
-        self.needsDefragmentation = false
-        self.isDirty = false
+        self.pageOffset = emptyPageAtOffset
+        self.checksum = 0
+        self.lastAccessTimestamp = Medusa.timeInMicroseconds
         self.initFreeCellList()
         self.freeList.writeAll(to: self.buffer)
-        self.lastAccessTimestamp = Medusa.timeInMicroseconds
+        self.magicNumber = Page.kPageMagicNumber
+        self.isStubbed = false
         }
         
-    public init(from buffer: RawPointer)
+    public required init()
+        {
+        let someBuffer = RawPointer.allocate(byteCount: Self.kPageSizeInBytes, alignment: 1)
+        someBuffer.initializeMemory(as: Byte.self, repeating: 0, count: Self.kPageSizeInBytes)
+        self.buffer = someBuffer
+        self.bufferSizeInBytes = Self.kPageSizeInBytes
+        self.pageOffset = 0
+        self.checksum = 0
+        self.lastAccessTimestamp = Medusa.timeInMicroseconds
+        self.initFreeCellList()
+        self.freeList.writeAll(to: self.buffer)
+        self.magicNumber = Page.kPageMagicNumber
+        self.isStubbed = false
+        }
+    //
+    // In this case, the page takes over ownership of the
+    // buffer because it will be freed when this object goes
+    // bye bye.
+    //
+    public required init(buffer: RawPointer,sizeInBytes: Integer64)
         {
         self.buffer = buffer
+        // these instance variables are all set evcen though they are loaded from the buffer,
+        // this is due to Swift's inane way of handling initialization of instance variables
+        self.bufferSizeInBytes = sizeInBytes
+        self.checksum = 0
+        self.freeList = FreeBlockList(buffer: buffer, atByteOffset: Self.kPageHeaderSizeInBytes)
+        self.lastAccessTimestamp = Medusa.timeInMicroseconds
         self.pageOffset = 0
         self.loadHeader()
-        self.freeList = FreeBlockList(buffer: self.buffer, atByteOffset: self.initialFreeCellOffset)
-        self.lastAccessTimestamp = Medusa.timeInMicroseconds
+        self.isStubbed = false
         }
-        
-    public init(copyOf page: Page)
+    //
+    // Take a copy of the buffer, but do not take ownership.
+    // The caller needs to deallocate the buffer
+    //
+    public init(copyPage page: Page)
         {
-        self.pageOffset = page.pageOffset
         self.buffer = RawPointer.allocate(byteCount: page.bufferSizeInBytes, alignment: 1)
         self.buffer.copyMemory(from: page.buffer, byteCount: page.bufferSizeInBytes)
         self.bufferSizeInBytes = page.bufferSizeInBytes
+        // these instance variables are all set evcen though they are loaded from the buffer,
+        // this is due to Swift's inane way of handling initialization of instance variables
+        self.pageOffset = 0
+        self.checksum = 0
+        self.freeByteCount = 0
+        self.loadHeader()
+        self.freeList = FreeBlockList(buffer: self.buffer, atByteOffset: self.initialFreeCellOffset)
+        self.lastAccessTimestamp = Medusa.timeInMicroseconds
+        self.isStubbed = false
+        self.pageOffset = page.pageOffset
+        }
+    //
+    // Take a copy of the buffer but do not take ownership of it.
+    //
+    public init(copyBuffer buffer: RawPointer,sizeInBytes: Integer64)
+        {
+        self.buffer = RawPointer.allocate(byteCount: sizeInBytes, alignment: 1)
+        self.buffer.copyMemory(from: buffer, byteCount: sizeInBytes)
+        self.bufferSizeInBytes = sizeInBytes
+        // these instance variables are all set evcen though they are loaded from the buffer,
+        // this is due to Swift's inane way of handling initialization of instance variables
+        self.pageOffset = 0
+        self.checksum = 0
         self.loadHeader()
         self.freeList = FreeBlockList(buffer: self.buffer, atByteOffset: self.initialFreeCellOffset)
         self.lastAccessTimestamp = Medusa.timeInMicroseconds
@@ -226,6 +406,25 @@ open class Page: PageProtocol
     deinit
         {
         self.buffer.deallocate()
+        }
+        
+    public func loadContents(from file: FileIdentifier) throws
+        {
+        let nextAddress = self.nextPageOffset
+        let previousAddress = self.previousPageOffset
+        self.buffer.deallocate()
+        self.bufferSizeInBytes = Self.kPageSizeInBytes
+        self.buffer = try file.readBuffer(atOffset: self.pageOffset, sizeInBytes: Self.kPageSizeInBytes)
+        self.freeList = FreeBlockList(buffer: self.buffer, atByteOffset: self.initialFreeCellOffset)
+        self.lastAccessTimestamp = Medusa.timeInMicroseconds
+        self.nextPageOffset = nextAddress
+        self.previousPageOffset = previousAddress
+        self.isStubbed = false
+        }
+        
+    public static func ==(lhs:Page,rhs: Page) -> Bool
+        {
+        lhs.pageOffset == rhs.pageOffset
         }
         
     public func lockInMemory()
@@ -256,29 +455,11 @@ open class Page: PageProtocol
         
     internal func storeHeader()
         {
-        self.freeCellCount = self.freeList.count
-        writeUnsigned64(self.buffer,self.magicNumber,Self.kPageMagicNumberOffset)
-        writeUnsigned64(self.buffer,self.checksum,Self.kPageChecksumOffset)
-        writeInteger64(self.buffer,self.freeByteCount,Self.kPageFreeByteCountOffset)
-        writeInteger64(self.buffer,self.freeCellCount,Self.kPageFreeCellCountOffset)
-        writeInteger64(self.buffer,self.nextPageOffset,Self.kPageNextPageOffsetOffset)
         self.lastAccessTimestamp = Medusa.timeInMicroseconds
         }
         
     internal func loadHeader()
         {
-        print("READING PAGE HEADER")
-        self.magicNumber = readUnsigned64(self.buffer,Self.kPageMagicNumberOffset)
-        var number = String(self.magicNumber,radix: 16,uppercase: true)
-        print("     MAGIC NUMBER \(number)")
-        number = String(self.checksum,radix: 16,uppercase: true)
-        print("     CHECKSUM \(number)")
-        // Store 0 into the checksum after we have loaded it so when we check the checksum it uses a value of 0 for the checksum in the calculation
-        writeInteger64(self.buffer,0,Self.kPageChecksumOffset)
-        self.freeByteCount = readInteger64(self.buffer,Self.kPageFreeByteCountOffset)
-        print("     FREE BYTE COUNT \(self.freeByteCount)")
-        self.freeCellCount = readInteger64(self.buffer,Self.kPageFreeCellCountOffset)
-        self.nextPageOffset = readInteger64(self.buffer,Self.kPageNextPageOffsetOffset)
         self.lastAccessTimestamp = Medusa.timeInMicroseconds
         }
         
@@ -296,15 +477,14 @@ open class Page: PageProtocol
         self.loadHeader()
         self.lastAccessTimestamp = Medusa.timeInMicroseconds
         }
-        
+
     internal func storeChecksum()
         {
         // set the checksum to 0 before we do the checksum to ensure we get a clean checksum
-        writeUnsigned64(self.buffer,UInt64(0),Self.kPageChecksumOffset)
+        self.checksum = 0
         let data = UnsafePointer<UInt32>(OpaquePointer(self.buffer))
         let length = Self.kPageSizeInBytes
         self.checksum = fletcher64(data,length)
-        writeUnsigned64(self.buffer,self.checksum,Self.kPageChecksumOffset)
         self.lastAccessTimestamp = Medusa.timeInMicroseconds
         }
         
@@ -330,7 +510,7 @@ open class Page: PageProtocol
         self.lastAccessTimestamp = Medusa.timeInMicroseconds
         }
         
-    internal func allocate(sizeInBytes: Int) throws -> Integer64
+    open func allocate(sizeInBytes: Int) throws -> Integer64
         {
         // adjust size up by 8 bytes for storage of the size of the allocated chunk
         if self.freeByteCount < sizeInBytes && self.needsDefragmentation

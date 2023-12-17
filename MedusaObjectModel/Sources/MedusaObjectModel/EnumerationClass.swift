@@ -9,6 +9,10 @@ import Foundation
 import MedusaCore
 import MedusaStorage
 
+open class EnumerationCase
+    {
+    }
+    
 open class EnumerationClass: Class
     {
     }

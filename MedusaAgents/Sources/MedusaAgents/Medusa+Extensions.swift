@@ -11,13 +11,12 @@ import MedusaObjectModel
 import MedusaStorage
 import MedusaPaging
 import MedusaNetworking
-import Path
 
 extension Medusa
     {
     public static let kMappedSegmentAddress: Integer64      = 0b01000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000
     public static let kMappedSegmentSizeInBytes: Integer64  = 0b00000000_00000000_00011111_11111111_11111111_11111111_11111111_11111111
-    public static let kMedusaDirectoryPath                  = Path("/Users/vincent/Medusa")!
+    public static let kMedusaDirectoryPath                  = "/Users/vincent/Medusa"
     public static let kMedusaDataDirectoryPath              = Medusa.kMedusaDirectoryPath + "/Data"
     public static let kMedusaLogDirectoryPath               = Medusa.kMedusaDirectoryPath + "/Logs"
     public static let kMedusaDataFilePath                   = Medusa.kMedusaDataDirectoryPath + "/Data.medusa"
@@ -77,33 +76,36 @@ extension Medusa
             
     private static func openOrCreateDataFile(needsInitialization: inout Bool) -> FileIdentifier
         {
-        if !Self.kMedusaDataDirectoryPath.isDirectory
+        var boolean = UnsafeMutablePointer<ObjCBool>.allocate(capacity: 1)
+        boolean.pointee = false
+        FileManager.default.fileExists(atPath: Self.kMedusaDataDirectoryPath, isDirectory: boolean)
+        if !boolean.pointee.boolValue
             {
-            LoggingAgent.shared.log("\(Self.kMedusaDataDirectoryPath.string) does not exist, files will be created.")
+            LoggingAgent.shared.log("\(Self.kMedusaDataDirectoryPath) does not exist, files will be created.")
             do
                 {
-                try FileManager.default.createDirectory(at: Self.kMedusaDataDirectoryPath.url, withIntermediateDirectories: true)
+                try FileManager.default.createDirectory(at: URL(filePath: Self.kMedusaDataDirectoryPath), withIntermediateDirectories: true)
                 needsInitialization = true
-                LoggingAgent.shared.log("Successfully created Data directory \(Self.kMedusaDataDirectoryPath.string).")
+                LoggingAgent.shared.log("Successfully created Data directory \(Self.kMedusaDataDirectoryPath).")
                 }
             catch let error
                 {
-                LoggingAgent.shared.log("Creation of directory \(Self.kMedusaDataDirectoryPath.string) failed with \(error).")
+                LoggingAgent.shared.log("Creation of directory \(Self.kMedusaDataDirectoryPath) failed with \(error).")
                 fatalError("Creation of Data directory failed, Medusa will now terminate.")
                 }
             }
         else
             {
-            LoggingAgent.shared.log("Found directory \(Self.kMedusaDataDirectoryPath.string).")
+            LoggingAgent.shared.log("Found directory \(Self.kMedusaDataDirectoryPath).")
             }
         let handle = FileIdentifier(path: kMedusaDataFilePath,logger: LoggingAgent.shared)
         if handle.fileExists
             {
-            LoggingAgent.shared.log("Found data file \(Self.kMedusaDataFilePath.string).")
+            LoggingAgent.shared.log("Found data file \(Self.kMedusaDataFilePath).")
             do
                 {
                 try handle.open(mode: .write)
-                LoggingAgent.shared.log("Successfully opened data file \(Self.kMedusaDataFilePath.string).")
+                LoggingAgent.shared.log("Successfully opened data file \(Self.kMedusaDataFilePath).")
                 return(handle)
                 }
             catch let error
@@ -118,7 +120,7 @@ extension Medusa
             do
                 {
                 try handle.open(mode: .write,.create,.truncate)
-                LoggingAgent.shared.log("Successfully created data file \(Self.kMedusaDataFilePath.string).")
+                LoggingAgent.shared.log("Successfully created data file \(Self.kMedusaDataFilePath).")
                 return(handle)
                 }
             catch let error

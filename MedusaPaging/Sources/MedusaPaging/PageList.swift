@@ -8,268 +8,373 @@
 import Foundation
 import MedusaCore
 
-public class PageList: Sequence
+//public typealias PageNodes = Array<PageNode>
+//
+//public class PageNode
+//    {
+//    public let pageReference: PageReference
+//    public var previousNode: PageNode?
+//    public var nextNode: PageNode?
+//    
+//    public init(pageReference: PageReference,previousNode: PageNode? = nil,nextNode: PageNode? = nil)
+//        {
+//        self.pageReference = pageReference
+//        self.previousNode = previousNode
+//        self.nextNode = nextNode
+//        }
+//        
+//    public func nodes(maximumCount: Integer64,matching: (PageReference) -> Bool,orderedBy: (PageNode,PageNode) -> Bool) -> PageNodes
+//        {
+//        var nodes = PageNodes()
+//        var node: PageNode? = self
+//        var count = 0
+//        while node.isNotNil && count < maximumCount
+//            {
+//            if matching(node!.pageReference)
+//                {
+//                nodes.append(node!)
+//                count += 1
+//                }
+//            node = node!.nextNode
+//            }
+//        return(nodes.sorted(by: orderedBy))
+//        }
+//    }
+//    
+//public class PageReference
+//    {
+//    public var lastAccessTimestamp: Integer64
+//        {
+//        self.page.isNotNil ? self.page!.lastAccessTimestamp : 0
+//        }
+//        
+//    public var isPageResident: Boolean
+//        {
+//        self.page.isNotNil
+//        }
+//        
+//    public var freeSpaceInBytes: Integer64
+//        {
+//        self.page.isNotNil ? self.page!.freeByteCount : self._freeSpaceInBytes!
+//        }
+//        
+//    public var isPageLockedInMemory: Bool
+//        {
+//        self.page.isNil ? false : self.page!.isLockedInMemory
+//        }
+//        
+//    public var isPageDirty: Boolean
+//        {
+//        self.page.isNil ? false : self.page!.isDirty
+//        }
+//        
+//    public var pageOffset: Integer64
+//        {
+//        self.page.isNil ? self._pageOffset! : self.page!.pageOffset
+//        }
+//        
+//    public var nextPageOffset: Integer64
+//        {
+//        self._nextPageOffset.isNil ? self.page!.nextPageOffset : self._nextPageOffset!
+//        }
+//        
+//    public var previousPageOffset: Integer64
+//        {
+//        self._previousPageOffset.isNil ? self.page!.previousPageOffset : self._previousPageOffset!
+//        }
+//        
+//    private var _pageOffset: Integer64?
+//    public var page: Page?
+//    private var _nextPageOffset: Integer64?
+//    private var _previousPageOffset: Integer64?
+//    private var _freeSpaceInBytes: Integer64?
+//    
+//    public private(set) var isDirty = false
+//    
+//    public init(pageOffset: Integer64,previousPageOffset: Integer64,nextPageOffset: Integer64)
+//        {
+//        self.page = nil
+//        self._pageOffset = pageOffset
+//        self._nextPageOffset = nextPageOffset
+//        self._previousPageOffset = previousPageOffset
+//        }
+//        
+//    public init(page: Page)
+//        {
+//        self.page = page
+//        self._pageOffset = nil
+//        }
+//        
+//    public func setNextPageOffset(_ offset: Integer64?)
+//        {
+//        self._nextPageOffset = offset
+//        self.isDirty = true
+//        }
+//        
+//    public func setPreviousPageOffset(_ offset: Integer64?)
+//        {
+//        self._previousPageOffset = offset
+//        self.isDirty = true
+//        }
+//        
+//    public func flushPage(to file: FileIdentifier) throws
+//        {
+//        if self._nextPageOffset.isNotNil
+//            {
+//            self.page!.nextPageOffset = self._nextPageOffset!
+//            }
+//        if self._previousPageOffset.isNotNil
+//            {
+//            self.page!.previousPageOffset = self._previousPageOffset!
+//            }
+//        try page!.store()
+//        try file.write(self.page!.buffer, atOffset: self.page!.pageOffset, sizeInBytes: self.page!.sizeInBytes)
+//        self._pageOffset = self.page!.pageOffset
+//        self.page = nil
+//        }
+//        
+//    public func faultPageIn(from file: FileIdentifier) throws -> Page?
+//        {
+//        let buffer = try file.readBuffer(atOffset: self.pageOffset, sizeInBytes: Page.kPageSizeInBytes)
+//        if let kind = Page.Kind(magicNumber: buffer.load(fromByteOffset: 0, as: Unsigned64.self))
+//            {
+//            let someClass = kind.pageClass
+//            self.page = someClass.init(buffer: buffer,sizeInBytes: Page.kPageSizeInBytes)
+//            if self._nextPageOffset.isNotNil
+//                {
+//                self.page!.nextPageOffset = self._nextPageOffset!
+//                }
+//            if self._previousPageOffset.isNotNil
+//                {
+//                self.page!.previousPageOffset = self._previousPageOffset!
+//                }
+//            return(page)
+//            }
+//        return(nil)
+//        }
+//        
+//    public func write(toFile file: FileIdentifier) throws
+//        {
+//        try file.seek(toOffset: self.pageOffset + MemoryLayout<Integer64>.size)
+//        try file.write(self.nextPageOffset)
+//        try file.write(self.previousPageOffset)
+//        }
+//        
+//    public func lockPageInMemory()
+//        {
+//        self.page?.lockInMemory()
+//        }
+//        
+//    public func unlockPageInMemory()
+//        {
+//        self.page?.unlockInMemory()
+//        }
+//        
+//    public func clearOffsets()
+//        {
+//        self._previousPageOffset = nil
+//        self._nextPageOffset = nil
+//        }
+//        
+//    public static func <(lhs: PageReference,rhs: PageReference) -> Bool
+//        {
+//        lhs.pageOffset < rhs.pageOffset
+//        }
+//        
+//    public static func ==(lhs: PageReference,rhs: PageReference) -> Bool
+//        {
+//        lhs.pageOffset == rhs.pageOffset
+//        }
+//    }
+//        
+public class PageList<P>: Sequence where P:PageProtocol
     {
-    public class PageReference
-        {
-        public var lastAccessTimestamp: Integer64
-            {
-            self.page.isNotNil ? self.page!.lastAccessTimestamp : 0
-            }
-            
-        public var isPageResident: Boolean
-            {
-            self.page.isNotNil
-            }
-            
-        public var freeByteCount: Integer64
-            {
-            self.page.isNotNil ? self.page!.freeByteCount : 0
-            }
-            
-        public var isPageLockedInMemory: Bool
-            {
-            self.page.isNil ? false : self.page!.isLockedInMemory
-            }
-            
-        public var isPageDirty: Boolean
-            {
-            self.page.isNil ? false : self.page!.isDirty
-            }
-            
-        public var pageOffset: Integer64
-            {
-            self.page.isNil ? self._pageOffset! : self.page!.pageOffset
-            }
-            
-        public var pageKind: Page.Kind
-            {
-            self.page.isNil ? self._pageKind! : self.page!.kind
-            }
-            
-        public var nextPageOffset: Integer64
-            {
-            self.page.isNil ? self._nextPageOffset! : self.page!.nextPageOffset
-            }
-            
-        public var previousPageOffset: Integer64
-            {
-            self.page.isNil ? self._previousPageOffset! : self.page!.previousPageOffset
-            }
-            
-        public var _pageOffset: Integer64?
-        public var page: Page?
-        public var _pageKind: Page.Kind?
-        public var _nextPageOffset: Integer64?
-        public var _previousPageOffset: Integer64?
-        
-        public init(pageKind: Page.Kind,previousPageOffset: Integer64,nextPageOffset: Integer64)
-            {
-            self._pageKind = pageKind
-            self._nextPageOffset = nextPageOffset
-            self._previousPageOffset = previousPageOffset
-            }
-            
-        public init(page: Page)
-            {
-            self.page = page
-            self._pageOffset = nil
-            }
-            
-        public func flushPage(to file: FileIdentifier) throws
-            {
-            try file.writeBuffer(self.page!.buffer, at: self.page!.pageOffset, sizeInBytes: self.page!.sizeInBytes)
-            self._pageOffset = self.page!.pageOffset
-            self.page = nil
-            }
-            
-        public func lockPageInMemory()
-            {
-            self.page?.lockInMemory()
-            }
-            
-        public func unlockPageInMemory()
-            {
-            self.page?.unlockInMemory()
-            }
-        }
-        
-    //
-    // Page entries hold references because the pages may not all be resident
-    // and there might be an external process that flushes or removes pages
-    // which means if the entry held onto the page, that page might no longer be valid.
-    // Using a page reference allows an external process holding on to the reference
-    // to dump the page for whatever reason and not screw up the page entries.
-    // Additonally pages might be held in more that one page list at the same time
-    // there might, for example be a global page list holding on to a page
-    // and a specific list holding on to the same page. This way both lists
-    // can hold onto a reference and manipualte the page safely.
-    //
-    public class PageEntry: Equatable
-        {
-        public var isPageResident: Boolean
-            {
-            self.pageReference.isPageResident
-            }
-            
-        public var freeByteCount: Integer64
-            {
-            self.pageReference.freeByteCount
-            }
-            
-        public var pageOffset: Integer64
-            {
-            self.pageReference.pageOffset
-            }
-            
-        public var pageReference: PageReference
-        public var nextEntry: PageEntry?
-        public var previousEntry: PageEntry?
-        
-        public init(pageReference: PageReference,previousEntry: PageEntry? = nil,nextEntry: PageEntry? = nil)
-            {
-            self.pageReference = pageReference
-            self.previousEntry = previousEntry
-            self.nextEntry = nextEntry
-            }
-            
-        public static func ==(lhs: PageEntry,rhs: PageEntry) -> Bool
-            {
-            lhs.pageReference.pageOffset == rhs.pageReference.pageOffset
-            }
-            
-        public func clearEntries()
-            {
-            self.nextEntry = nil
-            self.previousEntry = nil
-            }
-        }
-        
-    public var firstEntry: PageEntry?
-    private var lastEntry: PageEntry?
-    private var startingAtOffset: Integer64 = 0
-    private var pageEntriesByPageOffset = Dictionary<Integer64,PageEntry>()
+    public var firstPage: P?
+    private var lastPage: P?
+    private var startingAtOffset: Integer64
     
-    public init()
+    public init(startingAtOffset: Integer64)
         {
-        self.firstEntry = nil
-        self.lastEntry = nil
+        self.startingAtOffset = startingAtOffset
         }
         
-    public func append(_ pageEntry: PageEntry)
+    public func insert(_ page: P) where P:PageProtocol
         {
-        self.pageEntriesByPageOffset[pageEntry.pageOffset] = pageEntry
-        if self.firstEntry.isNil
+        page.previousPage = self.firstPage
+        page.nextPage = self.firstPage?.nextPage
+        let oldPage = self.firstPage
+        self.firstPage = page
+        if oldPage === self.lastPage
             {
-            self.startingAtOffset = pageEntry.pageReference.pageOffset
-            self.firstEntry = pageEntry
-            pageEntry.nextEntry = nil
-            pageEntry.previousEntry = nil
-            self.lastEntry = self.firstEntry
+            self.lastPage = page
+            }
+        }
+        
+    public func append(_ page: P) where P:PageProtocol
+        {
+        page.previousPage = self.lastPage
+        page.nextPage = nil
+        self.lastPage?.nextPage = page
+        let oldPage = self.lastPage
+        self.lastPage = page
+        if oldPage === self.firstPage
+            {
+            self.firstPage = page
+            }
+        }
+
+    public func findFirstResidentPageWithSpace(sizeInBytes: Integer64) -> P?
+        {
+        var page = self.firstPage
+        while page.isNotNil
+            {
+            if !page!.isStubbed && page!.freeByteCount >= sizeInBytes
+                {
+                return(page)
+                }
+            page = page!.nextPage as? P
+            }
+        return(nil)
+        }
+        
+    public func findFirstPageWithSpace(sizeInBytes: Integer64) -> P?
+        {
+        var page = self.firstPage
+        while page.isNotNil
+            {
+            if page!.freeByteCount >= sizeInBytes
+                {
+                return(page)
+                }
+            page = page!.nextPage as? P
+            }
+        return(nil)
+        }
+        
+    public func findFirstStubbedPageWithSpace(sizeInBytes: Integer64) -> P?
+        {
+        var page = self.firstPage
+        while page.isNotNil
+            {
+            if page!.isStubbed && page!.freeByteCount >= sizeInBytes
+                {
+                return(page)
+                }
+            page = page!.nextPage as? P
+            }
+        return(nil)
+        }
+        
+    public func loadStubList(from file: FileIdentifier) throws -> PageList<P>
+        {
+        var nextOffset = self.startingAtOffset
+        while nextOffset != 0
+            {
+            let stub = try self.loadPageStub(at: nextOffset,from: file)
+            self.append(stub)
+            nextOffset = stub.nextPageOffset
+            }
+        return(self)
+        }
+        
+    private func loadPageStub(at offset: Integer64,from file: FileIdentifier) throws -> P
+        {
+        let buffer = try file.readBuffer(atOffset: offset, sizeInBytes: Page.kPageStubSizeInBytes)
+        let magicNumber = buffer.load(fromByteOffset: 0, as: Unsigned64.self)
+        if let kind = Page.Kind(magicNumber: magicNumber)
+            {
+            let pageClass = kind.pageClass
+            let instance = pageClass.init(stubBuffer: buffer,pageOffset: offset,sizeInBytes: Page.kPageStubSizeInBytes) as! P
+            return(instance)
             }
         else
             {
-            let someEntry = self.lastEntry
-            self.lastEntry = pageEntry
-            self.lastEntry!.previousEntry = someEntry
-            someEntry!.nextEntry = pageEntry
-            
+            throw(SystemIssue(code: .readingPageStubFoundInvalidPageKind, agentKind: .pageServer))
             }
         }
         
-    public func append(_ page: Page)
+    public func findFirstResidentPage() -> P?
         {
-        self.append(PageEntry(pageReference: PageReference(page: page)))
-        }
-        
-//    @discardableResult
-//    public func addPageReference(_ pageReference: PageReference) -> PageReference
-//        {
-//        if self.firstEntry.isNil
-//            {
-//            self.firstEntry = PageEntry(pageReference: pageReference,previousEntry: nil,nextEntry: nil)
-//            self.lastEntry = self.firstEntry
-//            }
-//        else
-//            {
-//            self.lastEntry = PageEntry(pageReference: pageReference,previousEntry: self.lastEntry,nextEntry: nil)
-//            }
-//        return(pageReference)
-//        }
-        
-    public func findPageWithSpace(sizeInBytes: Integer64) -> Page?
-        {
-        for entry in self where entry.isPageResident
+        var page = self.firstPage
+        while page.isNotNil
             {
-            if entry.pageReference.freeByteCount >= sizeInBytes
+            if !page!.isStubbed
                 {
-                return(entry.pageReference.page!)
+                return(page)
                 }
+            page = page!.nextPage as? P
             }
         return(nil)
         }
         
-    @discardableResult
-    public func removePage(at offset: Integer64) -> PageReference
+    public func findFirstStubbedPage() -> P?
         {
-        }
-        
-    @discardableResult
-    public func removePage(page: Page) -> PageReference?
-        {
-        for entry in self
+        var page = self.firstPage
+        while page.isNotNil
             {
-            if entry.pageReference.pageOffset == page.pageOffset
+            if page!.isStubbed
                 {
-                if entry == self.firstEntry
-                    {
-                    self.firstEntry = entry.nextEntry
-                    entry.clearEntries()
-                    return(entry.pageReference)
-                    }
-                else if entry == self.lastEntry
-                    {
-                    self.lastEntry = entry.previousEntry
-                    entry.clearEntries()
-                    }
-                else
-                    {
-                    entry.previousEntry?.nextEntry = entry.nextEntry
-                    entry.nextEntry?.previousEntry = entry.previousEntry
-                    entry.clearEntries()
-                    return(entry.pageReference)
-                    }
+                return(page)
                 }
+            page = page!.nextPage as? P
             }
         return(nil)
         }
+    //
+    // This method assumes the page being removed is actually in this list
+    // and uses its instance variables accordingly.
+    //
+    public func removePage(page: P)
+        {
+        if page === self.firstPage
+            {
+            let oldPage = self.firstPage
+            self.firstPage = page.nextPage as? P
+            self.firstPage?.previousPage = nil
+            if oldPage === self.lastPage
+                {
+                self.lastPage = page
+                }
+            }
+        else if page === self.lastPage
+            {
+            let oldPage = self.lastPage
+            self.lastPage = page
+            if oldPage === self.firstPage
+                {
+                self.firstPage = self.lastPage
+                }
+            }
+        else
+            {
+            page.previousPage?.nextPage = page.nextPage
+            page.nextPage?.previousPage = page.previousPage
+            }
+        }
         
-    public func makeIterator() -> PageListIterator
+    public func makeIterator() -> PageListIterator<P>
         {
         PageListIterator(pageList: self)
         }
     }
 
 
-public struct PageListIterator: IteratorProtocol
+public struct PageListIterator<P>: IteratorProtocol where P:PageProtocol
     {
-    private let pageList: PageList
-    private var entry: PageList.PageEntry?
+    private let pageList: PageList<P>
+    private var page: (any PageProtocol)?
     
-    public init(pageList: PageList)
+    public init(pageList: PageList<P>)
         {
         self.pageList = pageList
-        self.entry = pageList.firstEntry
+        self.page = self.pageList.firstPage
         }
         
-    public mutating func next() -> PageList.PageEntry?
+    public mutating func next() -> P?
         {
-        if self.entry.isNil
-            {
-            return(nil)
-            }
-        let someEntry = self.entry
-        self.entry = self.entry!.nextEntry
-        return(someEntry)
+        let somePage = self.page?.nextPage
+        let nextPage = self.page
+        self.page = somePage
+        return(nextPage as? P)
         }
     }

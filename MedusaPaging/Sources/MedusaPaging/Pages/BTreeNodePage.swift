@@ -26,13 +26,49 @@ open class BTreeNodePage: Page
     public static let kBTreePageSizeInBytes                      = Page.kPageSizeInBytes
     public static let kBTreePageKeysOffset                       = BTreeNodePage.kBTreePageHeaderSizeInBytes
     
+    public static let kBTreeNodePageDefaultKeysPerPage           = 50
+    
     public typealias ChildPointers = Array<Int>
     public typealias Keys = Array<Integer64>
     
     private var children: ChildPointers!
-    private var keyCount: Integer64 = 0
+    
+    private var keyCount: Integer64
+        {
+        get
+            {
+            self.buffer.load(fromByteOffset: Self.kBTreePageKeyCountOffset, as: Integer64.self)
+            }
+        set
+            {
+            self.buffer.storeBytes(of: newValue, toByteOffset: Self.kBTreePageKeyCountOffset, as: Integer64.self)
+            }
+        }
+        
     private var keysPerPage: Integer64
-    private  var isLeaf: Bool = false
+        {
+        get
+            {
+            self.buffer.load(fromByteOffset: Self.kBTreePageKeysPerPageOffset, as: Integer64.self)
+            }
+        set
+            {
+            self.buffer.storeBytes(of: newValue, toByteOffset: Self.kBTreePageKeysPerPageOffset, as: Integer64.self)
+            }
+        }
+        
+    private var isLeaf: Boolean
+        {
+        get
+            {
+            self.buffer.load(fromByteOffset: Self.kBTreePageIsLeafOffset, as: Boolean.self)
+            }
+        set
+            {
+            self.buffer.storeBytes(of: newValue, toByteOffset: Self.kBTreePageIsLeafOffset, as: Boolean.self)
+            }
+        }
+        
     private var childPointersOffset: Int = 0
     private var keys: Keys!
     open var _keyClass: any KeyType
@@ -103,7 +139,7 @@ open class BTreeNodePage: Page
         
     public convenience init(keysPerPage: Integer64,keyClass: any KeyType,valueClass: any ValueType)
         {
-        self.init()
+        self.init(emptyPageAtOffset: 0)
         self.magicNumber = Page.kBTreeNodePageMagicNumber
         self.children = ChildPointers(repeating: 0,count: keysPerPage + 1)
         self.keys = Keys(repeating: 0, count: keysPerPage)
@@ -114,19 +150,30 @@ open class BTreeNodePage: Page
         self.keysPerPage = keysPerPage
         }
         
-    public override init()
+//    public required init()
+//        {
+//        self.keysPerPage = BTreeNodePage.kBTreeNodePageDefaultKeysPerPage
+//        self._keyClass = 
+//        super.init()
+//        }
+        
+    public required init(buffer: RawPointer,sizeInBytes: Integer64)
         {
         fatalError()
         }
-        
-    public override init(from buffer: RawPointer)
-        {
-        fatalError()
-//        self.keysPerPage = readInteger64(buffer,Self.kBTreePageKeysPerPageOffset)
-//        super.init(from: buffer)
-//        self.loadKeysAndChildren()
-        }
-        
+    
+    public required init() {
+        fatalError("init() has not been implemented")
+    }
+    
+    public required init(emptyPageAtOffset: Integer64) {
+        fatalError("init(emptyPageAtOffset:) has not been implemented")
+    }
+    
+    public required init(stubBuffer: RawPointer, pageOffset offset: Integer64, sizeInBytes: Integer64) {
+        fatalError("init(stubBuffer:pageOffset:sizeInBytes:) has not been implemented")
+    }
+    
     public override func store() throws
         {
         try super.store()
@@ -243,8 +290,8 @@ open class BTreeNodePage: Page
             {
             var byteOffset = try self.allocate(sizeInBytes: someKeys[index].sizeInBytes + someValues[index].sizeInBytes)
             writeInteger64WithOffset(self.buffer,byteOffset,&keyPointerOffset)
-            someKeys[index].write(into: self.buffer, atByteOffset: &byteOffset)
-            someValues[index].write(into: self.buffer,atByteOffset: &byteOffset)
+            try someKeys[index].write(into: self.buffer, atByteOffset: &byteOffset)
+            try someValues[index].write(into: self.buffer,atByteOffset: &byteOffset)
             }
         offset = childPointersOffset
         for index in 0..<self.keysPerPage
@@ -294,7 +341,7 @@ open class BTreeNodePage: Page
             }
         else
             {
-            let page2 = try pageServer.loadPage(at: self.children[position]) as! BTreeNodePage
+            let page2 = pageServer.loadPage(at: self.children[position],as: BTreeNodePage.self)
             var middle = KeyValue()
             let nextPage = try page2.insert(pageServer: pageServer, key: key, value: value, medianKeyValue: &middle)
             if let nextPage
@@ -316,7 +363,7 @@ open class BTreeNodePage: Page
             {
             let middle = self.keyCount / 2
             medianKeyValue = KeyValue(key: self.key(at: middle),value: self.value(at: middle))
-            let newPage = pageServer.allocateBTreePage(keysPerPage: self.keysPerPage,keyClass: self._keyClass,valueClass: self._valueClass)
+            let newPage = pageServer.allocateBTreeNodePage(keysPerPage: self.keysPerPage,keyClass: self._keyClass,valueClass: self._valueClass)
             newPage.keyCount = self.keyCount - middle - 1
             newPage.isLeaf = self.isLeaf
             for index in 0..<newPage.keyCount
@@ -344,8 +391,8 @@ open class BTreeNodePage: Page
         {
         var keyOffset = try self.allocate(sizeInBytes: key.sizeInBytes + value.sizeInBytes)
         let savedOffset = keyOffset
-        key.write(into: self.buffer, atByteOffset: &keyOffset)
-        value.write(into: self.buffer,atByteOffset: &keyOffset)
+        try key.write(into: self.buffer, atByteOffset: &keyOffset)
+        try value.write(into: self.buffer,atByteOffset: &keyOffset)
         return(savedOffset)
         }
 //        

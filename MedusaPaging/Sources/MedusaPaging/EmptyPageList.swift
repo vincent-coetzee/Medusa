@@ -26,7 +26,7 @@ public class EmptyPageList
             
         public func loadNextCell(fromFile: FileIdentifier) throws -> EmptyPageCell
             {
-            let nextOffset = try fromFile.readInteger64(at: self.pageOffset)
+            let nextOffset = try fromFile.readInteger64(atOffset: self.pageOffset)
             guard nextOffset != 0 else
                 {
                 return(self)
@@ -38,7 +38,7 @@ public class EmptyPageList
             
         public func storeCell(inFile: FileIdentifier) throws
             {
-            try inFile.writeInteger64(self.nextCell?.pageOffset ?? 0,at: self.pageOffset)
+            try inFile.write(self.nextCell?.pageOffset ?? 0,atOffset: self.pageOffset)
             try self.nextCell?.storeCell(inFile: inFile)
             }
         }

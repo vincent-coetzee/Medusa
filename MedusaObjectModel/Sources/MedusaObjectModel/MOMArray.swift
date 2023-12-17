@@ -11,4 +11,8 @@ import MedusaStorage
 
 open class MOMArray: MOMCollection
     {
+    public var `class`: Class
+        {
+        Class.arrayClass
+        }
     }

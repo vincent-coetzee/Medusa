@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BF06A4972B1E724F0034D7BF /* MOPAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF06A4962B1E724F0034D7BF /* MOPAddress.swift */; };
 		BF1504222B28A09200FFD996 /* MedusaCore in Frameworks */ = {isa = PBXBuildFile; productRef = BF1504212B28A09200FFD996 /* MedusaCore */; };
 		BF2B00EC2B20AFAD00E83152 /* MedusaStorage in Frameworks */ = {isa = PBXBuildFile; productRef = BF2B00EB2B20AFAD00E83152 /* MedusaStorage */; };
 		BF327E1B2B2211360077FF6B /* MedusaPaging in Frameworks */ = {isa = PBXBuildFile; productRef = BF327E1A2B2211360077FF6B /* MedusaPaging */; };
@@ -18,22 +17,15 @@
 		BF6C7E1D2B0E3543006DB858 /* FieldCellField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E1C2B0E3543006DB858 /* FieldCellField.swift */; };
 		BF75F1E32B28922F0046F259 /* MedusaNetworking in Frameworks */ = {isa = PBXBuildFile; productRef = BF75F1E22B28922F0046F259 /* MedusaNetworking */; };
 		BF9B5E3B2B28C05700BDF2D8 /* Socket in Frameworks */ = {isa = PBXBuildFile; productRef = BF9B5E3A2B28C05700BDF2D8 /* Socket */; };
-		BF9B5E3E2B28C06E00BDF2D8 /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = BF9B5E3D2B28C06E00BDF2D8 /* Path */; };
 		BF9B5E402B28C7A200BDF2D8 /* Fletcher in Frameworks */ = {isa = PBXBuildFile; productRef = BF9B5E3F2B28C7A200BDF2D8 /* Fletcher */; };
-		BFA944542B1111C100526CF1 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA944532B1111C100526CF1 /* File.swift */; };
-		BFAAF03E2B0FE55A00A2FFD1 /* SystemIssue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAAF03D2B0FE55A00A2FFD1 /* SystemIssue.swift */; };
 		BFAE71F22B1FAD8500C15E0F /* MedusaObjectModel in Frameworks */ = {isa = PBXBuildFile; productRef = BFAE71F12B1FAD8500C15E0F /* MedusaObjectModel */; };
-		BFBAF5132B172BC1003ED388 /* FileHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAF5122B172BC1003ED388 /* FileHandle.swift */; };
 		BFD674452B05E79F0086932A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BFD674442B05E79F0086932A /* Info.plist */; };
-		BFD674472B05EAE20086932A /* Medusa.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD674462B05EAE20086932A /* Medusa.swift */; };
 		BFD6744F2B05EBE60086932A /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD6744E2B05EBE60086932A /* main.swift */; };
 		BFD674762B0659DA0086932A /* BufferBrowserWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD674742B0659DA0086932A /* BufferBrowserWindowController.swift */; };
 		BFD674792B065A9C0086932A /* BufferBrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD674782B065A9C0086932A /* BufferBrowserView.swift */; };
 		BFD6747D2B06689E0086932A /* BufferBrowserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD6747C2B06689E0086932A /* BufferBrowserViewController.swift */; };
 		BFD674812B066A560086932A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BFD674802B066A560086932A /* Main.storyboard */; };
 		BFD6E1C92B238C9A00FC0A0A /* MedusaAgents in Frameworks */ = {isa = PBXBuildFile; productRef = BFD6E1C82B238C9A00FC0A0A /* MedusaAgents */; };
-		BFEEF9262B1C8CBD00F42C58 /* Path+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEEF9252B1C8CBD00F42C58 /* Path+Extensions.swift */; };
-		BFEEF92F2B1CFABC00F42C58 /* Task+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEEF92E2B1CFABC00F42C58 /* Task+Extensions.swift */; };
 		BFFB2E7D2B05363300254090 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E7C2B05363300254090 /* AppDelegate.swift */; };
 		BFFB2E7F2B05363300254090 /* PrimaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFB2E7E2B05363300254090 /* PrimaryViewController.swift */; };
 		BFFB2E812B05363500254090 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BFFB2E802B05363500254090 /* Assets.xcassets */; };
@@ -53,69 +45,31 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		BF06A4882B1E1FDE0034D7BF /* MOPStringObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPStringObject.swift; sourceTree = "<group>"; };
-		BF06A48A2B1E51810034D7BF /* MOPSystemDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPSystemDictionary.swift; sourceTree = "<group>"; };
-		BF06A48E2B1E53ED0034D7BF /* MOPDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPDictionary.swift; sourceTree = "<group>"; };
-		BF06A4902B1E54460034D7BF /* MOPIdentityDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPIdentityDictionary.swift; sourceTree = "<group>"; };
-		BF06A4922B1E54EE0034D7BF /* MOPKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPKey.swift; sourceTree = "<group>"; };
-		BF06A4942B1E65BC0034D7BF /* MOPHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPHeader.swift; sourceTree = "<group>"; };
-		BF06A4962B1E724F0034D7BF /* MOPAddress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPAddress.swift; sourceTree = "<group>"; };
-		BF1927AF2B1A6B4200643243 /* MOPMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPMessage.swift; sourceTree = "<group>"; };
-		BF1927B12B1A741700643243 /* MOPString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPString.swift; sourceTree = "<group>"; };
-		BF1927B32B1A7F6400643243 /* MOPIPv6Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPIPv6Address.swift; sourceTree = "<group>"; };
-		BF1927B52B1A7FC200643243 /* MOPBits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPBits.swift; sourceTree = "<group>"; };
 		BF327E1C2B2215630077FF6B /* Fletcher */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Fletcher; sourceTree = "<group>"; };
 		BF521F3A2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferBrowserPopoverViewController.swift; sourceTree = "<group>"; };
 		BF6C7E122B0E259A006DB858 /* BTreePageInspectorWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTreePageInspectorWindowController.swift; sourceTree = "<group>"; };
 		BF6C7E142B0E25B8006DB858 /* BTreePageInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTreePageInspectorViewController.swift; sourceTree = "<group>"; };
 		BF6C7E1A2B0E307E006DB858 /* FieldValueField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldValueField.swift; sourceTree = "<group>"; };
 		BF6C7E1C2B0E3543006DB858 /* FieldCellField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldCellField.swift; sourceTree = "<group>"; };
-		BF7075F72B16016300E3F6D8 /* BTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTree.swift; sourceTree = "<group>"; };
-		BF7075F92B1626C100E3F6D8 /* Stack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
-		BF7075FB2B162D5A00E3F6D8 /* Identifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Identifier.swift; sourceTree = "<group>"; };
-		BF7075FD2B16300B00E3F6D8 /* MOPModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPModule.swift; sourceTree = "<group>"; };
-		BF7076012B16594100E3F6D8 /* MOPRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPRoot.swift; sourceTree = "<group>"; };
-		BF7FFCCA2B079CA3001D2F93 /* MOPChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPChannel.swift; sourceTree = "<group>"; };
-		BF7FFCCC2B079CB9001D2F93 /* MOPWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPWriter.swift; sourceTree = "<group>"; };
-		BF7FFCCE2B079CDA001D2F93 /* MOPReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPReader.swift; sourceTree = "<group>"; };
-		BF7FFCD02B079D10001D2F93 /* MOPInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPInstance.swift; sourceTree = "<group>"; };
-		BF7FFCD22B079D48001D2F93 /* MOPObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPObject.swift; sourceTree = "<group>"; };
-		BF7FFCD42B079D67001D2F93 /* MOPPrimitives.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPPrimitives.swift; sourceTree = "<group>"; };
-		BF7FFCD62B079DA1001D2F93 /* MOPClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPClass.swift; sourceTree = "<group>"; };
-		BF7FFCD82B079DC1001D2F93 /* MOPSlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPSlot.swift; sourceTree = "<group>"; };
-		BF7FFCDA2B07A04F001D2F93 /* MOPBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPBuffer.swift; sourceTree = "<group>"; };
-		BF7FFCDE2B07AA72001D2F93 /* MOPEnumeration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPEnumeration.swift; sourceTree = "<group>"; };
-		BF7FFCE22B07AB3D001D2F93 /* MOPEnumerationCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPEnumerationCase.swift; sourceTree = "<group>"; };
-		BF7FFCE42B07FEF9001D2F93 /* MOPRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPRepository.swift; sourceTree = "<group>"; };
-		BF9369422B0BF33700921D6E /* Page.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Page.swift; sourceTree = "<group>"; };
-		BFA944532B1111C100526CF1 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
-		BFAAF03D2B0FE55A00A2FFD1 /* SystemIssue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemIssue.swift; sourceTree = "<group>"; };
 		BFB2863C2B28A13F00B9C15F /* MedusaCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaCore; sourceTree = "<group>"; };
-		BFBAF5122B172BC1003ED388 /* FileHandle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHandle.swift; sourceTree = "<group>"; };
 		BFC04BC72B28A3640076CD81 /* MedusaStorage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaStorage; sourceTree = "<group>"; };
 		BFC04BC82B28A36F0076CD81 /* MedusaPaging */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaPaging; sourceTree = "<group>"; };
 		BFC04BC92B28A3740076CD81 /* MedusaObjectModel */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaObjectModel; sourceTree = "<group>"; };
 		BFC04BCA2B28A3780076CD81 /* MedusaNetworking */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaNetworking; sourceTree = "<group>"; };
 		BFC04BCB2B28A37B0076CD81 /* MedusaAgents */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaAgents; sourceTree = "<group>"; };
 		BFD674442B05E79F0086932A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BFD674462B05EAE20086932A /* Medusa.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Medusa.swift; sourceTree = "<group>"; };
 		BFD6744C2B05EBE60086932A /* MedusaTester */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MedusaTester; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFD6744E2B05EBE60086932A /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		BFD674662B0607720086932A /* IPV6Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPV6Address.swift; sourceTree = "<group>"; };
 		BFD674742B0659DA0086932A /* BufferBrowserWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferBrowserWindowController.swift; sourceTree = "<group>"; };
 		BFD674782B065A9C0086932A /* BufferBrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferBrowserView.swift; sourceTree = "<group>"; };
 		BFD6747C2B06689E0086932A /* BufferBrowserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferBrowserViewController.swift; sourceTree = "<group>"; };
 		BFD674802B066A560086932A /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
-		BFD674832B0689990086932A /* PermissionsToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsToken.swift; sourceTree = "<group>"; };
-		BFEEF9252B1C8CBD00F42C58 /* Path+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Path+Extensions.swift"; sourceTree = "<group>"; };
-		BFEEF92E2B1CFABC00F42C58 /* Task+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Task+Extensions.swift"; sourceTree = "<group>"; };
 		BFEEF9302B1D03D900F42C58 /* Files.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Files.entitlements; sourceTree = "<group>"; };
 		BFFB2E792B05363300254090 /* Medusa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Medusa.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFFB2E7C2B05363300254090 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BFFB2E7E2B05363300254090 /* PrimaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryViewController.swift; sourceTree = "<group>"; };
 		BFFB2E802B05363500254090 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BFFB2E852B05363500254090 /* Medusa.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Medusa.entitlements; sourceTree = "<group>"; };
-		BFFE7E792B1B5D1100776231 /* MOPMetaclass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MOPMetaclass.swift; sourceTree = "<group>"; };
 		BFFE7E7B2B1B980C00776231 /* RepositoryBrowserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryBrowserViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -132,7 +86,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BFAE71F22B1FAD8500C15E0F /* MedusaObjectModel in Frameworks */,
-				BF9B5E3E2B28C06E00BDF2D8 /* Path in Frameworks */,
 				BF1504222B28A09200FFD996 /* MedusaCore in Frameworks */,
 				BF9B5E3B2B28C05700BDF2D8 /* Socket in Frameworks */,
 				BF327E1B2B2211360077FF6B /* MedusaPaging in Frameworks */,
@@ -146,54 +99,11 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		BF7FFCC92B079C8A001D2F93 /* Medusa Object Protocol Implementation */ = {
-			isa = PBXGroup;
-			children = (
-				BF06A4962B1E724F0034D7BF /* MOPAddress.swift */,
-				BF1927B52B1A7FC200643243 /* MOPBits.swift */,
-				BF7FFCDA2B07A04F001D2F93 /* MOPBuffer.swift */,
-				BF7FFCCA2B079CA3001D2F93 /* MOPChannel.swift */,
-				BF7FFCD62B079DA1001D2F93 /* MOPClass.swift */,
-				BF06A48E2B1E53ED0034D7BF /* MOPDictionary.swift */,
-				BF7FFCDE2B07AA72001D2F93 /* MOPEnumeration.swift */,
-				BF7FFCE22B07AB3D001D2F93 /* MOPEnumerationCase.swift */,
-				BF06A4942B1E65BC0034D7BF /* MOPHeader.swift */,
-				BF06A4902B1E54460034D7BF /* MOPIdentityDictionary.swift */,
-				BF7FFCD02B079D10001D2F93 /* MOPInstance.swift */,
-				BF1927B32B1A7F6400643243 /* MOPIPv6Address.swift */,
-				BF06A4922B1E54EE0034D7BF /* MOPKey.swift */,
-				BF1927AF2B1A6B4200643243 /* MOPMessage.swift */,
-				BFFE7E792B1B5D1100776231 /* MOPMetaclass.swift */,
-				BF7075FD2B16300B00E3F6D8 /* MOPModule.swift */,
-				BF7FFCD22B079D48001D2F93 /* MOPObject.swift */,
-				BF7FFCD42B079D67001D2F93 /* MOPPrimitives.swift */,
-				BF7FFCCE2B079CDA001D2F93 /* MOPReader.swift */,
-				BF7FFCE42B07FEF9001D2F93 /* MOPRepository.swift */,
-				BF7076012B16594100E3F6D8 /* MOPRoot.swift */,
-				BF7FFCD82B079DC1001D2F93 /* MOPSlot.swift */,
-				BF1927B12B1A741700643243 /* MOPString.swift */,
-				BF06A4882B1E1FDE0034D7BF /* MOPStringObject.swift */,
-				BF06A48A2B1E51810034D7BF /* MOPSystemDictionary.swift */,
-				BF7FFCCC2B079CB9001D2F93 /* MOPWriter.swift */,
-			);
-			path = "Medusa Object Protocol Implementation";
-			sourceTree = "<group>";
-		};
 		BFA9444C2B110F0200526CF1 /* System Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				BFEEF9252B1C8CBD00F42C58 /* Path+Extensions.swift */,
-				BFEEF92E2B1CFABC00F42C58 /* Task+Extensions.swift */,
 			);
 			path = "System Extensions";
-			sourceTree = "<group>";
-		};
-		BFA9444D2B110F2B00526CF1 /* Error Handling */ = {
-			isa = PBXGroup;
-			children = (
-				BFAAF03D2B0FE55A00A2FFD1 /* SystemIssue.swift */,
-			);
-			path = "Error Handling";
 			sourceTree = "<group>";
 		};
 		BFA9444E2B11100700526CF1 /* BTree Page Inspector */ = {
@@ -233,15 +143,6 @@
 			path = "Primary View Controller";
 			sourceTree = "<group>";
 		};
-		BFA944522B1111AD00526CF1 /* Storage */ = {
-			isa = PBXGroup;
-			children = (
-				BFA944532B1111C100526CF1 /* File.swift */,
-				BFBAF5122B172BC1003ED388 /* FileHandle.swift */,
-			);
-			path = Storage;
-			sourceTree = "<group>";
-		};
 		BFA944562B1113EE00526CF1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -267,26 +168,6 @@
 				BFFE7E7D2B1B981600776231 /* RepositoryBrowser */,
 			);
 			path = "User Interface";
-			sourceTree = "<group>";
-		};
-		BFD734AD2B06D7A400CD500D /* Networking */ = {
-			isa = PBXGroup;
-			children = (
-				BFD674662B0607720086932A /* IPV6Address.swift */,
-			);
-			path = Networking;
-			sourceTree = "<group>";
-		};
-		BFD734AE2B06D7DA00CD500D /* Plumbing */ = {
-			isa = PBXGroup;
-			children = (
-				BF7075F72B16016300E3F6D8 /* BTree.swift */,
-				BF7075FB2B162D5A00E3F6D8 /* Identifier.swift */,
-				BF9369422B0BF33700921D6E /* Page.swift */,
-				BFD674832B0689990086932A /* PermissionsToken.swift */,
-				BF7075F92B1626C100E3F6D8 /* Stack.swift */,
-			);
-			path = Plumbing;
 			sourceTree = "<group>";
 		};
 		BFFB2E702B05363300254090 = {
@@ -321,15 +202,9 @@
 		BFFB2E7B2B05363300254090 /* Medusa */ = {
 			isa = PBXGroup;
 			children = (
-				BFD674462B05EAE20086932A /* Medusa.swift */,
-				BFA944522B1111AD00526CF1 /* Storage */,
 				BFFB2E7C2B05363300254090 /* AppDelegate.swift */,
 				BFFB2E802B05363500254090 /* Assets.xcassets */,
-				BFA9444D2B110F2B00526CF1 /* Error Handling */,
-				BF7FFCC92B079C8A001D2F93 /* Medusa Object Protocol Implementation */,
 				BFFB2E852B05363500254090 /* Medusa.entitlements */,
-				BFD734AD2B06D7A400CD500D /* Networking */,
-				BFD734AE2B06D7DA00CD500D /* Plumbing */,
 				BFA9444C2B110F0200526CF1 /* System Extensions */,
 				BFD674822B06749A0086932A /* User Interface */,
 			);
@@ -385,7 +260,6 @@
 				BF75F1E22B28922F0046F259 /* MedusaNetworking */,
 				BF1504212B28A09200FFD996 /* MedusaCore */,
 				BF9B5E3A2B28C05700BDF2D8 /* Socket */,
-				BF9B5E3D2B28C06E00BDF2D8 /* Path */,
 				BF9B5E3F2B28C7A200BDF2D8 /* Fletcher */,
 			);
 			productName = Medusa;
@@ -422,7 +296,6 @@
 			mainGroup = BFFB2E702B05363300254090;
 			packageReferences = (
 				BF9B5E392B28C05700BDF2D8 /* XCRemoteSwiftPackageReference "BlueSocket" */,
-				BF9B5E3C2B28C06E00BDF2D8 /* XCRemoteSwiftPackageReference "Path" */,
 			);
 			productRefGroup = BFFB2E7A2B05363300254090 /* Products */;
 			projectDirPath = "";
@@ -460,19 +333,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF06A4972B1E724F0034D7BF /* MOPAddress.swift in Sources */,
 				BF6C7E162B0E25B8006DB858 /* BTreePageInspectorViewController.swift in Sources */,
-				BFAAF03E2B0FE55A00A2FFD1 /* SystemIssue.swift in Sources */,
-				BFEEF9262B1C8CBD00F42C58 /* Path+Extensions.swift in Sources */,
-				BFA944542B1111C100526CF1 /* File.swift in Sources */,
-				BFBAF5132B172BC1003ED388 /* FileHandle.swift in Sources */,
 				BF6C7E1D2B0E3543006DB858 /* FieldCellField.swift in Sources */,
 				BFD6747D2B06689E0086932A /* BufferBrowserViewController.swift in Sources */,
-				BFEEF92F2B1CFABC00F42C58 /* Task+Extensions.swift in Sources */,
 				BFD674792B065A9C0086932A /* BufferBrowserView.swift in Sources */,
 				BFFB2E7F2B05363300254090 /* PrimaryViewController.swift in Sources */,
 				BF6C7E132B0E259A006DB858 /* BTreePageInspectorWindowController.swift in Sources */,
-				BFD674472B05EAE20086932A /* Medusa.swift in Sources */,
 				BFFE7E7C2B1B980C00776231 /* RepositoryBrowserViewController.swift in Sources */,
 				BFD674762B0659DA0086932A /* BufferBrowserWindowController.swift in Sources */,
 				BFFB2E7D2B05363300254090 /* AppDelegate.swift in Sources */,
@@ -744,14 +610,6 @@
 				minimumVersion = 2.0.4;
 			};
 		};
-		BF9B5E3C2B28C06E00BDF2D8 /* XCRemoteSwiftPackageReference "Path" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/mxcl/Path.swift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.4.1;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -775,11 +633,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BF9B5E392B28C05700BDF2D8 /* XCRemoteSwiftPackageReference "BlueSocket" */;
 			productName = Socket;
-		};
-		BF9B5E3D2B28C06E00BDF2D8 /* Path */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = BF9B5E3C2B28C06E00BDF2D8 /* XCRemoteSwiftPackageReference "Path" */;
-			productName = Path;
 		};
 		BF9B5E3F2B28C7A200BDF2D8 /* Fletcher */ = {
 			isa = XCSwiftPackageProductDependency;
