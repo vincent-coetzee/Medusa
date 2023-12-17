@@ -43,13 +43,13 @@ class PrimaryViewController: NSViewController,NSMenuItemValidation,NSMenuDelegat
         true
         }
         
-//    @IBAction func browseBuffer(_ sender: Any?)
-//        {
-//        let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
-//        let windowController = storyboard.instantiateController(withIdentifier: "bufferBrowserWindowController") as! NSWindowController
-//        let _ = windowController.contentViewController as! BufferBrowserViewController
-//        windowController.showWindow(self)
-//        }
+    @IBAction func onBrowsePageLists(_ sender: Any?)
+        {
+        let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
+        let windowController = storyboard.instantiateController(withIdentifier: "PageBrowserWindowController") as! NSWindowController
+        let viewController = windowController.contentViewController as! PageBrowserViewController
+        windowController.showWindow(self)
+        }
 //        
 //    @IBAction func browseBTreePage(_ sender: Any?)
 //        {

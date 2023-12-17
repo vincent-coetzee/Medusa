@@ -90,17 +90,16 @@ open class BTreeNodePage: Page
         Self.kBTreePageSizeInBytes - Self.kBTreePageHeaderSizeInBytes - self.keysPerPage * MemoryLayout<Integer64>.size - (self.keysPerPage + 1) * MemoryLayout<Integer64>.size - 2 * MemoryLayout<Integer64>.size
         }
         
-    public override var annotations: AnnotatedBytes.CompositeAnnotation
+    public override var annotatedBytes: AnnotatedBytes
         {
-        let superFields = super.annotations
-        let headerFields = superFields.compositeAnnotation(atKey: "Header Fields")
-        let bytes = AnnotatedBytes(from: self.buffer, sizeInBytes: Self.kBTreePageSizeInBytes)
+        let bytes = super.annotatedBytes
+        let headerFields = bytes.annotations.compositeAnnotation(atKey: "Header Fields")
         headerFields?.append(bytes: bytes,key: "keyCount",kind: .integer64,atByteOffset: Self.kBTreePageKeyCountOffset)
         headerFields?.append(bytes: bytes,key: "keysPerPage",kind: .integer64,atByteOffset: Self.kBTreePageKeysPerPageOffset)
         headerFields?.append(bytes: bytes,key: "isLeaf",kind: .boolean,atByteOffset: Self.kBTreePageIsLeafOffset)
-        superFields.append(self.keyAnnotations)
-        superFields.append(self.childPointerAnnotations)
-        return(superFields)
+        bytes.annotations.append(self.keyAnnotations)
+        bytes.annotations.append(self.childPointerAnnotations)
+        return(bytes)
         }
         
     public var keyAnnotations: AnnotatedBytes.CompositeAnnotation

@@ -9,6 +9,7 @@ import Foundation
 
 public enum SystemIssueCode: String
     {
+    case closeFailed                                                = "Closing the specified file failed."
     case enumerationRawValueNotValidInDecodeEnumeration             = "The raw value of an enumeration is not valid when decoding enumeration."
     case endOfFileReached                                           = "Reading has reached the end of the file."
     

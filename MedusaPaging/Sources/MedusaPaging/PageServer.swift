@@ -14,19 +14,13 @@ public class PageServer
     
     public private(set) static var shared:PageServer!
     
-    private let dataFile: FileIdentifier
-    public var rootPage: RootPage!
-    private let logger: Logger
-    
     private var nextAvailableOffset: Integer64
         {
         get
             {
-            self.rootPage.endPageOffset
-            }
-        set
-            {
-            self.rootPage.endPageOffset = newValue
+            var offset = self.rootPage.endPageOffset
+            self.rootPage.endPageOffset = offset + Page.kPageSizeInBytes
+            return(offset)
             }
         }
     
@@ -38,6 +32,10 @@ public class PageServer
     private var objectPages: PageList<ObjectPage>!
     private var blockPages: PageList<BlockPage>!
     private var overflowPages: PageList<OverflowPage>!
+    private var btreeRootPages: PageList<BTreeRootPage>!
+    private let dataFile: FileIdentifier
+    public var rootPage: RootPage!
+    private let logger: Logger
     
     public static func initialize(with file: FileIdentifier,logger: Logger,dataFileNeedsInitialization: Boolean) throws
         {
@@ -55,7 +53,6 @@ public class PageServer
         self.dataFile = dataFile
         self.rootPage = RootPage()
         self.logger = logger
-        self.nextAvailableOffset = RootPage.kRootPageSizeInBytes
         }
         
     private func loadSystemData()
@@ -63,16 +60,17 @@ public class PageServer
         do
             {
             self.loadRootPage()
-            self.freePages = try PageList<Page>(startingAtOffset: self.rootPage.firstEmptyPageOffset).loadStubList(from: self.dataFile)
+            self.freePages = try PageList<Page>(startingAtOffset: self.rootPage.firstFreePageOffset).loadStubList(from: self.dataFile)
             self.objectPages = try PageList<ObjectPage>(startingAtOffset: self.rootPage.firstObjectPageOffset).loadStubList(from: self.dataFile)
             self.blockPages = try PageList<BlockPage>(startingAtOffset: self.rootPage.firstBlockPageOffset).loadStubList(from: self.dataFile)
             self.overflowPages = try PageList<OverflowPage>(startingAtOffset: self.rootPage.firstOverflowPageOffset).loadStubList(from: self.dataFile)
+            self.btreeRootPages = try PageList<BTreeRootPage>(startingAtOffset: self.rootPage.firstBTreeRootPageOffset).loadStubList(from: self.dataFile)
             self.touchColdPages()
             }
         catch let error as SystemIssue
             {
             self.logger.log("Error(\(error.code)) \(error.message) laoding system data. Medusa will now terminate.")
-            fatalError("Error(\(error.code)) \(error.message) laoding system data. Medusa will now terminate.")
+            fatalError("Error(\(error.code)) \(error.message) loading system data. Medusa will now terminate.")
             }
         catch let error
             {
@@ -86,6 +84,51 @@ public class PageServer
         do
             {
             self.rootPage = RootPage()
+            self.rootPage.endPageOffset = Page.kPageSizeInBytes
+            //
+            // Set up 2 object pages
+            //
+            let firstObjectPage = ObjectPage()
+            firstObjectPage.pageOffset = self.nextAvailableOffset
+            let secondObjectPage = ObjectPage()
+            secondObjectPage.pageOffset = self.nextAvailableOffset
+            firstObjectPage.previousPage = nil
+            firstObjectPage.nextPage = secondObjectPage
+            secondObjectPage.previousPage = firstObjectPage
+            secondObjectPage.nextPage = nil
+            self.rootPage.firstObjectPageOffset = firstObjectPage.pageOffset
+            try self.dataFile.write(firstObjectPage.buffer,atOffset: firstObjectPage.pageOffset,sizeInBytes: Page.kPageSizeInBytes)
+            try self.dataFile.write(secondObjectPage.buffer,atOffset: firstObjectPage.pageOffset,sizeInBytes: Page.kPageSizeInBytes)
+            //
+            // Set up 2 free pages
+            //
+            let firstFreePage = Page()
+            firstFreePage.pageOffset = self.nextAvailableOffset
+            let secondFreePage = Page()
+            secondFreePage.pageOffset = self.nextAvailableOffset
+            firstFreePage.previousPage = nil
+            firstFreePage.nextPage = secondFreePage
+            secondFreePage.previousPage = firstFreePage
+            secondFreePage.nextPage = nil
+            self.rootPage.firstFreePageOffset = firstFreePage.pageOffset
+            try self.dataFile.write(firstFreePage.buffer,atOffset: firstFreePage.pageOffset,sizeInBytes: Page.kPageSizeInBytes)
+            try self.dataFile.write(secondFreePage.buffer,atOffset: secondFreePage.pageOffset,sizeInBytes: Page.kPageSizeInBytes)
+            //
+            // Set up 2 block pages
+            //
+            let firstBlockPage = BlockPage()
+            firstBlockPage.pageOffset = self.nextAvailableOffset
+            let secondBlockPage = BlockPage()
+            secondBlockPage.pageOffset = self.nextAvailableOffset
+            firstBlockPage.previousPage = nil
+            firstBlockPage.nextPage = secondBlockPage
+            secondBlockPage.previousPage = firstBlockPage
+            secondBlockPage.nextPage = nil
+            self.rootPage.firstBlockPageOffset = firstBlockPage.pageOffset
+            try self.dataFile.write(firstBlockPage.buffer,atOffset: firstBlockPage.pageOffset,sizeInBytes: Page.kPageSizeInBytes)
+            try self.dataFile.write(secondBlockPage.buffer,atOffset: secondBlockPage.pageOffset,sizeInBytes: Page.kPageSizeInBytes)
+            self.rootPage.firstOverflowPageOffset = 0
+            self.rootPage.firstBTreeRootPageOffset = 0
             try self.dataFile.write(rootPage.buffer,atOffset: 0,sizeInBytes: RootPage.kRootPageSizeInBytes)
             }
         catch let error as SystemIssue
@@ -128,6 +171,39 @@ public class PageServer
         
     public func initDataFile()
         {
+        }
+        
+    public func firstFreePageStub() -> Page
+        {
+        fatalError()
+        }
+        
+    public func firstObjectPageStub() -> Page
+        {
+        fatalError()
+        }
+        
+    public func firstBlockPageStub() -> Page
+        {
+        fatalError()
+        }
+        
+    public func firstOverflowPageStub() -> Page
+        {
+        fatalError()
+        }
+        
+    public func firstBTreeRootPageStub() -> Page
+        {
+        fatalError()
+        }
+        
+    public func loadContents(of page: Page) throws
+        {
+        if page.isStubbed
+            {
+            try page.loadContents(from: self.dataFile)
+            }
         }
         
     public func objectPointer(forAddress address: ObjectAddress) -> RawPointer
@@ -190,7 +266,6 @@ public class PageServer
             let newPage = ObjectPage()
             newPage.pageOffset = self.nextAvailableOffset
             self.pageCache[newPage.pageOffset] = newPage
-            self.nextAvailableOffset += Page.kPageSizeInBytes
             do
                 {
                 try self.dataFile.write(newPage.buffer,atOffset: newPage.pageOffset,sizeInBytes: Page.kPageSizeInBytes)

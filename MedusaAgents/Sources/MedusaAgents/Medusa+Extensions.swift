@@ -29,7 +29,7 @@ extension Medusa
         self.checkPageSize()
         var dataFileNeedsInitialization = false
         let dataFileHandle = self.openOrCreateDataFile(needsInitialization: &dataFileNeedsInitialization)
-        Self.initMemorySegment(using: dataFileHandle)
+//        Self.initMemorySegment(using: dataFileHandle)
         Self.initAgents(with: dataFileHandle,dataFileNeedsInitialization:  dataFileNeedsInitialization)
         self.finalizeBoot()
         }
@@ -73,18 +73,16 @@ extension Medusa
             fatalError(message)
             }
         }
-            
+           
     private static func openOrCreateDataFile(needsInitialization: inout Bool) -> FileIdentifier
         {
-        var boolean = UnsafeMutablePointer<ObjCBool>.allocate(capacity: 1)
-        boolean.pointee = false
-        FileManager.default.fileExists(atPath: Self.kMedusaDataDirectoryPath, isDirectory: boolean)
-        if !boolean.pointee.boolValue
+        let file = FileIdentifier(path: Self.kMedusaDataDirectoryPath)
+        if !file.fileIsDirectory()
             {
             LoggingAgent.shared.log("\(Self.kMedusaDataDirectoryPath) does not exist, files will be created.")
             do
                 {
-                try FileManager.default.createDirectory(at: URL(filePath: Self.kMedusaDataDirectoryPath), withIntermediateDirectories: true)
+                try file.createDirectory(withIntermediateDirectories: true)
                 needsInitialization = true
                 LoggingAgent.shared.log("Successfully created Data directory \(Self.kMedusaDataDirectoryPath).")
                 }
@@ -98,13 +96,13 @@ extension Medusa
             {
             LoggingAgent.shared.log("Found directory \(Self.kMedusaDataDirectoryPath).")
             }
-        let handle = FileIdentifier(path: kMedusaDataFilePath,logger: LoggingAgent.shared)
-        if handle.fileExists
+        let handle = FileIdentifier(path: Self.kMedusaDataFilePath,logger: LoggingAgent.shared)
+        if handle.fileExists()
             {
             LoggingAgent.shared.log("Found data file \(Self.kMedusaDataFilePath).")
             do
                 {
-                try handle.open(mode: .write)
+                try handle.open(mode: .readWrite,.exclusiveLock)
                 LoggingAgent.shared.log("Successfully opened data file \(Self.kMedusaDataFilePath).")
                 return(handle)
                 }
@@ -119,7 +117,10 @@ extension Medusa
             needsInitialization = true
             do
                 {
-                try handle.open(mode: .write,.create,.truncate)
+                try handle.open(mode: .readWrite,.create,.truncate)
+                try handle.close()
+                try handle.setPOSIXPermissions(owner: .read,.write,group: .read,.write,other: .read)
+                try handle.open(mode: .readWrite)
                 LoggingAgent.shared.log("Successfully created data file \(Self.kMedusaDataFilePath).")
                 return(handle)
                 }

@@ -60,7 +60,7 @@ public class FreeBlockList
             {
             // It has space, grab actualSize bytes and add a new end cell to the list
             let lastOffset = self.endCell.byteOffset
-            let nextOffset = self.endCell.byteOffset + actualSize
+            let nextOffset = self.endCell.byteOffset - actualSize
             let nextSize = self.endCell.sizeInBytes - actualSize
             self.endCell.sizeInBytes = actualSize
             self.endCell.isAllocated = true
@@ -72,7 +72,7 @@ public class FreeBlockList
             oldEndCell.writeAll(to: buffer)
             return(lastOffset + FreeBlockListCell.kCellHeaderSizeInBytes)
             }
-        // There was no space in the end, see if we can find some free space in the list
+        // There was no space at the end, see if we can find some free space in the list
         var cells = self.firstCell.cellsWithSufficientSpace(sizeInBytes: actualSize).sorted{$0.deltaSize < $1.deltaSize}
         if cells.isEmpty
             {

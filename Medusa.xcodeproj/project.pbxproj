@@ -15,6 +15,7 @@
 		BF6C7E162B0E25B8006DB858 /* BTreePageInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E142B0E25B8006DB858 /* BTreePageInspectorViewController.swift */; };
 		BF6C7E1B2B0E307E006DB858 /* FieldValueField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E1A2B0E307E006DB858 /* FieldValueField.swift */; };
 		BF6C7E1D2B0E3543006DB858 /* FieldCellField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6C7E1C2B0E3543006DB858 /* FieldCellField.swift */; };
+		BF70EF0B2B2F00BC00973B1B /* PageBrowserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF70EF0A2B2F00BC00973B1B /* PageBrowserViewController.swift */; };
 		BF75F1E32B28922F0046F259 /* MedusaNetworking in Frameworks */ = {isa = PBXBuildFile; productRef = BF75F1E22B28922F0046F259 /* MedusaNetworking */; };
 		BF9B5E3B2B28C05700BDF2D8 /* Socket in Frameworks */ = {isa = PBXBuildFile; productRef = BF9B5E3A2B28C05700BDF2D8 /* Socket */; };
 		BF9B5E402B28C7A200BDF2D8 /* Fletcher in Frameworks */ = {isa = PBXBuildFile; productRef = BF9B5E3F2B28C7A200BDF2D8 /* Fletcher */; };
@@ -51,6 +52,7 @@
 		BF6C7E142B0E25B8006DB858 /* BTreePageInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTreePageInspectorViewController.swift; sourceTree = "<group>"; };
 		BF6C7E1A2B0E307E006DB858 /* FieldValueField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldValueField.swift; sourceTree = "<group>"; };
 		BF6C7E1C2B0E3543006DB858 /* FieldCellField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldCellField.swift; sourceTree = "<group>"; };
+		BF70EF0A2B2F00BC00973B1B /* PageBrowserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageBrowserViewController.swift; sourceTree = "<group>"; };
 		BFB2863C2B28A13F00B9C15F /* MedusaCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaCore; sourceTree = "<group>"; };
 		BFC04BC72B28A3640076CD81 /* MedusaStorage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaStorage; sourceTree = "<group>"; };
 		BFC04BC82B28A36F0076CD81 /* MedusaPaging */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MedusaPaging; sourceTree = "<group>"; };
@@ -99,11 +101,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		BFA9444C2B110F0200526CF1 /* System Extensions */ = {
+		BF70EF092B2F009100973B1B /* Page Browser */ = {
 			isa = PBXGroup;
 			children = (
+				BF70EF0A2B2F00BC00973B1B /* PageBrowserViewController.swift */,
 			);
-			path = "System Extensions";
+			path = "Page Browser";
 			sourceTree = "<group>";
 		};
 		BFA9444E2B11100700526CF1 /* BTree Page Inspector */ = {
@@ -161,6 +164,7 @@
 		BFD674822B06749A0086932A /* User Interface */ = {
 			isa = PBXGroup;
 			children = (
+				BF70EF092B2F009100973B1B /* Page Browser */,
 				BFA9444E2B11100700526CF1 /* BTree Page Inspector */,
 				BFA9444F2B11101F00526CF1 /* Buffer Browser */,
 				BFA944502B11102C00526CF1 /* Miscellaneous */,
@@ -205,7 +209,6 @@
 				BFFB2E7C2B05363300254090 /* AppDelegate.swift */,
 				BFFB2E802B05363500254090 /* Assets.xcassets */,
 				BFFB2E852B05363500254090 /* Medusa.entitlements */,
-				BFA9444C2B110F0200526CF1 /* System Extensions */,
 				BFD674822B06749A0086932A /* User Interface */,
 			);
 			path = Medusa;
@@ -339,6 +342,7 @@
 				BFD674792B065A9C0086932A /* BufferBrowserView.swift in Sources */,
 				BFFB2E7F2B05363300254090 /* PrimaryViewController.swift in Sources */,
 				BF6C7E132B0E259A006DB858 /* BTreePageInspectorWindowController.swift in Sources */,
+				BF70EF0B2B2F00BC00973B1B /* PageBrowserViewController.swift in Sources */,
 				BFFE7E7C2B1B980C00776231 /* RepositoryBrowserViewController.swift in Sources */,
 				BFD674762B0659DA0086932A /* BufferBrowserWindowController.swift in Sources */,
 				BFFB2E7D2B05363300254090 /* AppDelegate.swift in Sources */,

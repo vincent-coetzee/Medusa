@@ -162,7 +162,7 @@ open class Page: PageProtocol
     public static let kOverflowPageMagicNumber: MagicNumber        = 0x0BAD_C0DE_D0D0_0CAD
     public static let kRootPageMagicNumber: MagicNumber            = 0xDEAD_0C0D_0BAD_F00D
     
-    open var annotations: AnnotatedBytes.CompositeAnnotation
+    open var annotatedBytes: AnnotatedBytes
         {
         let bytes = AnnotatedBytes(from: self.buffer, sizeInBytes: Self.kPageSizeInBytes)
         let fields = AnnotatedBytes.CompositeAnnotation(key: "Header Fields")
@@ -179,7 +179,8 @@ open class Page: PageProtocol
         fields.append(bytes: bytes,key: "isDirty",kind: .booleanValue(self.isDirty))
         fields.append(bytes: bytes,key: "needsDefragmentation",kind: .booleanValue(self.needsDefragmentation))
         allFields.append(self.freeList.annotations)
-        return(allFields)
+        bytes.annotations = allFields
+        return(bytes)
         }
         
     open var kind: Page.Kind
@@ -189,7 +190,7 @@ open class Page: PageProtocol
         
     open var initialFreeCellOffset: Integer64
         {
-        Self.kPageHeaderSizeInBytes
+        Self.kPageSizeInBytes - FreeBlockListCell.kCellHeaderSizeInBytes
         }
         
     open var initialFreeByteCount: Integer64

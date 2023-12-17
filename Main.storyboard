@@ -362,6 +362,11 @@
                                                 <action selector="onBrowseRepositoryClicked:" target="2Ox-EC-oiC" id="A1l-6C-irn"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Inspect Pages..." keyEquivalent="i" id="94Y-ov-Xpf">
+                                            <connections>
+                                                <action selector="onBrowsePageLists:" target="2Ox-EC-oiC" id="5Df-KN-97E"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>
@@ -668,6 +673,130 @@
                 <customObject id="ofG-ZR-dyI" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2472" y="343"/>
+        </scene>
+        <!--Window Controller-->
+        <scene sceneID="RM2-Ca-1OK">
+            <objects>
+                <windowController storyboardIdentifier="PageBrowserWindowController" id="oB1-by-Geu" sceneMemberID="viewController">
+                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="3RK-FX-4Ql">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="555" y="611" width="480" height="270"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="3200" height="1775"/>
+                        <view key="contentView" id="fBh-Cl-7TE">
+                            <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </view>
+                        <connections>
+                            <outlet property="delegate" destination="oB1-by-Geu" id="a3e-84-ja7"/>
+                        </connections>
+                    </window>
+                    <connections>
+                        <segue destination="Z87-nr-2Lj" kind="relationship" relationship="window.shadowedContentViewController" id="wmF-ka-Trr"/>
+                    </connections>
+                </windowController>
+                <customObject id="uHG-gX-knW" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3276" y="11"/>
+        </scene>
+        <!--Page Browser View Controller-->
+        <scene sceneID="rT2-0K-ywO">
+            <objects>
+                <viewController storyboardIdentifier="PageBrowserViewController" id="Z87-nr-2Lj" customClass="PageBrowserViewController" customModule="Medusa" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="fhd-7D-AvE">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="927"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nj9-lM-OxQ">
+                                <rect key="frame" x="18" y="889" width="73" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Page Chain" id="a54-Mw-TO0">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Klg-Hp-BxQ">
+                                <rect key="frame" x="94" y="882" width="176" height="25"/>
+                                <popUpButtonCell key="cell" type="push" title="Block Pages" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="lzx-yD-j4N" id="3bf-3h-zjk">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="eRA-TD-1O0">
+                                        <items>
+                                            <menuItem title="Block Pages" id="lzx-yD-j4N">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="BTree Pages" id="A63-eG-sWE"/>
+                                            <menuItem title="Empty Pages" state="on" id="LUU-Ej-x70"/>
+                                            <menuItem title="Object Pages" id="EB4-Pv-MKu"/>
+                                            <menuItem title="Overflow Pages" id="bJi-6R-VYM">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Root Page" id="TwH-tV-WmJ">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="169" id="sg8-tc-W02"/>
+                                </constraints>
+                            </popUpButton>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WVq-I9-Yfi">
+                                <rect key="frame" x="455" y="886" width="22" height="19"/>
+                                <buttonCell key="cell" type="roundRect" title="&lt;" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="83w-Il-rsG">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="cellTitle"/>
+                                </buttonCell>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Zo6-RP-k0c">
+                                <rect key="frame" x="558" y="886" width="22" height="19"/>
+                                <buttonCell key="cell" type="roundRect" title="&gt;" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5F0-uM-XR8">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="cellTitle"/>
+                                </buttonCell>
+                            </button>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gJg-A0-Pxk">
+                                <rect key="frame" x="483" y="888" width="69" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="1,024,000" id="WY7-ur-Xzh">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="h50-0L-VOV" customClass="BufferBrowserView" customModule="Medusa" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="878"/>
+                            </customView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="nj9-lM-OxQ" firstAttribute="leading" secondItem="fhd-7D-AvE" secondAttribute="leading" constant="20" symbolic="YES" id="7NY-Co-ZeM"/>
+                            <constraint firstAttribute="bottom" secondItem="nj9-lM-OxQ" secondAttribute="bottom" constant="889" id="8zc-Uo-m8b"/>
+                            <constraint firstItem="nj9-lM-OxQ" firstAttribute="top" secondItem="fhd-7D-AvE" secondAttribute="top" constant="22" id="BPP-by-Iup"/>
+                            <constraint firstItem="WVq-I9-Yfi" firstAttribute="top" secondItem="gJg-A0-Pxk" secondAttribute="top" constant="-1" id="BpO-rI-4Zs"/>
+                            <constraint firstItem="gJg-A0-Pxk" firstAttribute="leading" secondItem="WVq-I9-Yfi" secondAttribute="trailing" constant="8" symbolic="YES" id="DB0-rT-Z8O"/>
+                            <constraint firstAttribute="bottom" secondItem="h50-0L-VOV" secondAttribute="bottom" id="IXF-3a-pex"/>
+                            <constraint firstAttribute="trailing" secondItem="h50-0L-VOV" secondAttribute="trailing" id="IfZ-8E-fkN"/>
+                            <constraint firstItem="gJg-A0-Pxk" firstAttribute="top" secondItem="Zo6-RP-k0c" secondAttribute="top" constant="1" id="JBr-dM-Df2"/>
+                            <constraint firstAttribute="bottom" secondItem="Klg-Hp-BxQ" secondAttribute="bottom" constant="886" id="MX6-nf-RJI"/>
+                            <constraint firstItem="Zo6-RP-k0c" firstAttribute="leading" secondItem="gJg-A0-Pxk" secondAttribute="trailing" constant="8" symbolic="YES" id="U2J-67-Wgt"/>
+                            <constraint firstItem="h50-0L-VOV" firstAttribute="leading" secondItem="fhd-7D-AvE" secondAttribute="leading" id="U2v-y2-0hM"/>
+                            <constraint firstItem="Klg-Hp-BxQ" firstAttribute="leading" secondItem="nj9-lM-OxQ" secondAttribute="trailing" constant="8" symbolic="YES" id="WlK-8u-MqJ"/>
+                            <constraint firstAttribute="trailing" secondItem="Zo6-RP-k0c" secondAttribute="trailing" constant="20" symbolic="YES" id="XPx-OU-IcU"/>
+                            <constraint firstItem="Zo6-RP-k0c" firstAttribute="top" secondItem="fhd-7D-AvE" secondAttribute="top" constant="22" id="eKc-0B-IHg"/>
+                            <constraint firstItem="Klg-Hp-BxQ" firstAttribute="firstBaseline" secondItem="nj9-lM-OxQ" secondAttribute="firstBaseline" id="fJF-Ah-Mbf"/>
+                            <constraint firstItem="h50-0L-VOV" firstAttribute="top" secondItem="Klg-Hp-BxQ" secondAttribute="bottom" constant="8" symbolic="YES" id="ftI-3c-kZf"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="bufferView" destination="h50-0L-VOV" id="x0k-Bi-W7W"/>
+                        <outlet property="chainPopUpButton" destination="Klg-Hp-BxQ" id="mz2-Zb-ESs"/>
+                        <outlet property="leftArrowButton" destination="WVq-I9-Yfi" id="ZMp-ix-qnX"/>
+                        <outlet property="pageIndexField" destination="gJg-A0-Pxk" id="mhY-4i-hQ5"/>
+                        <outlet property="rightArrowButton" destination="Zo6-RP-k0c" id="Nbz-h5-RHT"/>
+                    </connections>
+                </viewController>
+                <customObject id="vXu-Sk-338" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3276" y="968.5"/>
         </scene>
         <!--Repository Browser View Controller-->
         <scene sceneID="WKM-zk-54T">
