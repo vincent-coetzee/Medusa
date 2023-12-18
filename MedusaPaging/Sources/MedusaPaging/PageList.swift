@@ -114,6 +114,18 @@ public class PageList<P>: Sequence where P:PageProtocol
             }
         }
         
+    deinit
+        {
+        self.release()
+        }
+        
+    public func release()
+        {
+        self.firstPage?.release()
+        self.firstPage = nil
+        self.lastPage = nil
+        }
+        
     public func findFirstResidentPage() -> P?
         {
         var page = self.firstPage

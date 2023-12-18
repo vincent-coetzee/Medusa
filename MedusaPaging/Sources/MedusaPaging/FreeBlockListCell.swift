@@ -59,18 +59,25 @@ public class FreeBlockListCell: Equatable
     //
     // Read in the free list
     //
-    public init(in page: UnsafeMutableRawPointer,atByteOffset: Int,lastCell: FreeBlockListCell?)
+    public init(in buffer: RawPointer,atByteOffset: Int,lastCell: FreeBlockListCell?)
         {
-        var offset = atByteOffset
-        let nextCellOffset = readInteger64WithOffset(page,&offset)
-        self.sizeInBytes = readInteger64WithOffset(page,&offset)
-        self.isAllocated = readByte(page,offset) == 1
+        var pointer = buffer + atByteOffset
+        let nextCellOffset = pointer.loadValue(as: Integer64.self)
+        self.sizeInBytes = pointer.loadValue(as: Integer64.self)
+        self.isAllocated = pointer.loadValue(as: Byte.self) == 1
         self.byteOffset = atByteOffset
         if nextCellOffset != 0
             {
-            self.nextCell = FreeBlockListCell(in: page,atByteOffset: nextCellOffset,lastCell: self)
+            self.nextCell = FreeBlockListCell(in: buffer,atByteOffset: nextCellOffset,lastCell: self)
             }
         self.lastCell = lastCell
+        }
+        
+    public func release()
+        {
+        self.nextCell?.release()
+        self.lastCell = nil
+        self.nextCell = nil
         }
         
     public func writeAll(to pageBuffer: UnsafeMutableRawPointer,number: Int = 0)
@@ -81,28 +88,20 @@ public class FreeBlockListCell: Equatable
         
     public func write(to pageBuffer: UnsafeMutableRawPointer,number: Int = 0)
         {
-        var offset = self.byteOffset
-        print("WRITING FREE LIST CELL \(number) AT \(offset)")
+        var pointer = pageBuffer + self.byteOffset
         let value = self.nextCell?.byteOffset ?? 0
-        writeInteger64WithOffset(pageBuffer,value,&offset)
-        print("     NEXT CELL OFFSET \(value)")
-        writeInteger64WithOffset(pageBuffer,self.sizeInBytes,&offset)
-        print("     SIZE IN BYTES \(self.sizeInBytes)")
-        writeByte(pageBuffer,self.isAllocated ? 1 : 0,offset)
-        print("     ALLOCATED \(self.isAllocated)")
+        pointer.storeValue(of: value,as: Integer64.self)
+        pointer.storeValue(of: self.sizeInBytes,as: Integer64.self)
+        pointer.storeValue(of: self.isAllocated ? 1 : 0,as: Byte.self)
         }
         
     public func cellsWithSufficientSpace(sizeInBytes size: Int) -> Array<FreeBlockListCell>
         {
-        var cells = Array<FreeBlockListCell>()
+        var cells = self.nextCell?.cellsWithSufficientSpace(sizeInBytes: sizeInBytes) ?? Array<FreeBlockListCell>()
         if self.sizeInBytes > size && !self.isAllocated
             {
             self.deltaSize = self.sizeInBytes - size
             cells.append(self)
-            }
-        if self.nextCell.isNotNil
-            {
-            cells.append(contentsOf: self.nextCell!.cellsWithSufficientSpace(sizeInBytes: size))
             }
         return(cells)
         }

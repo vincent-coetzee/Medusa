@@ -52,10 +52,6 @@ open class MOMDictionary: MOMCollection
         
     private func initDictionary()  throws
         {
-        let newPage = HashtableRootPage()
-        self.tableEntryCount = newPage.freeByteCount / MemoryLayout<Integer64>.size
-        newPage.tableEntryCount = self.tableEntryCount
-        
         }
         
     private func loadDictionary() throws

@@ -1,0 +1,27 @@
+{
+  "configurations" : [
+    {
+      "id" : "29CEB74C-B53B-42FB-BADA-46F0000F4055",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "MedusaCoreTests\/testExample()"
+      ],
+      "target" : {
+        "containerPath" : "container:MedusaCore",
+        "identifier" : "MedusaCoreTests",
+        "name" : "MedusaCoreTests"
+      }
+    }
+  ],
+  "version" : 1
+}

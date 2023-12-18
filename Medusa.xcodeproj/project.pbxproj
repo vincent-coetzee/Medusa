@@ -47,6 +47,7 @@
 
 /* Begin PBXFileReference section */
 		BF327E1C2B2215630077FF6B /* Fletcher */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Fletcher; sourceTree = "<group>"; };
+		BF481FBC2B30DE5F00970F54 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 		BF521F3A2B148EF200EAFC53 /* BufferBrowserPopoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferBrowserPopoverViewController.swift; sourceTree = "<group>"; };
 		BF6C7E122B0E259A006DB858 /* BTreePageInspectorWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTreePageInspectorWindowController.swift; sourceTree = "<group>"; };
 		BF6C7E142B0E25B8006DB858 /* BTreePageInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTreePageInspectorViewController.swift; sourceTree = "<group>"; };
@@ -177,6 +178,7 @@
 		BFFB2E702B05363300254090 = {
 			isa = PBXGroup;
 			children = (
+				BF481FBC2B30DE5F00970F54 /* TestPlan.xctestplan */,
 				BFC04BCB2B28A37B0076CD81 /* MedusaAgents */,
 				BFB2863C2B28A13F00B9C15F /* MedusaCore */,
 				BFC04BCA2B28A3780076CD81 /* MedusaNetworking */,

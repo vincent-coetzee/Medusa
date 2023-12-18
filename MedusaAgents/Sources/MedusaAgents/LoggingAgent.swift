@@ -33,7 +33,7 @@ public class LoggingAgent: Logger
     private func initLogging()
         {
         let file = FileIdentifier(path: Medusa.kMedusaLogDirectoryPath)
-        if !file.fileIsDirectory()
+        if !file.isDirectory
             {
             self.log("The logs directory \(Medusa.kMedusaLogDirectoryPath) does not exist, it will be created.")
             do

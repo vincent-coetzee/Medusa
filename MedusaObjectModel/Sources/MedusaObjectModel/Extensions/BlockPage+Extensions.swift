@@ -13,7 +13,8 @@ extension BlockPage
     {
     public convenience init(pageOffset: Integer64,slotClass: Class)
         {
-        self.init(emptyPageAtOffset: pageOffset)
+        self.init()
+        self.pageOffset = pageOffset
         self.magicNumber = Page.kBlockPageMagicNumber
         self.slotSizeInBytes = slotClass.slotSizeInBytes
         self.slotClassAddress = slotClass.objectAddress

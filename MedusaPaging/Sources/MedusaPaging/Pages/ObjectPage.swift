@@ -59,15 +59,10 @@ public class ObjectPage: Page
         self.magicNumber = Page.kObjectPageMagicNumber
         }
         
-    public required init(emptyPageAtOffset offset: Integer64)
+    public required init(stubBuffer: RawPointer,pageOffset: Integer64,sizeInBytes: Integer64)
         {
-        super.init(emptyPageAtOffset: offset)
+        super.init(stubBuffer: stubBuffer,pageOffset: pageOffset,sizeInBytes: sizeInBytes)
         self.magicNumber = Page.kObjectPageMagicNumber
-        }
-        
-    public required init(stubBuffer: RawPointer,pageOffset offset: Integer64,sizeInBytes: Integer64)
-        {
-        super.init(stubBuffer: stubBuffer,pageOffset: offset,sizeInBytes: sizeInBytes)
         }
         
     public override func storeHeader()

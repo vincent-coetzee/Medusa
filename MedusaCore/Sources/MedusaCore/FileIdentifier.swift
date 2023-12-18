@@ -108,42 +108,49 @@ public class FileIdentifier
             }
         }
         
-    
-        
-    public private(set) var fileDescriptor: Int32!
-    public let path: String
-    public private(set) var mappedAddress: Integer64?
-    private let logger: Logger?
-    
-    public init(path: String,logger: Logger? = nil)
+    public enum FileState
         {
-        self.logger = logger
-        self.path = path
+        case none
+        case ready
+        case open
+        case closed
         }
         
-    @discardableResult
-    public func open(mode: Mode...) throws -> Self
+    public var isOpen: Bool
         {
-        let modeValue = mode.reduce(0) { $0 | $1.modeValue }
-        let string = self.path
-        self.fileDescriptor = Darwin.open(string,modeValue)
-        if self.fileDescriptor == -1
+        self.fileState == .open
+        }
+        
+    public var isClosed: Bool
+        {
+        self.fileState != .open
+        }
+        
+    public var fileOffset: Integer64?
+        {
+        get throws
             {
-            let string = String(cString: strerror(errno))
-            let message = "Opening file at \(string) in mode \(mode) failed with error(\(errno)) \(string)"
-            self.logger?.log(message)
-            throw(SystemIssue(code: .fileOpenFailed,agentKind: .pageServer,message: message))
+            if self.fileState == .open
+                {
+                return(Integer64(lseek(self.fileDescriptor,0,SEEK_CUR)))
+                }
+            throw(SystemIssue(code: .fileNotOpen,agentKind: .pageServer))
             }
-        self.logger?.log("File at \(string) in mode \(mode) successfully opened for \(mode).")
-        return(self)
         }
         
-    public func createDirectory(withIntermediateDirectories: Bool) throws
+    public var isDirectory: Bool
         {
-        try FileManager.default.createDirectory(at: URL(filePath: self.path), withIntermediateDirectories: withIntermediateDirectories)
+        let boolean = UnsafeMutablePointer<ObjCBool>.allocate(capacity: 1)
+        defer
+            {
+            boolean.deallocate()
+            }
+        boolean.pointee = false
+        FileManager.default.fileExists(atPath: self.path, isDirectory: boolean)
+        return(boolean.pointee.boolValue)
         }
         
-    public func fileExists() -> Bool
+    public var exists: Bool
         {
         let boolean = UnsafeMutablePointer<ObjCBool>.allocate(capacity: 1)
         defer
@@ -152,6 +159,89 @@ public class FileIdentifier
             }
         boolean.pointee = false
         return(FileManager.default.fileExists(atPath: self.path, isDirectory: boolean))
+        }
+        
+    public private(set) var fileDescriptor: Int32!
+    public let path: String
+    public private(set) var mappedAddress: Integer64?
+    private let logger: Logger?
+    private var fileState: FileState = .none
+    
+    public init(path: String,logger: Logger? = nil)
+        {
+        self.logger = logger
+        self.path = path
+        self.fileState = .ready
+        }
+        
+    @discardableResult
+    public func open(mode: Mode...) throws -> Self
+        {
+        guard self.fileState != .open else
+            {
+            throw(SystemIssue(code: .fileAlreadyOpen,agentKind: .pageServer,message: "The file \(self.path) is already open."))
+            }
+        let modeValue = mode.reduce(0) { $0 | $1.modeValue }
+        let string = self.path
+        self.fileDescriptor = Darwin.open(string,modeValue)
+        if self.fileDescriptor == -1
+            {
+            self.fileState = .ready
+            let string = String(cString: strerror(errno))
+            let message = "Opening file at \(string) in mode \(mode) failed with error(\(errno)) \(string)"
+            self.logger?.log(message)
+            throw(SystemIssue(code: .fileOpenFailed,agentKind: .pageServer,message: message))
+            }
+        self.logger?.log("File at \(string) in mode \(mode) successfully opened for \(mode).")
+        self.fileState = .open
+        return(self)
+        }
+        
+    @discardableResult
+    public func create(truncate: Bool) throws -> Self
+        {
+        guard self.fileState == .ready else
+            {
+            throw(SystemIssue(code: .fileNotReady,agentKind: .pageServer,message: "The file \(self.path) is not ready."))
+            }
+        let modeValue = Mode.create.modeValue | Mode.readWrite.modeValue | (truncate ? Mode.truncate.modeValue : 0)
+        let string = self.path
+        self.fileDescriptor = Darwin.open(string,modeValue)
+        if self.fileDescriptor == -1
+            {
+            self.fileState = .ready
+            let string = String(cString: strerror(errno))
+            let message = "Creating file at \(string) failed with error(\(errno)) \(string)"
+            self.logger?.log(message)
+            throw(SystemIssue(code: .fileCreationFailed,agentKind: .pageServer,message: message))
+            }
+        self.logger?.log("File at \(string) successfully created.")
+        try self.close()
+        return(self)
+        }
+        
+    public func delete() throws
+        {
+        guard self.fileState != .open else
+            {
+            throw(SystemIssue(code: .fileAlreadyOpen,agentKind: .pageServer))
+            }
+        guard self.exists else
+            {
+            throw(SystemIssue(code: .fileDoesNotExist,agentKind: .pageServer))
+            }
+        guard Darwin.unlink(self.path) == 0 else
+            {
+            let string = String(cString: strerror(errno))
+            let message = "Error \(errno) deleting file \(self.path) \(string)"
+            self.logger?.log(message)
+            throw(SystemIssue(code: .unableToDeleteFile,agentKind: .pageServer))
+            }
+        }
+        
+    public func createDirectory(withIntermediateDirectories: Bool) throws
+        {
+        try FileManager.default.createDirectory(at: URL(filePath: self.path), withIntermediateDirectories: withIntermediateDirectories)
         }
         
     public func setPOSIXPermissions(owner: POSIXPermission...,group: POSIXPermission...,other: POSIXPermission...) throws
@@ -164,13 +254,6 @@ public class FileIdentifier
         dictionary[FileAttributeKey.posixPermissions] = permissions
         try FileManager.default.setAttributes( dictionary, ofItemAtPath: self.path)
         }
-    public func fileIsDirectory() -> Bool
-        {
-        let boolean = UnsafeMutablePointer<ObjCBool>.allocate(capacity: 1)
-        boolean.pointee = false
-        FileManager.default.fileExists(atPath: self.path, isDirectory: boolean)
-        return(boolean.pointee.boolValue)
-        }
         
     public func close() throws
         {
@@ -180,6 +263,8 @@ public class FileIdentifier
             self.logger?.log("Close of file \(self.path) failed with error(\(errno),\(error)).")
             throw(SystemIssue(code: .closeFailed, agentKind: .pageServer, message: "Close of file \(self.path) failed with error(\(errno),\(error))."))
             }
+        self.fileState = .closed
+        self.fileDescriptor = 0
         }
         
     public func seek(toOffset offset: Integer64) throws

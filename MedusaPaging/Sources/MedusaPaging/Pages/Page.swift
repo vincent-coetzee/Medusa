@@ -9,18 +9,6 @@ import Foundation
 import MedusaStorage
 import MedusaCore
 import Fletcher
-
-public protocol PageProtocol: AnyObject,Equatable
-    {
-    var pageOffset: Integer64 { get set }
-    var nextPageOffset: Integer64 { get set }
-    var freeByteCount: Integer64 { get set }
-    var nextPage: (any PageProtocol)? { get set }
-    var previousPage: (any PageProtocol)? { get set }
-    var isStubbed: Bool { get }
-    var magicNumber: Unsigned64 { get set }
-    init(emptyPageAtOffset: Integer64)
-    }
     
 open class Page: PageProtocol
     {
@@ -183,6 +171,16 @@ open class Page: PageProtocol
         return(bytes)
         }
         
+    internal var isLockedInMemory: Boolean = false
+    internal var bufferSizeInBytes: Integer64
+    public   var buffer: RawPointer
+    private  let accessLock = NSRecursiveLock()
+    internal var freeList: FreeBlockList!
+    open var isDirty = false
+    internal var needsDefragmentation = false
+    internal var lastAccessTimestamp = Medusa.timeInMicroseconds
+    public private(set) var isStubbed = false
+
     open var kind: Page.Kind
         {
         Page.Kind.page
@@ -203,11 +201,6 @@ open class Page: PageProtocol
         Page.kPageSizeInBytes
         }
         
-    internal var isLockedInMemory: Boolean = false
-    internal var bufferSizeInBytes: Integer64
-    public   var buffer: RawPointer
-    private  let accessLock = NSRecursiveLock()
-
     open var checksum: Unsigned64
         {
         get
@@ -246,8 +239,6 @@ open class Page: PageProtocol
             self.isDirty = true
             }
         }
-        
-    internal var freeList: FreeBlockList!
     
     open var pageOffset: Integer64
         {
@@ -304,113 +295,79 @@ open class Page: PageProtocol
             }
         }
     
-    open var isDirty = false
-    internal var needsDefragmentation = false
-    internal var lastAccessTimestamp = Medusa.timeInMicroseconds
-    public private(set) var isStubbed = false
-    
+    //
+    // Create a a stubbed page. The page takes ownership of the passed in stub buffer. This
+    // is a required initializer because it's used by the PageServer to create Page instances
+    // using the Page metatype.
+    //
     public required init(stubBuffer: RawPointer,pageOffset offset: Integer64,sizeInBytes: Integer64)
         {
         self.buffer = stubBuffer
         self.bufferSizeInBytes = sizeInBytes
         self.pageOffset = offset
+        self.lastAccessTimestamp = Medusa.timeInMicroseconds
         self.isStubbed = true
-        self.checksum = 0
-        self.lastAccessTimestamp = Medusa.timeInMicroseconds
-        self.initFreeCellList()
         self.magicNumber = Page.kPageMagicNumber
+        // we don't initialize the free list because the stubbed buffer
+        // does not contain free cell information. When loadContents is invoked
+        // ( which destubs the stub ) the free list information is part of the loaded
+        // buffer and the free list is constructed then.
         }
-        
-    public required init(emptyPageAtOffset: Integer64)
-        {
-        self.buffer = RawPointer.allocate(byteCount: Self.kPageSizeInBytes, alignment: 1)
-        self.buffer.initializeMemory(as: Byte.self, repeating: 0, count: Self.kPageSizeInBytes)
-        self.bufferSizeInBytes = Self.kPageSizeInBytes
-        self.pageOffset = emptyPageAtOffset
-        self.checksum = 0
-        self.lastAccessTimestamp = Medusa.timeInMicroseconds
-        self.initFreeCellList()
-        self.freeList.writeAll(to: self.buffer)
-        self.magicNumber = Page.kPageMagicNumber
-        self.isStubbed = false
-        }
-        
+    //
+    // This initializer is used when creating an empty clean page that
+    // we do not yet know the page offset of. It's also used by some
+    // subclass initializers.
+    //
     public required init()
         {
         let someBuffer = RawPointer.allocate(byteCount: Self.kPageSizeInBytes, alignment: 1)
         someBuffer.initializeMemory(as: Byte.self, repeating: 0, count: Self.kPageSizeInBytes)
         self.buffer = someBuffer
         self.bufferSizeInBytes = Self.kPageSizeInBytes
-        self.pageOffset = 0
-        self.checksum = 0
         self.lastAccessTimestamp = Medusa.timeInMicroseconds
         self.initFreeCellList()
         self.freeList.writeAll(to: self.buffer)
         self.magicNumber = Page.kPageMagicNumber
-        self.isStubbed = false
         }
     //
     // In this case, the page takes over ownership of the
     // buffer because it will be freed when this object goes
-    // bye bye.
+    // bye bye. This initializer is used when loading a page
+    // from disk.
     //
     public required init(buffer: RawPointer,sizeInBytes: Integer64)
         {
         self.buffer = buffer
-        // these instance variables are all set evcen though they are loaded from the buffer,
+        // these instance variables are all set even though they are loaded from the buffer,
         // this is due to Swift's inane way of handling initialization of instance variables
         self.bufferSizeInBytes = sizeInBytes
-        self.checksum = 0
         self.freeList = FreeBlockList(buffer: buffer, atByteOffset: Self.kPageHeaderSizeInBytes)
         self.lastAccessTimestamp = Medusa.timeInMicroseconds
-        self.pageOffset = 0
         self.loadHeader()
-        self.isStubbed = false
         }
     //
-    // Take a copy of the buffer, but do not take ownership.
-    // The caller needs to deallocate the buffer
+    // We always own our own buffer, so we free it when we are
+    // released. Also release all the free cells becuase they
+    // are two way lists which means they form a retain cycle
     //
-    public init(copyPage page: Page)
-        {
-        self.buffer = RawPointer.allocate(byteCount: page.bufferSizeInBytes, alignment: 1)
-        self.buffer.copyMemory(from: page.buffer, byteCount: page.bufferSizeInBytes)
-        self.bufferSizeInBytes = page.bufferSizeInBytes
-        // these instance variables are all set evcen though they are loaded from the buffer,
-        // this is due to Swift's inane way of handling initialization of instance variables
-        self.pageOffset = 0
-        self.checksum = 0
-        self.freeByteCount = 0
-        self.loadHeader()
-        self.freeList = FreeBlockList(buffer: self.buffer, atByteOffset: self.initialFreeCellOffset)
-        self.lastAccessTimestamp = Medusa.timeInMicroseconds
-        self.isStubbed = false
-        self.pageOffset = page.pageOffset
-        }
-    //
-    // Take a copy of the buffer but do not take ownership of it.
-    //
-    public init(copyBuffer buffer: RawPointer,sizeInBytes: Integer64)
-        {
-        self.buffer = RawPointer.allocate(byteCount: sizeInBytes, alignment: 1)
-        self.buffer.copyMemory(from: buffer, byteCount: sizeInBytes)
-        self.bufferSizeInBytes = sizeInBytes
-        // these instance variables are all set evcen though they are loaded from the buffer,
-        // this is due to Swift's inane way of handling initialization of instance variables
-        self.pageOffset = 0
-        self.checksum = 0
-        self.loadHeader()
-        self.freeList = FreeBlockList(buffer: self.buffer, atByteOffset: self.initialFreeCellOffset)
-        self.lastAccessTimestamp = Medusa.timeInMicroseconds
-        }
-        
     deinit
         {
         self.buffer.deallocate()
+        self.freeList.release()
         }
-        
+    //
+    // This method effectively destubs a page by loading the full
+    // page buffer from disk. Buffers in stubbed pages are truncated
+    // buffers to save memory, they only contain the absolute essentials
+    // of the page fields which are located right at the top
+    // of the full page buffer, this allows a truncated buffer to easily
+    // be loaded in when the page exists as a stub page.
+    //
     public func loadContents(from file: FileIdentifier) throws
         {
+        // save these two instance variables because they may have changed from
+        // the page being in a stubbed page list and the values would be overwritten
+        // when the complete buffer is loaded.
         let nextAddress = self.nextPageOffset
         let previousAddress = self.previousPageOffset
         self.buffer.deallocate()
@@ -418,6 +375,7 @@ open class Page: PageProtocol
         self.buffer = try file.readBuffer(atOffset: self.pageOffset, sizeInBytes: Self.kPageSizeInBytes)
         self.freeList = FreeBlockList(buffer: self.buffer, atByteOffset: self.initialFreeCellOffset)
         self.lastAccessTimestamp = Medusa.timeInMicroseconds
+        // reapply these changes
         self.nextPageOffset = nextAddress
         self.previousPageOffset = previousAddress
         self.isStubbed = false
@@ -457,6 +415,13 @@ open class Page: PageProtocol
     internal func storeHeader()
         {
         self.lastAccessTimestamp = Medusa.timeInMicroseconds
+        }
+        
+    public func release()
+        {
+        self.nextPage?.release()
+        self.nextPage = nil
+        self.previousPage = nil
         }
         
     internal func loadHeader()

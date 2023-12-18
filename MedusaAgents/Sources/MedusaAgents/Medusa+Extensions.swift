@@ -77,7 +77,7 @@ extension Medusa
     private static func openOrCreateDataFile(needsInitialization: inout Bool) -> FileIdentifier
         {
         let file = FileIdentifier(path: Self.kMedusaDataDirectoryPath)
-        if !file.fileIsDirectory()
+        if !file.isDirectory
             {
             LoggingAgent.shared.log("\(Self.kMedusaDataDirectoryPath) does not exist, files will be created.")
             do
@@ -97,7 +97,7 @@ extension Medusa
             LoggingAgent.shared.log("Found directory \(Self.kMedusaDataDirectoryPath).")
             }
         let handle = FileIdentifier(path: Self.kMedusaDataFilePath,logger: LoggingAgent.shared)
-        if handle.fileExists()
+        if handle.exists
             {
             LoggingAgent.shared.log("Found data file \(Self.kMedusaDataFilePath).")
             do

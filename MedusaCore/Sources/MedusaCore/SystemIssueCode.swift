@@ -19,6 +19,9 @@ public enum SystemIssueCode: String
     case fileCreationFailed                                         = "Creating the specified file failed."
     case filePositioningFailed                                      = "The specified file cursor could not be positioned at the specified offset."
     case fileReadFailedShort                                        = "Reading the specified file returned less bytes than requested."
+    case fileAlreadyOpen                                            = "The specified file is already open."
+    case fileNotOpen                                                = "The specified file is not open."
+    case fileNotReady                                               = "The file is not in a valid state for the requested action."
     
     case messageDecodingClassNotFound                               = "A class needed to decode an encoded message is missing."
     
@@ -40,6 +43,8 @@ public enum SystemIssueCode: String
     case segmentMappingFailed                                       = "Memory mapping of segment ( mmap ) failed."
     case segmentAdviseFailed                                        = "Giving OS advise about segment usage failed."
     case seekFailed                                                 = "Seeking the specified offet in the file failed."
+    
+    case unableToDeleteFile                                         = "The specified file could not be deleted."
     
     case writeBufferFailed                                          = "Writing specified buffer to specified file failed."
     }

@@ -96,11 +96,11 @@ public class BlockPage: Page
         Page.Kind.blockPage
         }
         
-    public required init(buffer: RawPointer,sizeInBytes: Integer64)
-        {
-        super.init(buffer: buffer,sizeInBytes: sizeInBytes)
-        self.magicNumber = Page.kBlockPageMagicNumber
-        }
+//    public required init(buffer: RawPointer,sizeInBytes: Integer64)
+//        {
+//        super.init(buffer: buffer,sizeInBytes: sizeInBytes)
+//        self.magicNumber = Page.kBlockPageMagicNumber
+//        }
         
     public required init()
         {
@@ -108,17 +108,18 @@ public class BlockPage: Page
         self.magicNumber = Page.kBlockPageMagicNumber
         }
         
-    public required init(emptyPageAtOffset offset: Integer64)
+    public required init(buffer: RawPointer,sizeInBytes: Integer64)
         {
-        super.init(emptyPageAtOffset: offset)
+        super.init(buffer: buffer,sizeInBytes: sizeInBytes)
         self.magicNumber = Page.kBlockPageMagicNumber
         }
     
-    public required init(stubBuffer: RawPointer, pageOffset offset: Integer64, sizeInBytes: Integer64)
+    public required init(stubBuffer: RawPointer,pageOffset: Integer64,sizeInBytes: Integer64)
         {
-        super.init(stubBuffer: stubBuffer,pageOffset: offset,sizeInBytes: sizeInBytes)
+        super.init(stubBuffer: stubBuffer,pageOffset: pageOffset,sizeInBytes: sizeInBytes)
+        self.magicNumber = Page.kObjectPageMagicNumber
         }
-    
+        
     private func initSlots()
         {
         let availableSpace = Page.kPageSizeInBytes - BlockPage.kBlockPageHeaderSizeInBytes
@@ -127,7 +128,6 @@ public class BlockPage: Page
         self.totalSlotCount = self.pageTotalSlotCount
         self.slotCount = 0
         self.firstEmptySlotIndex = 0
-        
         }
     }
 

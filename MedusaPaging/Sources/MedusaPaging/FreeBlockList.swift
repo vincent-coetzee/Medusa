@@ -52,6 +52,11 @@ public class FreeBlockList
         self.endCell = self.firstCell.endCell
         }
 
+    public func release()
+        {
+        self.firstCell.release()
+        }
+        
     public func allocate(from buffer: UnsafeMutableRawPointer,sizeInBytes: Int) throws -> Integer64
         {
         // Try the endCell to see if it has space
@@ -108,7 +113,6 @@ public class FreeBlockList
         
     public func writeAll(to buffer: UnsafeMutableRawPointer)
         {
-        print("WRITING FREE LIST FOR BUFFER \(buffer)")
         self.firstCell.writeAll(to: buffer,number: 0)
         }
         
