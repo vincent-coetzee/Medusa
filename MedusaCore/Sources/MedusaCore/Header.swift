@@ -29,56 +29,55 @@ import Foundation
 public class Header
     {
     public static let kSignMask: Unsigned64             = 0b10000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000 // 1 bit at at bit  63  -> this is ignored
-    public static let kTagMask: Unsigned64              = 0b01111000_00000000_00000000_00000000_00000000_00000000_00000000_00000000 // 4 bits at bit    59  -> this stores the tag defining the base type of the value
-    public static let kSizeInWordsMask: Unsigned64      = 0b00000111_11111111_11111111_11111111_11111111_00000000_00000000_00000000 // 36 bits at bit   23  -> this has the size in words of the object, total size = size in words * MemoryLayout<Integer64>.size
-    public static let kIndexedMask: Unsigned64          = 0b00000000_00000000_00000000_00000000_00000000_11000000_00000000_00000000 // 1 bit at bit     22  -> does this object have bytes
-    public static let kKeyedMask: Unsigned64            = 0b00000000_00000000_00000000_00000000_00000000_00100000_00000000_00000000 // 1 bit at bit     21  -> can this object's contents be accessed via a key
-    public static let kFlipCountMask: Unsigned64        = 0b00000000_00000000_00000000_00000000_00000000_000111111_1111111_10000000 // 14 bits at bit    7  -> how many times has this object been flipped by the GC
-    public static let kForwardedMask: Unsigned64        = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_01000000 // 1 bit at bit      6  -> has this object been moved, if so the new address is found immediately after this header
-    public static let kMarkedMask: Unsigned64           = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00100000 // 1 bit at bit      5  -> during the database GC rocess this flag is used to note that we have visited the object
-    public static let kAssociatedMask: Unsigned64       = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00010000 // 1 bit at bit      4  -> this is an anumeration that has associated values
-    public static let kKindMask: Unsigned64             = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00001111 // 5 bits at bit     0
+    public static let kIsHeaderMask: Unsigned64         = 0b01000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000
+    public static let kSizeInWordsMask: Unsigned64      = 0b00111111_11111111_11111111_11111111_11111111_10000000_00000000_00000000 // 39 bits at bit   23  -> this has the size in words of the object, total size = size in words * MemoryLayout<Integer64>.size
+    public static let kHasBytesMask: Unsigned64         = 0b00000000_00000000_00000000_00000000_00000000_01000000_00000000_00000000 // 1 bit at bit     22  -> does this object have bytes
+    public static let kFlipCountMask: Unsigned64        = 0b00000000_00000000_00000000_00000000_00000000_00111111_11111111_00000000 // 14 bits at bit    7  -> how many times has this object been flipped by the GC
+    public static let kIsForwardedMask: Unsigned64      = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_10000000 // 1 bit at bit      6  -> has this object been moved, if so the new address is found immediately after this header
+    public static let kIsMarkedMask: Unsigned64         = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_01000000 // 1 bit at bit      5  -> during the database GC rocess this flag is used to note that we have visited the object
+    public static let kReservedMask: Unsigned64         = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00111111 // 6 bits at bit     0
     
     public static let kSignBits: Unsigned64             = 0b1
-    public static let kTagBits: Unsigned64              = 0b111
-    public static let kSizeInWordsBits: Unsigned64      = 0b1111_11111111_11111111_11111111_11111111
-    public static let kIndexedBits: Unsigned64          = 0b1
-    public static let kKeyedBits: Unsigned64            = 0b1
-    public static let kFlipCountBits: Unsigned64        = 0b1
-    public static let kForwardedBits: Unsigned64        = 0b1
-    public static let kMarkedBits: Unsigned64           = 0b111111_11111111
+    public static let kIsHeaderBits: Unsigned64         = 0b1
+    public static let kSizeInWordsBits: Unsigned64      = 0b111111_11111111_11111111_11111111_11111111_1
+    public static let kHasBytesBits: Unsigned64         = 0b1
+    public static let kFlipCountBits: Unsigned64        = 0b111111_11111111
+    public static let kIsForwardedBits: Unsigned64      = 0b1
+    public static let kIsMarkedBits: Unsigned64         = 0b1
+    public static let kReservedBits: Unsigned64         = 0b111111
+    
     
     public static let kSignOffset: Unsigned64           = 63
-    public static let kTagOffset: Unsigned64            = 60
-    public static let kSizeInWordsOffset: Unsigned64    = 24
-    public static let kIndexedOffset: Unsigned64        = 23
-    public static let kKeyedOffset: Unsigned64          = 22
+    public static let kIsHeaderOffset: Unsigned64       = 62
+    public static let kSizeInWordsOffset: Unsigned64    = 23
+    public static let kHasBytesOffset: Unsigned64       = 22
     public static let kFlipCountOffset: Unsigned64      = 8
-    public static let kForwardedOffset: Unsigned64      = 7
-    public static let kMarkedOffset: Unsigned64         = 6
+    public static let kIsForwardedOffset: Unsigned64    = 7
+    public static let kIsMarkedOffset: Unsigned64       = 6
+    public static let kReservedOffset: Unsigned64       = 0
 
     
     public var sign: Integer64
         {
         get
             {
-            Integer64(self.word & Self.kSignMask >> Self.kSignOffset)
+            Integer64((self.word & Self.kSignMask) >> Self.kSignOffset)
             }
         set
             {
-            self.word = (self.word & ~Self.kSignBits) | (Unsigned64(newValue) & Self.kSignBits) << Self.kSignOffset
+            self.word = (self.word & ~Self.kSignMask) | (newValue == 1 ? Self.kSignMask : 0)
             }
         }
         
-    public var sizeInWords: Unsigned64
+    public var sizeInWords: Integer64
         {
         get
             {
-            self.word & Self.kSizeInWordsMask >> Self.kSizeInWordsOffset
+            Integer64((self.word & Self.kSizeInWordsMask) >> Self.kSizeInWordsOffset)
             }
         set
             {
-            self.word = (self.word & ~Self.kSizeInWordsBits) | (Unsigned64(newValue) & Self.kSizeInWordsBits) << Self.kSizeInWordsOffset
+            self.word = (self.word & ~Self.kSizeInWordsMask) | ((Unsigned64(newValue) & Self.kSizeInWordsBits) << Self.kSizeInWordsOffset)
             }
         }
         
@@ -86,35 +85,23 @@ public class Header
         {
         get
             {
-            Integer64(self.word & Self.kFlipCountMask >> Self.kFlipCountOffset)
+            Integer64((self.word & Self.kFlipCountMask) >> Self.kFlipCountOffset)
             }
         set
             {
-            self.word = (self.word & ~Self.kFlipCountBits) | (Unsigned64(newValue) & Self.kFlipCountBits)  << Self.kFlipCountOffset
+            self.word = (self.word & ~Self.kFlipCountMask) | ((Unsigned64(newValue) & Self.kFlipCountBits) << Self.kFlipCountOffset)
             }
         }
         
-    public var isIndexed: Boolean
+    public var hasBytes: Boolean
         {
         get
             {
-            (self.word & Self.kIndexedMask) == Self.kIndexedMask
+            (self.word & Self.kHasBytesMask) == Self.kHasBytesMask
             }
         set
             {
-            self.word = (self.word & ~Self.kIndexedBits) | (newValue ? Self.kIndexedBits << Self.kSizeInWordsOffset : 0)
-            }
-        }
-        
-    public var isKeyed: Boolean
-        {
-        get
-            {
-            (self.word & Self.kKeyedMask) == Self.kKeyedMask
-            }
-        set
-            {
-            self.word = (self.word & ~Self.kKeyedBits) | (newValue ? Self.kKeyedBits << Self.kKeyedOffset : 0)
+            self.word = (self.word & ~Self.kHasBytesMask) | (newValue ? Self.kHasBytesMask : 0)
             }
         }
         
@@ -122,11 +109,23 @@ public class Header
         {
         get
             {
-            (self.word & Self.kForwardedMask) == Self.kForwardedMask
+            (self.word & Self.kIsForwardedMask) == Self.kIsForwardedMask
             }
         set
             {
-            self.word = (self.word & ~Self.kForwardedBits) | (newValue ? Self.kForwardedBits << Self.kForwardedOffset : 0)
+            self.word = (self.word & ~Self.kIsForwardedMask) | (newValue ? Self.kIsForwardedMask : 0)
+            }
+        }
+        
+    public var isHeader: Boolean
+        {
+        get
+            {
+            (self.word & Self.kIsHeaderMask) == Self.kIsHeaderMask
+            }
+        set
+            {
+            self.word = (self.word & ~Self.kIsHeaderMask) | (newValue ? Self.kIsHeaderMask : 0)
             }
         }
         
@@ -134,11 +133,11 @@ public class Header
         {
         get
             {
-            (self.word & Self.kMarkedMask) == Self.kMarkedMask
+            (self.word & Self.kIsMarkedMask) == Self.kIsMarkedMask
             }
         set
             {
-            self.word = (self.word & ~Self.kMarkedBits) | (newValue ? Self.kMarkedBits << Self.kMarkedOffset : 0)
+            self.word = (self.word & ~Self.kIsMarkedMask) | (newValue ? Self.kIsMarkedMask : 0)
             }
         }
         
@@ -162,16 +161,30 @@ public class Header
             }
         }
         
+    public var bitPattern: Unsigned64
+        {
+        get
+            {
+            self.word
+            }
+        set
+            {
+            self.word = newValue
+            }
+        }
+        
     private var _word: Unsigned64?
     private var _pointer: RawPointer?
     
     public init(bitPattern: Unsigned64)
         {
         self._word = bitPattern
+        self._pointer = nil
         }
         
     public init(pointer: RawPointer)
         {
+        self._word = nil
         self._pointer = pointer
         }
     }

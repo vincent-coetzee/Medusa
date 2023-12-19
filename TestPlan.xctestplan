@@ -21,6 +21,13 @@
         "identifier" : "MedusaCoreTests",
         "name" : "MedusaCoreTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:MedusaPaging",
+        "identifier" : "MedusaPagingTests",
+        "name" : "MedusaPagingTests"
+      }
     }
   ],
   "version" : 1

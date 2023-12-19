@@ -19,7 +19,7 @@ extension RawPointer
     // Note that this method changes the underlying value of the receiver by incrementing it by the number of bytes read
     public mutating func loadValue<T>(as: T.Type) -> T
         {
-        let value = self.load(as: T.self)
+        let value = self.loadUnaligned(as: T.self)
         self ++ T.self
         return(value)
         }

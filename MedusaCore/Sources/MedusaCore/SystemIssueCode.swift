@@ -9,7 +9,11 @@ import Foundation
 
 public enum SystemIssueCode: String
     {
+    case allocationRequestSizeExceedsMaximumPageObjectSize          = "The requested sizeInBytes is larger than the maximum allowed page object size."
+    
     case closeFailed                                                = "Closing the specified file failed."
+    case checksumsDiffer                                            = "Page checksum and calculated checksum do not agree."
+    
     case enumerationRawValueNotValidInDecodeEnumeration             = "The raw value of an enumeration is not valid when decoding enumeration."
     case endOfFileReached                                           = "Reading has reached the end of the file."
     

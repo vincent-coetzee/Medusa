@@ -193,7 +193,7 @@ open class Page: PageProtocol
         
     open var initialFreeByteCount: Integer64
         {
-        Self.kPageSizeInBytes - Self.kPageHeaderSizeInBytes
+        Self.kPageSizeInBytes - Self.kPageHeaderSizeInBytes - FreeBlockListCell.kCellHeaderSizeInBytes
         }
         
     final var sizeInBytes: Integer64
@@ -341,7 +341,7 @@ open class Page: PageProtocol
         // these instance variables are all set even though they are loaded from the buffer,
         // this is due to Swift's inane way of handling initialization of instance variables
         self.bufferSizeInBytes = sizeInBytes
-        self.freeList = FreeBlockList(buffer: buffer, atByteOffset: Self.kPageHeaderSizeInBytes)
+        self.freeList = FreeBlockList(buffer: buffer, atByteOffset: self.initialFreeCellOffset)
         self.lastAccessTimestamp = Medusa.timeInMicroseconds
         self.loadHeader()
         }
@@ -454,6 +454,19 @@ open class Page: PageProtocol
         self.lastAccessTimestamp = Medusa.timeInMicroseconds
         }
         
+    internal func validateChecksum() throws
+        {
+        let oldChecksum = self.checksum
+        self.checksum = 0
+        let data = UnsafePointer<UInt32>(OpaquePointer(self.buffer))
+        let length = Self.kPageSizeInBytes
+        let newChecksum = fletcher64(data,length)
+        if newChecksum != oldChecksum
+            {
+            throw(SystemIssue(code: .checksumsDiffer,agentKind: .pageServer))
+            }
+        }
+        
     public func store() throws
         {
 //        if self.needsDefragmentation
@@ -478,6 +491,11 @@ open class Page: PageProtocol
         
     open func allocate(sizeInBytes: Int) throws -> Integer64
         {
+        // is this a reasonable size for a page
+        if sizeInBytes >= self.initialFreeByteCount
+            {
+            throw(SystemIssue(code: .allocationRequestSizeExceedsMaximumPageObjectSize,agentKind: .pageServer))
+            }
         // adjust size up by 8 bytes for storage of the size of the allocated chunk
         if self.freeByteCount < sizeInBytes && self.needsDefragmentation
             {
@@ -510,83 +528,5 @@ open class Page: PageProtocol
         self.lastAccessTimestamp = Medusa.timeInMicroseconds
         }
     }
-
-
-//public class PageWrapper: Buffer
-//    {
-//    public var rawPointer: UnsafeMutableRawPointer
-//        {
-//        self.page.buffer
-//        }
-//        
-//    public var fields: CompositeField
-//        {
-//        self.page.fields
-//        }
-//        
-//    public let page: Page
-//    public let sizeInBytes: Int = Self.kPageSizeInBytes
-//    
-//    public init(page: Page)
-//        {
-//        self.page = page
-//        }
-//        
-//    public subscript(_ index: Int) -> Medusa.Byte
-//        {
-//        get
-//            {
-//            self.page.buffer.loadUnaligned(fromByteOffset: index, as: Medusa.Byte.self)
-//            }
-//        set
-//            {
-//            UnsafeMutablePointer<Medusa.Byte>(OpaquePointer(self.page.buffer + index)).pointee = newValue
-//            }
-//        }
-//        
-//    public func allocate(sizeInBytes: Integer64) throws -> Integer64
-//        {
-//        try self.page.allocate(sizeInBytes: sizeInBytes)
-//        }
-//        
-//    public func deallocate(at: Integer64) throws
-//        {
-//        try self.page.deallocate(at: at)
-//        }
-//        
-//    public func fill(atByteOffset: Integer64,with: Medusa.Byte,count: Integer64)
-//        {
-//        self.page.fill(atByteOffset: atByteOffset, with: with, count: count)
-//        }
-//        
-//    func addKey(_ key: String,value: String)
-//        {
-//        do
-//            {
-//            _ = try (self.page as? BTreePage<String,String>)?.insert(key: key, value: value)
-//            }
-//        catch let error
-//            {
-//            print(error)
-//            }
-//        }
-//        
-//    public func flush()
-//        {
-//        do
-//            {
-//            try self.page.write()
-//            }
-//        catch let error
-//            {
-//            print(error)
-//            }
-//        }
-//        
-//    public func compact() throws
-//        {
-//        try self.page.rewrite()
-//        }
-//    }
 
 public typealias Pages = Array<Page>

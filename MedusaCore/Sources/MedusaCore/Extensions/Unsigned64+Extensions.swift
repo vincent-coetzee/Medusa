@@ -14,7 +14,7 @@ extension Unsigned64
         let little = self.littleEndian
         var bit: Unsigned64 = 1
         var string = String()
-        for index in 0..<32
+        for index in 0..<64
             {
             if index % 8 == 0 && index != 0
                 {

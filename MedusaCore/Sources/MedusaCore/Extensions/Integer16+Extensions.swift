@@ -14,7 +14,7 @@ extension Integer16: AnnotationValueType,PrimitiveType
         let little = self.littleEndian
         var bit: Integer16 = 1
         var string = String()
-        for index in 0..<64
+        for index in 0..<16
             {
             if index % 8 == 0 && index != 0
                 {

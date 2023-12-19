@@ -9,10 +9,10 @@ import Foundation
 
 public struct ObjectAddress: Hashable,Equatable
     {
-    public static let kNothing = ObjectAddress(bitPattern: ObjectAddress.kNothingMask)
+    public static let kNothing = ObjectAddress(bitPattern: ObjectAddress.kIsNothingMask)
     
     private static let kSignMask: Unsigned64                    = 0b10000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000
-    private static let kNothingMask: Unsigned64                 = 0b01000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000
+    private static let kIsNothingMask: Unsigned64               = 0b01000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000
     private static let kIsObjectMask: Unsigned64                = 0b00100000_00000000_00000000_00000000_00000000_00000000_00000000_00000000
     private static let kIsHeaderMask: Unsigned64                = 0b00010000_00000000_00000000_00000000_00000000_00000000_00000000_00000000
     private static let kPageOffsetMask: Unsigned64              = 0b00001111_11111111_11111111_11111111_11111111_11111111_11000000_00000000
@@ -41,11 +41,11 @@ public struct ObjectAddress: Hashable,Equatable
         {
         get
             {
-            self.address & Self.kNothingMask == Self.kNothingMask
+            self.address & Self.kIsNothingMask == Self.kIsNothingMask
             }
         set
             {
-            self.address = (self.address & ~Self.kNothingMask) | (newValue ? Self.kNothingMask : 0)
+            self.address = (self.address & ~Self.kIsNothingMask) | (newValue ? Self.kIsNothingMask : 0)
             }
         }
         

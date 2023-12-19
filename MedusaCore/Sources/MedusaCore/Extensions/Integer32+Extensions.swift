@@ -14,7 +14,7 @@ extension Integer32: AnnotationValueType,PrimitiveType
         let little = self.littleEndian
         var bit: Integer32 = 1
         var string = String()
-        for index in 0..<64
+        for index in 0..<32
             {
             if index % 8 == 0 && index != 0
                 {
